@@ -14,6 +14,7 @@ public:
 
 private:
 
+	
 	int			_ip_address;
 	std::string	_name;
 
