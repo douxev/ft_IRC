@@ -6,7 +6,7 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 12:59:03 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/05/27 14:04:52 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/05/27 14:50:36 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,10 @@ public:
 
 	void send_message( const User& user, const std::string msg ) ;
 	void change_role( const User& user, const User& target, bool is_op );
+	void user_join( const User& user );
 	void user_quit( const User& user );
-	void user_kicked( const User& user );
-	void set_mode( t_enum_modes mode );
+	void user_kicked( const User& user, std::string kick_message );
+	void set_mode( t_enum_modes mode, size_t value );
 
 	Channel( void );
 	Channel& operator=( const Channel& Other );
@@ -50,12 +51,14 @@ public:
 
 private:
 
-	void _is_op( const User& name );
-
+	bool _is_op( const User& name );
+	void _remove_connected_user( const User& user );
+	void _add_connected_user( const User& user );
+	
 	t_modes						_modes;
 	std::string					_topic;
 	std::vector<std::string> 	_op_users;
-	std::vector<User *> 		_connected_users;
+	std::vector<User> 		_connected_users;
 
 };
 
