@@ -15,13 +15,11 @@ public:
 	Server( const Server& copied);
 	~Server();
 	void user_identify( std::string password );
-	void user_register( const User& name, std::string password, std::string email );
-
+	void new_user( std::string name, int socketfd, std::string join_message, std::string quit_message, int ip_adress );
+	void user_quit( const User& name );
 
 private:
 
-	bool _is_register( const User& name );
-	bool _is_register( const Channel& name );
 	void _add_active_channel( const Channel& channel );
 	void _remove_unactive_channel( const Channel& channel );
 	void _welcome_message();
@@ -30,8 +28,9 @@ private:
 	std::string							_ip_str;
 	int									_ip_address;
 	short								_port;
+	int 								_socket;
 	std::vector<Channel>				_active_channel;
-	std::map<std::string, std::string>	_registered_users;
+	std::vector<User>					_connected_users;
 
 };
 
