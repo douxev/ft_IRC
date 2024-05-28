@@ -8,11 +8,11 @@ Server::Server( const Server& copied ) {}
 
 Server::~Server() {}
 
-void Server::user_identify(std::string password) {
+void Server::user_identify( std::string password ) {
 
 }
 
-void Server::user_register() {
+void Server::user_register( const User& name, std::string password, std::string email ) {
 
 }
 
