@@ -6,7 +6,7 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 12:59:03 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/05/27 14:50:36 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/05/28 14:17:11 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,12 +36,17 @@ class Channel {
 
 public:
 
-	void send_message( const User& user, const std::string msg ) ;
+	void send_message( const User& user, const std::string msg );
+	void server_message( const std::string msg );
+
 	void change_role( const User& user, const User& target, bool is_op );
 	void user_join( const User& user );
 	void user_quit( const User& user );
 	void user_kicked( const User& user, std::string kick_message );
+
 	void set_mode( t_enum_modes mode, size_t value );
+	void set_mode( t_enum_modes mode, const User& user, const std::string target, bool value );
+	void set_mode( t_enum_modes mode, bool value, std::string password );
 
 	Channel( void );
 	Channel& operator=( const Channel& Other );

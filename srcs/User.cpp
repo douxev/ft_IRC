@@ -34,3 +34,7 @@ std::string	User::get_quit_message( void ) const {
 std::string User::get_join_message( void ) const {
 	return (this->_join_message);
 }
+
+int			User::get_socketfd( void ) const {
+	return (this->_socketfd);
+}

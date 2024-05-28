@@ -1,4 +1,6 @@
 #include "Channel.hpp"
+#include "utils.tpp"
+#include <sys/socket.h>
 
 Channel::Channel( void ) {
 
@@ -16,19 +18,28 @@ Channel::~Channel() {
 
 }
 
-void Channel::send_message( const User& user, const std::string msg ) {
-
+void Channel::server_message( const std::string msg ) {
+	const size_t len = this->_connected_users.size();
+	for (size_t i = 0 ; i < len; i++) {
+		send(this->_connected_users[i].get_socketfd(), \
+		("SERVER: " + msg + "\n").c_str(), msg.size(), \
+		0);
+	}
 }
 
-void Channel::change_role( const User& user, const User& target, bool is_op ) {
-
+void Channel::send_message( const User& user, const std::string msg ) {
+	const size_t len = this->_connected_users.size();
+	for (size_t i = 0 ; i < len; i++) {
+		send(this->_connected_users[i].get_socketfd(), \
+		(user.get_name() + ": " + msg + "\n").c_str(), \
+		msg.size(), 0);
+	}
 }
 
 void Channel::user_join( const User& user ) {
 	this->_add_connected_user(user);
 	this->send_message(user, user.get_join_message());
 }
-
 
 void Channel::user_quit( const User& user ) {
 	this->_remove_connected_user(user);
@@ -54,25 +65,43 @@ void Channel::_add_connected_user( const User& user ) {
 	this->_connected_users.push_back(user);
 }
 
-//sset OP
-void Channel::set_mode( t_enum_modes mode, User& user, std::string target, std::string value ) {
-	switch (mode)
-	{
-	case OP:
-		// check if user is op
-		// change_role(user, value);
-		break;
-	
-	default:
-		break;
+void Channel::change_role( const User& user, const User& target, bool is_op ) {
+	this->set_mode(OP, user, target.get_name(), is_op);
+}
+
+//Operators change modes
+void Channel::set_mode( t_enum_modes mode, const User& user, const std::string target, bool value ) {
+	if (mode != OP)
+		return ;
+	if (find_elem(this->_op_users, user)) {
+		if (value == false && find_elem(this->_op_users, target)) {
+			const size_t len = this->_op_users.size();
+			for (size_t i = 0; i < len; i++) {
+				if (this->_op_users[i] == target) {
+					this->_op_users.erase(this->_op_users.begin() + i);
+				break ;
+		}
+	}
+		}
+		else if (value == true) {
+			this->_op_users.push_back(target);
+		}
 	}
 }
 
-//SET PASSWORD
+//Password KEY
 void Channel::set_mode( t_enum_modes mode, bool value, std::string password ) {
-	if ()
+	if (mode != KEY)
+		return ;
+	if (!value) {
+		this->_modes.password.clear();
+	}
+	else {
+		this->_modes.password = password;
+	}
 }
 
+//Invite, Topics, Limits
 void Channel::set_mode( t_enum_modes mode, size_t value ) {
 	switch (mode)
 	{
