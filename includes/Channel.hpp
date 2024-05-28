@@ -6,7 +6,7 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 12:59:03 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/05/28 14:17:11 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/05/28 14:44:11 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ public:
 
 private:
 
+	bool _is_op( const std::string user );
 	bool _is_op( const User& name );
 	void _remove_connected_user( const User& user );
 	void _add_connected_user( const User& user );
@@ -63,7 +64,7 @@ private:
 	t_modes						_modes;
 	std::string					_topic;
 	std::vector<std::string> 	_op_users;
-	std::vector<User> 		_connected_users;
+	std::vector<User> 			_connected_users;
 
 };
 
