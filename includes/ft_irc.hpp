@@ -6,7 +6,7 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 14:56:20 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/05/21 15:11:54 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/05/28 15:03:30 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include "User.hpp"
 # include "Channel.hpp"
 
+void	ft_send(int socketfd, const void *c_str, size_t len);
 
 
 

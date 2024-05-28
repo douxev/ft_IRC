@@ -6,7 +6,7 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 12:59:03 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/05/28 14:44:11 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/05/28 15:03:46 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <vector>
 # include <string>
 # include "User.hpp"
+# include "ft_irc.hpp"
 
 typedef enum e_modes {
 	INVITE,
@@ -49,15 +50,15 @@ public:
 	void set_mode( t_enum_modes mode, bool value, std::string password );
 
 	Channel( void );
+	Channel( const User& user );
 	Channel& operator=( const Channel& Other );
 	Channel( const Channel& copied );
 	~Channel();
 
-
 private:
 
-	bool _is_op( const std::string user );
 	bool _is_op( const User& name );
+	bool _is_op( const std::string user );
 	void _remove_connected_user( const User& user );
 	void _add_connected_user( const User& user );
 	
@@ -67,7 +68,5 @@ private:
 	std::vector<User> 			_connected_users;
 
 };
-
-
 
 #endif

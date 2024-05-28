@@ -3,15 +3,30 @@
 #include <sys/socket.h>
 
 Channel::Channel( void ) {
-
+	this->_modes.invite_only = 0;
+	this->_modes.op_topic = 0;
+	this->_modes.password = "";
+	this->_modes.limit = 0;
 }
 
-Channel::Channel( const Channel& Other ) {
+Channel::Channel( const User& user ) {
+	this->user_join(user);
+	this->_op_users.push_back(user.get_name());
 
+	this->_modes.invite_only = 0;
+	this->_modes.op_topic = 0;
+	this->_modes.password = "";
+	this->_modes.limit = 0;
 }
+
+Channel::Channel( const Channel& Other ):
+_modes(Other._modes), _topic(Other._topic), _op_users(Other._op_users), _connected_users(Other._connected_users) {}
 
 Channel& Channel::operator=( const Channel& Other ) {
-
+	this->_modes = Other._modes;
+	this->_topic = Other._topic;
+	this->_op_users = Other._op_users;
+	this->_connected_users = Other._connected_users;
 }
 
 Channel::~Channel() {
@@ -21,18 +36,17 @@ Channel::~Channel() {
 void Channel::server_message( const std::string msg ) {
 	const size_t len = this->_connected_users.size();
 	for (size_t i = 0 ; i < len; i++) {
-		send(this->_connected_users[i].get_socketfd(), \
-		("SERVER: " + msg + "\n").c_str(), msg.size(), \
-		0);
+		ft_send(this->_connected_users[i].get_socketfd(), \
+		("SERVER: " + msg + "\n").c_str(), msg.size());
 	}
 }
 
 void Channel::send_message( const User& user, const std::string msg ) {
 	const size_t len = this->_connected_users.size();
 	for (size_t i = 0 ; i < len; i++) {
-		send(this->_connected_users[i].get_socketfd(), \
+		ft_send(this->_connected_users[i].get_socketfd(), \
 		(user.get_name() + ": " + msg + "\n").c_str(), \
-		msg.size(), 0);
+		msg.size());
 	}
 }
 
