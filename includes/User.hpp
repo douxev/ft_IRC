@@ -18,7 +18,7 @@ public:
 
 	User( void );
 	User& operator=( const User& Other );
-	bool operator==( const User& Other );
+	bool operator==( const User& Other ) const;
 	User( const User& copied);
 	~User();
 
