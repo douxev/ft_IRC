@@ -19,7 +19,7 @@ void	nick_command( Server server, int reply_socket, std::string message ) {
 }
 
 void	join_command( Server server, int reply_socket, std::string message ) {
-
+	
 }
 
 void	part_command( Server server, int reply_socket, std::string message ) {
