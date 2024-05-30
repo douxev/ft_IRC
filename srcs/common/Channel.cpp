@@ -44,22 +44,6 @@ Channel::~Channel() {
 
 }
 
-void Channel::server_message( const std::string msg ) {
-	const size_t len = this->_connected_users.size();
-	for (size_t i = 0 ; i < len; i++) {
-		ft_send(this->_connected_users[i].get_socketfd(), \
-		("[SERVER] " + msg + "\n"));
-	}
-}
-
-void Channel::send_message( const User& user, const std::string msg ) {
-	const size_t len = this->_connected_users.size();
-	for (size_t i = 0 ; i < len; i++) {
-		ft_send(this->_connected_users[i].get_socketfd(), \
-		(user.get_name() + ": " + msg + "\n"));
-	}
-}
-
 void	Channel::send_userlist( const User& user ) {
 	std::stringstream msg_to_send;
 
