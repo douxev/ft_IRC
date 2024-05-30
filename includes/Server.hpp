@@ -2,6 +2,7 @@
 # define SERVER_HPP
 
 # include <vector>
+# include <algorithm>
 # include <string>
 # include <map>
 # include "Channel.hpp"

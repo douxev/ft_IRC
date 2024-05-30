@@ -162,7 +162,11 @@ void Server::_read_data(int i)
 		_nb_sockets--;
 		try
 		{
-			user_quit(find_user_from_fd(sender_fd));
+			User *client = find_user_from_fd(sender_fd);
+			//user_quit(client);
+			std::vector<User*>::iterator it = find(_connected_users.begin(), _connected_users.end(), client);
+			_connected_users.erase(it);
+			delete client;
 		}
 		catch(const std::exception& e)
 		{
