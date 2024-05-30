@@ -1,4 +1,5 @@
 #include "Server.hpp"
+#include <cstddef>
 #include <iostream>
 
 Server::Server( void ) {}
@@ -36,6 +37,15 @@ void Server::_remove_unactive_channel( const Channel& channel ) {
 
 std::string Server::get_motd( void ) {
 	return (this->_motd);
+}
+
+bool	Server::nick_already_taken( std::string name ) const {
+	const size_t len = this->_connected_users.size();
+	for (size_t i = 0; i < len; i++) {
+		if (this->_connected_users[i].get_name() == name)
+			return (true);
+	}
+	return (false);
 }
 
 

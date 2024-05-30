@@ -2,7 +2,7 @@
 #include "numeric_replies.hpp"
 
 void	pong(Server server, int reply_socket, std::string message) {
-	ft_send(reply_socket, "PONG " + message.substr(5, message.size() - 5));
+	ft_send(reply_socket, "PONG " + message.substr(5));
 }
 
 void	motd_command( Server server, int reply_socket, std::string message ) {
@@ -15,7 +15,8 @@ void	version_command( Server server, int reply_socket, std::string message ) {
 }
 
 void	nick_command( Server server, int reply_socket, std::string message ) {
-	
+	server.
+	message.substr(5);
 }
 
 void	join_command( Server server, int reply_socket, std::string message ) {

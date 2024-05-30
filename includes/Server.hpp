@@ -20,6 +20,7 @@ public:
 	void	user_quit( const User& name );
 	int		init_server( int ac, char **av );
 	void	manage_loop( void );
+	bool	nick_already_taken( std::string name ) const;
 
 private:
 
@@ -35,7 +36,7 @@ private:
 	short								_port;
 	int 								_server_socket;
 	std::vector<Channel>				_active_channel;
-	std::map<int, std::string>			_connected_users;
+	std::vector<User>					_connected_users;
 	std::vector<struct pollfd> 			_sockets_fds;
 	int									_nb_sockets;
 };
