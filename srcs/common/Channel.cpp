@@ -64,9 +64,13 @@ void Channel::user_join( const User& user ) {
 	this->_add_connected_user(user);
 	const size_t len = this->_connected_users.size();
 
+	std::stringstream msg_to_send;
+	msg_to_send << ":" << user.get_name() << " JOIN #" << _name << std::endl;
+	std::cout << msg_to_send.str();
 	for (size_t i = 0; i < len; i++) {
-		ft_send(this->_connected_users[i].get_socketfd(), )
+		ft_send(this->_connected_users[i].get_socketfd(), msg_to_send.str());
 	}
+	
 }
 
 void Channel::user_quit( const User& user, const std::string quit_message ) {
