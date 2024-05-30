@@ -6,7 +6,7 @@
 /*   By: rastie <rastie@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:22:05 by aauthier          #+#    #+#             */
-/*   Updated: 2024/05/30 16:17:34 by rastie           ###   ########.fr       */
+/*   Updated: 2024/05/30 16:23:18 by rastie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,8 @@ int	main(int ac, char **av) {
 	check_args(ac, av);
 	std::cout << "HERE\n" << std::endl;
 	Server server;
-	server._init_server(ac, av);
-	server._manage_loop();
+	server.init_server(ac, av);
+	server.manage_loop();
 	
 	return (0);
 }

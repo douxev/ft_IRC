@@ -18,8 +18,8 @@ public:
 	std::string get_motd( void );
 	void new_user( std::string name, int socketfd, std::string join_message, std::string quit_message, int ip_adress );
 	void user_quit( const User& name );
-	int _init_server(int ac, char **av);
-	void	_manage_loop();
+	int init_server(int ac, char **av);
+	void	manage_loop();
 
 private:
 

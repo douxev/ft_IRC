@@ -44,7 +44,7 @@ void Server::_welcome_message() {
 	std::cout<<"Welcome to GuiRaMa/n list of commands : etc"<<std::endl;
 }
 
-int Server::_init_server(int ac, char **av)
+int Server::init_server(int ac, char **av)
 {
 	struct pollfd	*poll_fds;
 
@@ -63,7 +63,7 @@ int Server::_init_server(int ac, char **av)
 	_nb_sockets = 1;
 }
 
-void Server::_manage_loop()
+void Server::manage_loop()
 {
 	while (true)
 	{
