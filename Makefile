@@ -6,7 +6,7 @@
 #    By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/07 16:11:15 by jdoukhan          #+#    #+#              #
-#    Updated: 2024/05/21 14:52:19 by jdoukhan         ###   ########.fr        #
+#    Updated: 2024/05/30 14:23:09 by jdoukhan         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,10 +25,12 @@ URL = https://cdn.intra.42.fr/pdf/pdf/89250/en.subject.pdf
 ################################################################################
 
 COMMON_SOURCES = \
-		Channel.cpp\
-		User.cpp\
-		Server.cpp\
 		main.cpp\
+		init_server.cpp\
+		connections.cpp\
+		# Channel.cpp\
+		# User.cpp\
+		# Server.cpp\
 
 
 M_SOURCES = 
@@ -75,13 +77,9 @@ clean:
 	@rm -rf $(OBJS) $(B_OBJS)
 	@echo "\033[0;33mCleaned .o files ✔️\033[0m"
 
-fclean: clean ffclean
+fclean: clean
 	@rm -rf $(NAME)
 	@echo "\033[0;91mCleaned exe ✔️\033[1;37m"
-
-ffclean:
-	@rm -rf $(MLX_DIR)
-	@make -C minilibft fclean --no-print-directory
 
 re: fclean all
 
@@ -91,6 +89,6 @@ subject.txt:
 read: subject.txt
 	@bat subject.txt
 
-.PHONY: all clean fclean re bonus ffclean read
+.PHONY: all clean fclean re bonus read
 
 -include $(OBJS:.o=.d);
