@@ -1,5 +1,6 @@
-#include "Channel.hpp"
+#include "ft_irc.hpp"
 #include "utils.tpp"
+#include <cstddef>
 #include <sys/socket.h>
 
 Channel::Channel( void ) {
@@ -10,8 +11,8 @@ Channel::Channel( void ) {
 	this->_modes.limit = 0;
 }
 
-Channel::Channel( const std::string name, const User& user ) {
-	this->user_join(user);
+Channel::Channel( const std::string name, const User& user, std::string join_message ) {
+	this->user_join(user, join_message);
 	this->_op_users.push_back(user.get_name());
 	this->_name = name;
 	this->_modes.invite_only = 0;
@@ -59,9 +60,13 @@ void Channel::send_message( const User& user, const std::string msg ) {
 	}
 }
 
-void Channel::user_join( const User& user, const std::string join_message ) {
+void Channel::user_join( const User& user ) {
 	this->_add_connected_user(user);
-	this->send_message(user, join_message);
+	const size_t len = this->_connected_users.size();
+
+	for (size_t i = 0; i < len; i++) {
+		ft_send(this->_connected_users[i].get_socketfd(), )
+	}
 }
 
 void Channel::user_quit( const User& user, const std::string quit_message ) {
@@ -150,6 +155,10 @@ bool Channel::_is_op( const User& user ) {
 			return (true);
 	}
 	return (false);
+}
+
+void	Channel::force_op( const User& user) {
+	this->_op_users.push_back(user.get_name());
 }
 
 bool Channel::_is_op( const std::string user ) {

@@ -57,22 +57,24 @@ void	Server::change_nick( std::string name ) {
 	this->_get_user_class(name)->change_name(name);
 }
 
-User*	Server::_get_user_class( std::string name ) {
+User&	Server::_get_user_class( std::string name ) {
 	const size_t len = this->_connected_users.size();
+
 	for (size_t i = 0; i < len; i++) {
 		if (this->_connected_users[i]->get_name() == name)
-			return (this->_connected_users[i]);
+			return (*this->_connected_users[i]);
 	}
 	throw UserNotFoundException();
 }
 
-User*	Server::_get_channel_class( std::string name ) {
+Channel&	Server::_get_channel_class( std::string name ) {
 	const size_t len = this->_active_channels.size();
+
 	for (size_t i = 0; i < len; i++) {
 		if (this->_active_channels[i]->get_name() == name)
-			return (this->_active_channels[i]);
+			return (*this->_active_channels[i]);
 	}
-	throw UserNotFoundException();
+	throw ChannelNotFoundException();
 }
 
 
@@ -202,12 +204,24 @@ User*	Server::find_user_from_fd( int socketfd ) const {
 	throw UserNotFoundException();
 }
 
-void	Server::join_channel( std::string name, std::string channel ) {
-
-	if (!)
-	this->_active_channels.push_back((channel));
+void	Server::join_channel( std::string username, std::string channelname, std::string join_message ) {
+	User&		user = this->_get_user_class(username);
+	try {
+		Channel&	channel = this->_get_channel_class(channelname);
+		channel.user_join(user)
+	}
+	catch (ChannelNotFoundException e) {
+		Channel *new_channel = new Channel(channelname, user, join_message);
+		this->_active_channels.push_back(new_channel);
+		new_channel->force_op(user);
+		return ;
+	}
 }
 
-void	Server::part_channel( std::string name, std::string channel ) {
+void	Server::part_channel( std::string username, std::string channelname, std::string part_message ) {
+	Channel&	channel = this->_get_channel_class(channelname);
+	User&		user = this->_get_user_class(username);
 
+	channel.user_quit(user, part_message);
+	
 }

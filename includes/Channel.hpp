@@ -6,7 +6,7 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 12:59:03 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/05/30 18:26:59 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/05/30 18:58:25 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,9 @@ public:
 	void send_message( const User& user, const std::string msg );
 	void server_message( const std::string msg );
 
+	void force_op( const User& user);
 	void change_role( const User& user, const User& target, bool is_op );
-	void user_join( const User& user, const std::string join_message );
+	void user_join( const User& user );
 	void user_quit( const User& user, const std::string quit_message );
 	void user_kicked( const User& user, std::string kick_message );
 
@@ -52,7 +53,7 @@ public:
 	std::string get_name( void );
 	
 
-	Channel( const std::string name, const User& user );
+	Channel( const std::string name, const User& user, std::string join_message );
 	Channel& operator=( const Channel& Other );
 	bool operator==( const Channel& Other );
 	Channel( const Channel& copied );

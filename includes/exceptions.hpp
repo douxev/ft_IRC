@@ -20,4 +20,9 @@ class UserNotFoundException: public std::exception {
 		virtual const char* what() const throw() {return ("UserNotFoundException");}
 };
 
+class ChannelNotFoundException: public std::exception {
+	public:
+		virtual const char* what() const throw() {return ("ChannelNotFoundException");}
+};
+
 #endif

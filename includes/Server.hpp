@@ -24,17 +24,18 @@ public:
 	void	change_nick( std::string name );
 	User*	find_user_from_fd( int socketfd ) const ;
 	
-	void	join_channel( std::string name, std::string channel );
-	void	part_channel( std::string name, std::string channel );
+	void	join_channel( std::string name, std::string channel, std::string join_message );
+	void	part_channel( std::string name, std::string channel, std::string part_message );
 
 private:
 
-	User*	_get_user_class( std::string name );
-	void 	_add_active_channel( const Channel *channel );
-	void 	_remove_unactive_channel( const Channel *channel );
-	void 	_welcome_message( void );
-	void	_accept_connection( void );
-	void	_read_data( int i );
+	User&		_get_user_class( std::string name );
+	Channel&	_get_channel_class( std::string name );
+	void 		_add_active_channel( const Channel *channel );
+	void 		_remove_unactive_channel( const Channel *channel );
+	void 		_welcome_message( void );
+	void		_accept_connection( void );
+	void		_read_data( int i );
 
 	std::string							_motd;
 	std::string							_ip_str;
