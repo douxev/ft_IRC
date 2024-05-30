@@ -14,7 +14,6 @@ public:
 	Server& operator=( const Server& Other );
 	Server( const Server& copied);
 	~Server();
-	void user_identify( std::string password );
 	void new_user( std::string name, int socketfd, std::string join_message, std::string quit_message, int ip_adress );
 	void user_quit( const User& name );
 

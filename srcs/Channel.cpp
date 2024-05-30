@@ -30,6 +30,13 @@ Channel& Channel::operator=( const Channel& Other ) {
 	return (*this);
 }
 
+bool Channel::operator==( const Channel& Other ){
+	if (this->_name == Other._name)
+		return (true);
+	return (false);
+
+}
+
 Channel::~Channel() {
 
 }
