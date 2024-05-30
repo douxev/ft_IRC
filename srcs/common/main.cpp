@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rastie <rastie@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:22:05 by aauthier          #+#    #+#             */
-/*   Updated: 2024/05/30 14:59:17 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/05/30 16:17:34 by rastie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,52 +59,9 @@ int	main(int ac, char **av) {
 
 	check_args(ac, av);
 	std::cout << "HERE\n" << std::endl;
-	server_socket_fd = create_server_socket(get_port(ac, av));
-	
-	if (server_socket_fd == -1)
-		return (1);
-	
-	printf("[Server] Listening on port %d\n", get_port(ac, av));
-    if (listen(server_socket_fd, 10)) {
-		std::cerr << "[Server] Listen error: " <<  strerror(errno) << std::endl;
-        return (2);
-	}
-	
-	poll_size = 2;
-	poll_fds = static_cast<struct pollfd *>(calloc(poll_size + 1, sizeof(*poll_fds)));
-	if (!poll_fds)
-		return (3);
-	
-	poll_fds[0].fd = server_socket_fd;
-	poll_fds[0].events = POLLIN;
-	poll_count = 1;
-
-
-	while (true)
-	{
-		int status = poll(poll_fds, poll_count, 2000);
-		if (status == -1) {
-			std::cerr << "[Server] Poll error: " <<  strerror(errno) << std::endl;
-			free(poll_fds);
-			return (4);
-		}
-		if (!status){
-			// std::cout << "[Server] Waiting for connnection...\n";
-			continue ;
-		}
-		
-		for (int i = 0; i < poll_count; i++)
-		{
-			if ((poll_fds[i].revents & POLLIN) != 1)
-				continue;
-			if (poll_fds[i].fd == server_socket_fd) {
-				accept_connection(server_socket_fd, &poll_fds, poll_count, poll_size);
-			} else {
-				read_socket_data(i, poll_fds, poll_count, server_socket_fd);
-			}
-		}
-		
-	}
+	Server server;
+	server._init_server(ac, av);
+	server._manage_loop();
 	
 	return (0);
 }
