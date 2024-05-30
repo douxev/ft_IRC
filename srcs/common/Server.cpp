@@ -174,3 +174,13 @@ void Server::_read_data(int i)
 	}
 	
 }
+User*	Server::find_user_from_fd( int socketfd ) const {
+	const size_t len = this->_connected_users.size();
+
+	for (size_t i = 0; i < len; i++) {
+		if (this->_connected_users[i]->get_socketfd() == socketfd)
+			return (this->_connected_users[i]);
+	}
+	throw UserNotFoundException();
+}
+

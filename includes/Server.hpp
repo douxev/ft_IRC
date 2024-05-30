@@ -22,6 +22,7 @@ public:
 	void	manage_loop( void );
 	bool	nick_already_taken( std::string name ) const;
 	void	change_nick( std::string name );
+	User*	find_user_from_fd( int socketfd ) const ;
 
 private:
 
