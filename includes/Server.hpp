@@ -16,14 +16,16 @@ public:
 	~Server();
 
 	std::string get_motd( void );
-	void	new_user( std::string name, int socketfd, std::string join_message, std::string quit_message, int ip_adress );
+	void	new_user( std::string name, int socketfd, int ip_adress );
 	void	user_quit( const User& name );
 	int		init_server( int ac, char **av );
 	void	manage_loop( void );
 	bool	nick_already_taken( std::string name ) const;
+	void	change_nick( std::string name );
 
 private:
 
+	User*	_get_user_class( std::string name );
 	void 	_add_active_channel( const Channel& channel );
 	void 	_remove_unactive_channel( const Channel& channel );
 	void 	_welcome_message( void );
@@ -36,7 +38,7 @@ private:
 	short								_port;
 	int 								_server_socket;
 	std::vector<Channel>				_active_channel;
-	std::vector<User>					_connected_users;
+	std::vector<User *>					_connected_users;
 	std::vector<struct pollfd> 			_sockets_fds;
 	int									_nb_sockets;
 };

@@ -15,8 +15,7 @@ void	version_command( Server server, int reply_socket, std::string message ) {
 }
 
 void	nick_command( Server server, int reply_socket, std::string message ) {
-	server.
-	message.substr(5);
+	server.change_nick(message.substr(5));
 }
 
 void	join_command( Server server, int reply_socket, std::string message ) {
