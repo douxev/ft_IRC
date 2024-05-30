@@ -10,6 +10,10 @@ public:
 	std::string get_name( void ) const;
 	std::string	get_quit_message( void ) const;
 	std::string get_join_message( void ) const;
+	void		set_quit_message( std::string msg );
+	void		set_join_message( std::string msg );
+	void		change_name( std::string name );
+	
 	int			get_socketfd( void ) const;
 
 	User( void );
