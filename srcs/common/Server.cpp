@@ -1,4 +1,6 @@
 #include "Server.hpp"
+#include "ft_irc.hpp"
+#include "exceptions.hpp"
 #include <cstddef>
 #include <iostream>
 
@@ -46,6 +48,21 @@ bool	Server::nick_already_taken( std::string name ) const {
 			return (true);
 	}
 	return (false);
+}
+
+void	Server::change_nick( std::string name ) {
+	if (nick_already_taken(name))
+		throw NickAlreadyTakenException();
+	this->_get_user_class(name)->change_name(name);
+}
+
+User*	Server::_get_user_class( std::string name ) {
+	const size_t len = this->_connected_users.size();
+	for (size_t i = 0; i < len; i++) {
+		if (this->_connected_users[i]->get_name() == name)
+			return (this->_connected_users[i]);
+	}
+	throw UserNotFoundException();
 }
 
 
@@ -157,3 +174,13 @@ void Server::_read_data(int i)
 	}
 	
 }
+User*	Server::find_user_from_fd( int socketfd ) const {
+	const size_t len = this->_connected_users.size();
+
+	for (size_t i = 0; i < len; i++) {
+		if (this->_connected_users[i]->get_socketfd() == socketfd)
+			return (this->_connected_users[i]);
+	}
+	throw UserNotFoundException();
+}
+
