@@ -27,6 +27,7 @@ Channel& Channel::operator=( const Channel& Other ) {
 	this->_topic = Other._topic;
 	this->_op_users = Other._op_users;
 	this->_connected_users = Other._connected_users;
+	return (*this);
 }
 
 bool Channel::operator==( const Channel& Other ){
@@ -44,7 +45,7 @@ void Channel::server_message( const std::string msg ) {
 	const size_t len = this->_connected_users.size();
 	for (size_t i = 0 ; i < len; i++) {
 		ft_send(this->_connected_users[i].get_socketfd(), \
-		("SERVER: " + msg + "\n").c_str(), msg.size());
+		("[SERVER] " + msg + "\n").c_str(), msg.size());
 	}
 }
 
