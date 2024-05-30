@@ -34,6 +34,11 @@ void Server::_remove_unactive_channel( const Channel& channel ) {
 	}
 }
 
+std::string Server::get_motd( void ) {
+	return (this->_motd);
+}
+
+
 void Server::_welcome_message() {
 
 	std::cout<<"Welcome to GuiRaMa/n list of commands : etc"<<std::endl;

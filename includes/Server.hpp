@@ -13,6 +13,8 @@ public:
 	Server& operator=( const Server& Other );
 	Server( const Server& copied);
 	~Server();
+
+	std::string get_motd( void );
 	void new_user( std::string name, int socketfd, std::string join_message, std::string quit_message, int ip_adress );
 	void user_quit( const User& name );
 
@@ -22,6 +24,7 @@ private:
 	void _remove_unactive_channel( const Channel& channel );
 	void _welcome_message();
 
+	std::string							_motd;
 	std::string							_ip_str;
 	int									_ip_address;
 	short								_port;
