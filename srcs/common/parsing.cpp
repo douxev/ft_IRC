@@ -4,6 +4,11 @@ static std::string	get_command( std::string cmd ) {
 	
 }
 
+void	init_client( Server server, int reply_socket, std::string message) {
+
+	
+}
+
 void	parse_commands( Server server, int reply_socket, std::string message ) {
 
 	const std::string cmd = get_command(message);
