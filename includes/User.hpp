@@ -9,7 +9,7 @@ public:
 
 	std::string get_name( void ) const;
 	void		change_name( std::string name );
-	
+	void		set_fd( int fd );
 	int			get_socketfd( void ) const;
 
 	User( void );
