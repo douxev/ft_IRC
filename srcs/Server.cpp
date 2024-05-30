@@ -13,14 +13,12 @@ Server& Server::operator=( const Server& Other ) {
 	this->_connected_users = Other._connected_users;
 }
 
-Server::Server( const Server& copied ) {}
+Server::Server( const Server& copied ) {
 
-Server::~Server() {}
-
-void Server::user_identify( std::string password ) {
-
+	*this = copied;
 }
 
+Server::~Server() {}
 
 void Server::_add_active_channel( const Channel& channel ) {
 	this->_active_channel.push_back(channel);

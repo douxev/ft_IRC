@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gbonnard <gbonnard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 12:59:03 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/05/28 15:03:46 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/05/30 13:11:57 by gbonnard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,12 @@ public:
 	void set_mode( t_enum_modes mode, const User& user, const std::string target, bool value );
 	void set_mode( t_enum_modes mode, bool value, std::string password );
 
+	
+
 	Channel( void );
 	Channel( const User& user );
 	Channel& operator=( const Channel& Other );
+	bool operator==( const Channel& Other );
 	Channel( const Channel& copied );
 	~Channel();
 
@@ -64,6 +67,7 @@ private:
 	
 	t_modes						_modes;
 	std::string					_topic;
+	std::string					_name;
 	std::vector<std::string> 	_op_users;
 	std::vector<User> 			_connected_users;
 
