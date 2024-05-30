@@ -6,7 +6,7 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 14:56:20 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/05/30 14:21:07 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/05/30 15:41:09 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@
 
 void	check_args(int ac, char **av);
 
-void	ft_send(int socketfd, const void *c_str, size_t len);
+void	ft_send(int socketfd, std::string msg);
 short		get_port(int ac, char **av);
 
 int		create_server_socket( short port );
