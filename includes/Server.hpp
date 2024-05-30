@@ -24,7 +24,6 @@ private:
 	void _remove_unactive_channel( const Channel& channel );
 	void _welcome_message();
 
-
 	std::string							_ip_str;
 	int									_ip_address;
 	short								_port;
@@ -33,7 +32,5 @@ private:
 	std::vector<User>					_connected_users;
 
 };
-
-
 
 #endif
