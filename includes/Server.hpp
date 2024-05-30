@@ -16,16 +16,16 @@ public:
 	~Server();
 
 	std::string get_motd( void );
-	void new_user( std::string name, int socketfd, std::string join_message, std::string quit_message, int ip_adress );
-	void user_quit( const User& name );
-	int init_server( int ac, char **av );
+	void	new_user( std::string name, int socketfd, std::string join_message, std::string quit_message, int ip_adress );
+	void	user_quit( const User& name );
+	int		init_server( int ac, char **av );
 	void	manage_loop( void );
 
 private:
 
-	void _add_active_channel( const Channel& channel );
-	void _remove_unactive_channel( const Channel& channel );
-	void _welcome_message( void );
+	void 	_add_active_channel( const Channel& channel );
+	void 	_remove_unactive_channel( const Channel& channel );
+	void 	_welcome_message( void );
 	void	_accept_connection( void );
 	void	_read_data( int i );
 
