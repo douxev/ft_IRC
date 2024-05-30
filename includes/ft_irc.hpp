@@ -6,7 +6,7 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 14:56:20 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/05/30 14:21:07 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/05/30 16:04:58 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,27 @@
 
 void	check_args(int ac, char **av);
 
-void	ft_send(int socketfd, const void *c_str, size_t len);
-short		get_port(int ac, char **av);
+void	ft_send(int socketfd, std::string msg);
+short	get_port(int ac, char **av);
 
 int		create_server_socket( short port );
 void	accept_connection( int server_fd, struct pollfd **poll_fds, int& poll_count, int& poll_capacity );
+void	init_client( Server server, int reply_socket, std::string message );
 
+//Parsing commands
+void	parse_commands( Server server, int reply_socket, std::string message );
+void	pong(Server server, int reply_socket, std::string message);
+void	motd_command( Server server, int reply_socket, std::string message );
+void	version_command( Server server, int reply_socket, std::string message );
+void	nick_command( Server server, int reply_socket, std::string message );
+void	join_command( Server server, int reply_socket, std::string message );
+void	part_command( Server server, int reply_socket, std::string message );
+void	topic_command( Server server, int reply_socket, std::string message );
+void	names_command( Server server, int reply_socket, std::string message );
+void	list_command( Server server, int reply_socket, std::string message );
+void	invite_command( Server server, int reply_socket, std::string message );
+void	kick_command( Server server, int reply_socket, std::string message );
+void	whois_command( Server server, int reply_socket, std::string message );
+void	quit_command( Server server, int reply_socket, std::string message );
 
 #endif
