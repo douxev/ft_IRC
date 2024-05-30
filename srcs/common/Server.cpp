@@ -12,7 +12,7 @@ Server& Server::operator=( const Server& Other ) {
 	this->_ip_address = Other._ip_address;
 	this->_port = Other._port;
 	this->_server_socket = Other._server_socket;
-	this->_active_channel = Other._active_channel;
+	this->_active_channels = Other._active_channels;
 	this->_connected_users = Other._connected_users;
 }
 
@@ -23,15 +23,16 @@ Server::Server( const Server& copied ) {
 
 Server::~Server() {}
 
-void Server::_add_active_channel( const Channel& channel ) {
-	this->_active_channel.push_back(channel);
+void Server::_add_active_channel( const std::string channel ) {
+	this->_active_channels.push_back(channel);
 }
 
-void Server::_remove_unactive_channel( const Channel& channel ) {
-	const size_t len = this->_active_channel.size();
+
+void Server::_remove_unactive_channel( const Channel *channel ) {
+	const size_t len = this->_active_channels.size();
 	for (size_t i = 0; i < len; i++) {
-		if (this->_active_channel[i] == channel) {
-			this->_active_channel.erase(this->_active_channel.begin() + i);
+		if (this->_active_channels[i] == channel) {
+			this->_active_channels.erase(this->_active_channels.begin() + i);
 			break;
 		}
 	}
@@ -61,6 +62,15 @@ User*	Server::_get_user_class( std::string name ) {
 	for (size_t i = 0; i < len; i++) {
 		if (this->_connected_users[i]->get_name() == name)
 			return (this->_connected_users[i]);
+	}
+	throw UserNotFoundException();
+}
+
+User*	Server::_get_channel_class( std::string name ) {
+	const size_t len = this->_active_channels.size();
+	for (size_t i = 0; i < len; i++) {
+		if (this->_active_channels[i]->get_name() == name)
+			return (this->_active_channels[i]);
 	}
 	throw UserNotFoundException();
 }
@@ -196,3 +206,12 @@ User*	Server::find_user_from_fd( int socketfd ) const {
 	throw UserNotFoundException();
 }
 
+void	Server::join_channel( std::string name, std::string channel ) {
+
+	if (!)
+	this->_active_channels.push_back((channel));
+}
+
+void	Server::part_channel( std::string name, std::string channel ) {
+
+}

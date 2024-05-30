@@ -13,7 +13,7 @@ public:
 
 	Server( void );
 	Server& operator=( const Server& Other );
-	Server( const Server& copied);
+	Server( const Server& Other );
 	~Server();
 
 	std::string get_motd( void );
@@ -24,12 +24,15 @@ public:
 	bool	nick_already_taken( std::string name ) const;
 	void	change_nick( std::string name );
 	User*	find_user_from_fd( int socketfd ) const ;
+	
+	void	join_channel( std::string name, std::string channel );
+	void	part_channel( std::string name, std::string channel );
 
 private:
 
 	User*	_get_user_class( std::string name );
-	void 	_add_active_channel( const Channel& channel );
-	void 	_remove_unactive_channel( const Channel& channel );
+	void 	_add_active_channel( const Channel *channel );
+	void 	_remove_unactive_channel( const Channel *channel );
 	void 	_welcome_message( void );
 	void	_accept_connection( void );
 	void	_read_data( int i );
@@ -39,7 +42,7 @@ private:
 	int									_ip_address;
 	short								_port;
 	int 								_server_socket;
-	std::vector<Channel>				_active_channel;
+	std::vector<Channel *>				_active_channels;
 	std::vector<User *>					_connected_users;
 	std::vector<struct pollfd> 			_sockets_fds;
 	int									_nb_sockets;

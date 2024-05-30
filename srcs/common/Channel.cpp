@@ -5,14 +5,15 @@
 Channel::Channel( void ) {
 	this->_modes.invite_only = 0;
 	this->_modes.op_topic = 0;
+	this->_name = "Unknown";
 	this->_modes.password = "";
 	this->_modes.limit = 0;
 }
 
-Channel::Channel( const User& user ) {
+Channel::Channel( const std::string name, const User& user ) {
 	this->user_join(user);
 	this->_op_users.push_back(user.get_name());
-
+	this->_name = name;
 	this->_modes.invite_only = 0;
 	this->_modes.op_topic = 0;
 	this->_modes.password = "";
@@ -20,13 +21,14 @@ Channel::Channel( const User& user ) {
 }
 
 Channel::Channel( const Channel& Other ):
-_modes(Other._modes), _topic(Other._topic), _op_users(Other._op_users), _connected_users(Other._connected_users) {}
+_modes(Other._modes), _topic(Other._topic), _name(Other._name), _op_users(Other._op_users), _connected_users(Other._connected_users) {}
 
 Channel& Channel::operator=( const Channel& Other ) {
 	this->_modes = Other._modes;
 	this->_topic = Other._topic;
 	this->_op_users = Other._op_users;
 	this->_connected_users = Other._connected_users;
+	this->_name = Other._name;
 	return (*this);
 }
 
@@ -45,7 +47,7 @@ void Channel::server_message( const std::string msg ) {
 	const size_t len = this->_connected_users.size();
 	for (size_t i = 0 ; i < len; i++) {
 		ft_send(this->_connected_users[i].get_socketfd(), \
-		("[SERVER] " + msg + "\n").c_str(), msg.size());
+		("[SERVER] " + msg + "\n"));
 	}
 }
 
@@ -53,19 +55,18 @@ void Channel::send_message( const User& user, const std::string msg ) {
 	const size_t len = this->_connected_users.size();
 	for (size_t i = 0 ; i < len; i++) {
 		ft_send(this->_connected_users[i].get_socketfd(), \
-		(user.get_name() + ": " + msg + "\n").c_str(), \
-		msg.size());
+		(user.get_name() + ": " + msg + "\n"));
 	}
 }
 
-void Channel::user_join( const User& user ) {
+void Channel::user_join( const User& user, const std::string join_message ) {
 	this->_add_connected_user(user);
-	this->send_message(user, user.get_join_message());
+	this->send_message(user, join_message);
 }
 
-void Channel::user_quit( const User& user ) {
+void Channel::user_quit( const User& user, const std::string quit_message ) {
 	this->_remove_connected_user(user);
-	this->send_message(user, user.get_quit_message());
+	this->send_message(user, quit_message);
 }
 
 void Channel::user_kicked( const User& user, std::string kick_message ) {
@@ -158,4 +159,8 @@ bool Channel::_is_op( const std::string user ) {
 			return (true);
 	}
 	return (false);
+}
+
+std::string Channel::get_name( void ) {
+	return (this->_name);
 }
