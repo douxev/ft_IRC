@@ -1,13 +1,23 @@
 #include "ft_irc.hpp"
+<<<<<<< HEAD
 #include <exception>
+=======
+#include "numeric_replies.hpp"
+>>>>>>> refs/remotes/origin/main
 
 static std::string	get_command( std::string cmd ) {
 	
 }
 
 void	init_client( Server server, int reply_socket, std::string message) {
-
-	
+	std::stringstream msg_to_sent;
+	msg_to_sent <<RPL_WELCOME<<"Welcome to the GuiRaMa Internet Relay Chat Network " << reply_socket << std::endl;
+	msg_to_sent <<RPL_YOURHOST<<
+	msg_to_sent <<RPL_CREATED<<
+	msg_to_sent <<RPL_MYNFO<<
+	msg_to_sent <<RPL_ISUPPORT<<
+	// if (send(reply_socket, msg_to_sent.str().c_str(), msg_to_sent.str().size(), 0) == -1)
+	// 	std::cerr << "[Server] Send error to client " << reply_socket << ": " <<  strerror(errno)  << std::endl;
 }
 
 //ADD TRY CATCH EXCEPTIONS FOR SENDING GOOD REPLIES

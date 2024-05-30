@@ -45,7 +45,7 @@ std::string Server::get_motd( void ) {
 bool	Server::nick_already_taken( std::string name ) const {
 	const size_t len = this->_connected_users.size();
 	for (size_t i = 0; i < len; i++) {
-		if (this->_connected_users[i].get_name() == name)
+		if (_connected_users[i]->get_name() == name)
 			return (true);
 	}
 	return (false);
@@ -145,7 +145,10 @@ void Server::_accept_connection()
 	_nb_sockets++;
 	
 	name << "Client" << client_fd;
-	_connected_users[client_fd] = name.str();
+	User *client = new User();
+	client->change_name(name.str());
+	client->set_fd(client_fd);
+	_connected_users.push_back(client);
 	
 	msg_to_sent << "1 [Server] Welcome client " << client_fd << std::endl;
 	if (send(client_fd, msg_to_sent.str().c_str(), msg_to_sent.str().size(), 0) == -1)
@@ -167,10 +170,15 @@ void Server::_read_data(int i)
 		close(sender_fd);
 		_sockets_fds[i] = _sockets_fds[_nb_sockets - 1];
 		_nb_sockets--;
-		_connected_users[sender_fd] = "";
-		//TODO: enlever le client de la liste des clients connectes
-	}else
-	{
+		try
+		{
+			user_quit(find_user_from_fd(sender_fd));
+		}
+		catch(const std::exception& e)
+		{
+			std::cerr << e.what() << '\n';
+		}
+	} else {
 		std::cout << "[Server] Got message from client " << sender_fd << ": " << buffer;
 		//Parsing
 		msg_to_sent << "Client [" << sender_fd << "] said: " << buffer;
