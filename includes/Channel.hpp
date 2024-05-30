@@ -6,7 +6,7 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 12:59:03 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/05/30 21:11:02 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/05/30 22:03:19 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,9 @@ public:
 	void send_message( const User& user, const std::string msg );
 	void send_channel( const std::string msg );
 	void server_message( const std::string msg );
+
+	void send_userlist( const User& user );
+
 
 	void force_op( const User& user);
 	void change_role( const User& user, const User& target, bool is_op );

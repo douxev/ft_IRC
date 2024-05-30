@@ -60,17 +60,29 @@ void Channel::send_message( const User& user, const std::string msg ) {
 	}
 }
 
+void	Channel::send_userlist( const User& user ) {
+	std::stringstream msg_to_send;
+
+	msg_to_send << "353 " + this->get_name() + " ";
+	const size_t len = this->_connected_users.size();
+	for (size_t i = 0; i < len; i++) {
+		if (this->_is_op(this->_connected_users[i]))
+			msg_to_send << "@";
+		msg_to_send << this->_connected_users[i].get_name() << " ";
+	}
+	ft_send(user.get_socketfd(), msg_to_send.str());
+	ft_send(user.get_socketfd(), "366 " + this->get_name() + " :End of /NAMES list");
+}
+
 void Channel::user_join( const User& user ) {
 	this->_add_connected_user(user);
-	const size_t len = this->_connected_users.size();
 
 	std::stringstream msg_to_send;
-	msg_to_send << ":" << user.get_name() << " JOIN #" << _name << std::endl;
+	msg_to_send << ":" << user.get_name() << " JOIN #" << this->_name;
 	std::cout << msg_to_send.str();
-	for (size_t i = 0; i < len; i++) {
-		ft_send(this->_connected_users[i].get_socketfd(), msg_to_send.str());
-	}
-	
+	this->send_channel(msg_to_send.str());
+	ft_send(user.get_socketfd(), "TOPIC #" + this->get_name() + " :" + this->_topic);
+	this->send_userlist(user);
 }
 
 void Channel::user_quit( const User& user, const std::string quit_message ) {
