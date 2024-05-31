@@ -3,6 +3,7 @@
 #include "numeric_replies.hpp"
 #include <ctime>
 #include <sstream>
+#include <string>
 
 static std::string	get_command( std::istringstream cmd ) {
 	
@@ -23,7 +24,8 @@ void	init_client( Server server, int reply_socket, std::string message) {
 //ADD TRY CATCH EXCEPTIONS FOR SENDING GOOD REPLIES
 void	parse_commands( Server server, int reply_socket, std::istringstream message ) {
 
-	std::string cmd = get_command(message);
+	std::string cmd;
+	std::getline(message, cmd);
 	std::istringstream param1;
 
 	try {
