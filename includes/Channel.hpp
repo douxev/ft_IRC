@@ -6,7 +6,7 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 12:59:03 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/05/30 22:15:46 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/05/31 10:44:35 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ public:
 	std::string get_name( void );
 	
 
-	Channel( const std::string name, const User& user, std::string join_message );
+	Channel( const std::string name, const User& user );
 	Channel& operator=( const Channel& Other );
 	bool operator==( const Channel& Other );
 	Channel( const Channel& copied );

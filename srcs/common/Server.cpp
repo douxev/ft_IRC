@@ -212,14 +212,14 @@ User*	Server::find_user_from_fd( int socketfd ) const {
 	throw UserNotFoundException();
 }
 
-void	Server::join_channel( std::string username, std::string channelname, std::string join_message ) {
+void	Server::join_channel( std::string username, std::string channelname ) {
 	User&		user = this->_get_user_class(username);
 	try {
 		Channel&	channel = this->_get_channel_class(channelname);
 		channel.user_join(user)
 	}
 	catch (ChannelNotFoundException e) {
-		Channel *new_channel = new Channel(channelname, user, join_message);
+		Channel *new_channel = new Channel(channelname, user);
 		this->_active_channels.push_back(new_channel);
 		new_channel->force_op(user);
 		return ;
