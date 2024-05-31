@@ -24,7 +24,6 @@ void	join_command( Server server, int reply_socket, std::string message ) {
 
 void	part_command( Server server, int reply_socket, std::istringstream &message ) {
 	std::string	channel;
-	std::string	part_message;
 
 	std::getline(message, channel, ' ');
 	server.part_channel(server.find_user_from_fd(reply_socket)->get_name(), channel , message.str());
