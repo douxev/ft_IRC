@@ -7,22 +7,24 @@
 
 void	init_client( Server server, int reply_socket, std::string message) {
 
+	(void) server;
+	(void) message;
 	std::stringstream msg_to_sent;
-	std::time_t result = std::time(nullptr);
+	std::time_t result = std::time(NULL);
 	
-	msg_to_sent << RPL_WELCOME << reply_socket << std::endl;
+	msg_to_sent << RPL_WELCOME << reply_socket << "\n" << std::endl;
 	if (send(reply_socket, msg_to_sent.str().c_str(), msg_to_sent.str().size(), 0) == -1)
 		std::cerr << "[Server] Send error to client " << reply_socket << ": " <<  strerror(errno)  << std::endl;
-	msg_to_sent << RPL_YOURHOST << std::endl;
+	msg_to_sent << RPL_YOURHOST << "\n" << std::endl;
 	if (send(reply_socket, msg_to_sent.str().c_str(), msg_to_sent.str().size(), 0) == -1)
 		std::cerr << "[Server] Send error to client " << reply_socket << ": " <<  strerror(errno)  << std::endl;
-	msg_to_sent << RPL_CREATED << std::asctime(std::localtime(&result)) << std::endl;
+	msg_to_sent << RPL_CREATED << std::asctime(std::localtime(&result)) << "\n" << std::endl;
 	if (send(reply_socket, msg_to_sent.str().c_str(), msg_to_sent.str().size(), 0) == -1)
 		std::cerr << "[Server] Send error to client " << reply_socket << ": " <<  strerror(errno)  << std::endl;
-	msg_to_sent << RPL_MYNFO << ""/*<available user modes><available channel modes> [<channel modes with a parameter>]*/ << std::endl;
+	msg_to_sent << RPL_MYNFO << "\n"/*<available user modes><available channel modes> [<channel modes with a parameter>]*/ << std::endl;
 	if (send(reply_socket, msg_to_sent.str().c_str(), msg_to_sent.str().size(), 0) == -1)
 		std::cerr << "[Server] Send error to client " << reply_socket << ": " <<  strerror(errno)  << std::endl;
-	msg_to_sent << RPL_ISUPPORT << ""/* tous les parametres qu'on utilisera pour ISUPPORT */ << std::endl;
+	msg_to_sent << RPL_ISUPPORT << "\n"/* tous les parametres qu'on utilisera pour ISUPPORT */ << std::endl;
 	if (send(reply_socket, msg_to_sent.str().c_str(), msg_to_sent.str().size(), 0) == -1)
 		std::cerr << "[Server] Send error to client " << reply_socket << ": " <<  strerror(errno)  << std::endl;
 }
@@ -42,15 +44,15 @@ void	parse_commands( Server server, int reply_socket, std::istringstream& messag
 		if (cmd == "USER")
 			init_client(server, reply_socket, line.str());
 		else if (cmd == "PING")
-			pong(server, reply_socket, line.str());
+			pong(reply_socket, line.str());
 		else if (cmd == "MOTD")
 			motd_command(server, reply_socket);
 		else if (cmd == "VERSION")
-			version_command(server, reply_socket);
+			version_command(reply_socket);
 		else if (cmd == "NICK")
-			nick_command(server, reply_socket, line.str());
+			nick_command(server, line.str());
 		else if (cmd == "JOIN")
-			join_command(server, reply_socket, line.str());
+			join_command(server, reply_socket, line);
 		else if (cmd == "PART")
 			part_command(server, reply_socket, line);
 		else if (cmd == "TOPIC")
@@ -63,8 +65,6 @@ void	parse_commands( Server server, int reply_socket, std::istringstream& messag
 			invite_command(server, reply_socket, line);
 		else if (cmd == "KICK")
 			kick_command(server, reply_socket, line);
-		else if (cmd == "WHOIS")
-			whois_command(server, reply_socket, line);
 		else if (cmd == "QUIT")
 			quit_command(server, reply_socket, line);
 	}

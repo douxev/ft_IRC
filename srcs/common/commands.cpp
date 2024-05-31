@@ -4,11 +4,11 @@
 #include <string>
 #include "Server.hpp"
 
-void	pong(Server server, int reply_socket, std::string message) {
+void	pong(int reply_socket, std::string message) {
 	ft_send(reply_socket, "PONG " + message.substr(5));
 }
 
-void	motd_command( Server server, int reply_socket, std::string message ) {
+void	motd_command( Server server, int reply_socket ) {
 	if (server.get_motd().empty())
 		ft_send(reply_socket, "422 :No MOTD set");
 	else
@@ -16,12 +16,12 @@ void	motd_command( Server server, int reply_socket, std::string message ) {
 				server.get_motd() + "\n376 :End of MOTD.");
 }
 
-void	version_command( Server server, int reply_socket, std::string message ) {
+void	version_command( int reply_socket ) {
 	ft_send(reply_socket, RPL_VERSION);
 	ft_send(reply_socket, RPL_ISUPPORT);
 }
 
-void	nick_command( Server server, int reply_socket, std::string message ) {
+void	nick_command( Server server, std::string message ) {
 	server.change_nick(message.substr(5));
 }
 
@@ -58,21 +58,37 @@ void	topic_command( Server server, int reply_socket, std::istringstream &message
 
 
 	// TOPIC CHANNEL topic si change sinon sans
+	(void) server;
+	(void) reply_socket;
+	(void) message;
 }
 
-//NAMES => list all visible users
-//NAMES #CHAN1,#CHAN2 => list all on channel(s)
+//NAMES => list all channel and their occupant, then all users outside any channel, under the "channel *"
+//NAMES #CHAN1,#CHAN2 => list all users on channel(s)
 void	names_command( Server server, int reply_socket, std::istringstream &message ) {
-	//names 
+	//names
+	(void) server;
+	(void) reply_socket;
+	(void) message;
+	int i = 0;
+	for (std::string argument; std::getline(message, argument, ' ');i++) {
+		send 
+	}
+	if (!message.str().c_str()[0])	//pas d'arguments
+
 }
 
 //Liste tous les canaux 
 void	list_command( Server server, int reply_socket, std::istringstream &message ) {
-
+	(void) server;
+	(void) reply_socket;
+	(void) message;
 }
 
 void	invite_command( Server server, int reply_socket, std::istringstream &message ) {
-
+	(void) server;
+	(void) reply_socket;
+	(void) message;
 }
 
 void	kick_command( Server server, int reply_socket, std::istringstream &message ) {
@@ -105,5 +121,7 @@ void	kick_command( Server server, int reply_socket, std::istringstream &message 
 }
 
 void	quit_command( Server server, int reply_socket, std::istringstream &message ) {
-
+	(void) server;
+	(void) reply_socket;
+	(void) message;
 }

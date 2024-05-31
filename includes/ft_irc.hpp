@@ -6,7 +6,7 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 14:56:20 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/05/31 15:10:43 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/05/31 15:26:14 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 # define FT_IRC_HPP
 
 
-# include "Server.hpp"
-# include "exceptions.hpp"
-# include "User.hpp"
-# include "Channel.hpp"
+#include "Server.hpp"
+#include "exceptions.hpp"
+#include "User.hpp"
+#include "Channel.hpp"
 #include <sys/poll.h>
 #include <sys/socket.h> // For socket functions
 #include <sys/types.h>	// For socket read/write
@@ -43,10 +43,10 @@ void	init_client( Server server, int reply_socket, std::string message );
 
 //Parsing commands
 void	parse_commands( Server server, int reply_socket, std::istringstream &message );
-void	pong(Server server, int reply_socket, std::string message);
+void	pong(int reply_socket, std::string message);
 void	motd_command( Server server, int reply_socket );
-void	version_command( Server server, int reply_socket );
-void	nick_command( Server server, int reply_socket, std::string message );
+void	version_command( int reply_socket );
+void	nick_command( Server server, std::string message );
 void	join_command( Server server, int reply_socket, std::istringstream &message );
 void	part_command( Server server, int reply_socket, std::istringstream &message );
 void	topic_command( Server server, int reply_socket, std::istringstream &message );

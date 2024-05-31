@@ -6,7 +6,7 @@
 #    By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/07 16:11:15 by jdoukhan          #+#    #+#              #
-#    Updated: 2024/05/30 14:23:09 by jdoukhan         ###   ########.fr        #
+#    Updated: 2024/05/31 15:28:15 by jdoukhan         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@
 ################################################################################
 
 NAME = irc_serv
-CFLAGS = -Wall -Wextra -Werror -std=c++98
+CFLAGS = -Wall -Wextra -Werror -std=c++98 -g3
 CC := c++
 URL = https://cdn.intra.42.fr/pdf/pdf/89250/en.subject.pdf
 
@@ -28,10 +28,13 @@ COMMON_SOURCES = \
 		main.cpp\
 		init_server.cpp\
 		connections.cpp\
-		# Channel.cpp\
-		# User.cpp\
-		# Server.cpp\
-
+		Channel.cpp\
+		User.cpp\
+		Server.cpp\
+		utils.cpp\
+		commands.cpp\
+		parsing.cpp\
+		
 
 M_SOURCES = 
 B_SOURCES = 
