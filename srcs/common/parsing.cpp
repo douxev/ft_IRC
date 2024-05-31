@@ -12,13 +12,21 @@ static std::string	get_command( std::istringstream cmd ) {
 void	init_client( Server server, int reply_socket, std::string message) {
 	std::stringstream msg_to_sent;
 	std::time_t result = std::time(nullptr);
-	msg_to_sent << RPL_WELCOME << "Welcome to the GuiRaMa Internet Relay Chat Network " << reply_socket << std::endl;
-	msg_to_sent << RPL_YOURHOST << "You host is irc.guirama.42, running on version " << RPL_VERSION << std::endl;
-	msg_to_sent << RPL_CREATED << "this server was created "<< std::asctime(std::localtime(&result)) << std::endl;
-	msg_to_sent << RPL_MYNFO << "irc.guirama.42 " << RPL_VERSION << ""/*<available user modes><available channel modes> [<channel modes with a parameter>]*/ << std::endl;
+	msg_to_sent << RPL_WELCOME << reply_socket << std::endl;
+	if (send(reply_socket, msg_to_sent.str().c_str(), msg_to_sent.str().size(), 0) == -1)
+		std::cerr << "[Server] Send error to client " << reply_socket << ": " <<  strerror(errno)  << std::endl;
+	msg_to_sent << RPL_YOURHOST << std::endl;
+	if (send(reply_socket, msg_to_sent.str().c_str(), msg_to_sent.str().size(), 0) == -1)
+		std::cerr << "[Server] Send error to client " << reply_socket << ": " <<  strerror(errno)  << std::endl;
+	msg_to_sent << RPL_CREATED << std::asctime(std::localtime(&result)) << std::endl;
+	if (send(reply_socket, msg_to_sent.str().c_str(), msg_to_sent.str().size(), 0) == -1)
+		std::cerr << "[Server] Send error to client " << reply_socket << ": " <<  strerror(errno)  << std::endl;
+	msg_to_sent << RPL_MYNFO << ""/*<available user modes><available channel modes> [<channel modes with a parameter>]*/ << std::endl;
+	if (send(reply_socket, msg_to_sent.str().c_str(), msg_to_sent.str().size(), 0) == -1)
+		std::cerr << "[Server] Send error to client " << reply_socket << ": " <<  strerror(errno)  << std::endl;
 	msg_to_sent << RPL_ISUPPORT << ""/* tous les parametres qu'on utilisera pour ISUPPORT */ << std::endl;
-	// if (send(reply_socket, msg_to_sent.str().c_str(), msg_to_sent.str().size(), 0) == -1)
-	// 	std::cerr << "[Server] Send error to client " << reply_socket << ": " <<  strerror(errno)  << std::endl;
+	if (send(reply_socket, msg_to_sent.str().c_str(), msg_to_sent.str().size(), 0) == -1)
+		std::cerr << "[Server] Send error to client " << reply_socket << ": " <<  strerror(errno)  << std::endl;
 }
 
 //ADD TRY CATCH EXCEPTIONS FOR SENDING GOOD REPLIES

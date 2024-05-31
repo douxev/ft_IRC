@@ -78,12 +78,6 @@ Channel&	Server::_get_channel_class( std::string name ) {
 	throw ChannelNotFoundException();
 }
 
-
-void Server::_welcome_message() {
-
-	std::cout<<"Welcome to GuiRaMa/n list of commands : etc"<<std::endl;
-}
-
 int Server::init_server(int ac, char **av)
 {
 	struct pollfd	*poll_fds;
