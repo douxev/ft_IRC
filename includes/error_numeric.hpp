@@ -18,10 +18,20 @@ class NotOnChannelException: public std::exception {
 		virtual const char* what() const throw() {return ("NotOnChannelException");}
 };
 
-
 class NeedMoreParamsException: public std::exception {
 	public:
 		virtual const char* what() const throw() {return ("NeedMoreParamsException");}
 };
+
+class NoSuchNickException: public std::exception {
+	public:
+		virtual const char* what() const throw() {return ("NoSuchNickException");}
+};
+
+class NoNicknameGivenException: public std::exception {
+	public:
+		virtual const char* what() const throw() {return ("NoNicknameGivenException");}
+};
+
 
 #endif

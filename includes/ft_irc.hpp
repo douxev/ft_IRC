@@ -6,7 +6,7 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 14:56:20 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/05/31 14:08:15 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/05/31 15:10:43 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ void	names_command( Server server, int reply_socket, std::istringstream &message
 void	list_command( Server server, int reply_socket, std::istringstream &message );
 void	invite_command( Server server, int reply_socket, std::istringstream &message );
 void	kick_command( Server server, int reply_socket, std::istringstream &message );
-void	whois_command( Server server, int reply_socket, std::istringstream &message );
 void	quit_command( Server server, int reply_socket, std::istringstream &message );
 
 #endif

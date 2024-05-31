@@ -85,10 +85,6 @@ void	kick_command( Server server, int reply_socket, std::istringstream &message 
 	}
 }
 
-void	whois_command( Server server, int reply_socket, std::istringstream &message ) {
-
-}
-
 void	quit_command( Server server, int reply_socket, std::istringstream &message ) {
 
 }
