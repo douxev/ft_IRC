@@ -30,6 +30,20 @@ void	part_command( Server server, int reply_socket, std::istringstream &message 
 }
 
 void	topic_command( Server server, int reply_socket, std::istringstream &message ) {
+	std::string	channel;
+
+	if (is_on_channel()) {
+		if (std::getline(message, channel, ' ')) {
+
+		}
+	}
+	else if (_is_op) {
+		
+	}
+
+
+
+
 	// TOPIC CHANNEL topic si change sinon sans
 }
 
