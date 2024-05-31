@@ -48,17 +48,38 @@ void	topic_command( Server server, int reply_socket, std::istringstream &message
 //NAMES #CHAN1,#CHAN2 => list all users on channel(s)
 void	names_command( Server server, int reply_socket, std::istringstream &message ) {
 	//names
-	(void) server;
-	(void) reply_socket;
-	(void) message;
 	int i = 0;
-	for (std::string channel_name; std::getline(message, channel_name, ' ');i++) {
-		Channel channel = server._get_channel_class(channel_name);
+	User *user = server.find_user_from_fd(reply_socket);
 
+	for (std::string channel_name; std::getline(message, channel_name, ',');i++) {
+		Channel *channel;
+		try
+		{
+			*channel = server._get_channel_class(channel_name);
+		}
+		catch(const std::exception& e)
+		{
+			std::cerr << e.what() << '\n';
+		}
 		send(reply_socket, channel_name.c_str(), channel_name.size(), 0);
+		channel->send_userlist(*user);
 	}
-	if (!message.str().c_str()[0])	//pas d'arguments
-		;
+	if (!i) //aucun parametres
+	{
+		std::vector<Channel*> channel_list = server.get_channels_list();
+		for (int j = 0; channel_list[j] != channel_list.back(); j++)
+		{
+			send(reply_socket, channel_list[j]->get_name().c_str(), channel_list[j]->get_name().size(), 0);
+			channel_list[j]->send_userlist(*user);
+		}
+		std::vector<User*> user_list = server.get_connected_user();
+		for (int j = 0; user_list[j] < user_list.back(); j++)
+		{
+			if (!user_list[j]->get_list_channel().size())
+		}
+		
+		
+	}
 }
 
 //Liste tous les canaux 
