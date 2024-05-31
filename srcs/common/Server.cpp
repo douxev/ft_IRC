@@ -16,6 +16,7 @@ Server& Server::operator=( const Server& Other ) {
 	this->_server_socket = Other._server_socket;
 	this->_active_channels = Other._active_channels;
 	this->_connected_users = Other._connected_users;
+	return (*this);
 }
 
 Server::Server( const Server& copied ) {
@@ -79,10 +80,7 @@ Channel&	Server::_get_channel_class( std::string name ) {
 	throw NoSuchChannelException();
 }
 
-int Server::init_server(int ac, char **av)
-{
-	struct pollfd	*poll_fds;
-
+int Server::init_server(int ac, char **av) {
 	_server_socket = create_server_socket(get_port(ac, av));
 	if (_server_socket == -1)
 		return (1);
@@ -96,6 +94,7 @@ int Server::init_server(int ac, char **av)
 	_sockets_fds[0].fd = _server_socket;
 	_sockets_fds[0].events = POLLIN;
 	_nb_sockets = 1;
+	return (0);
 }
 
 void Server::manage_loop()
