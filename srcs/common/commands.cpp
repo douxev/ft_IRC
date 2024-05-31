@@ -9,7 +9,7 @@ void	pong(int reply_socket, std::string message) {
 	ft_send(reply_socket, "PONG " + message.substr(5));
 }
 
-void	motd_command( Server server, int reply_socket ) {
+void	motd_command( Server& server, int reply_socket ) {
 	std::cout << "MOTD\n";
 	if (server.get_motd().empty())
 		ft_send(reply_socket, "422 :No MOTD set");
@@ -24,18 +24,18 @@ void	version_command( int reply_socket ) {
 	ft_send(reply_socket, RPL_ISUPPORT);
 }
 
-void	nick_command( Server server, std::string message ) {
+void	nick_command( Server& server, int reply_socket, std::string message ) {
 	std::cout << "NICK\n";
-	server.change_nick(message.substr(5));
+	server.change_nick(*server.find_user_from_fd(reply_socket), message.substr(5));
 }
 
-void	join_command( Server server, int reply_socket, std::istringstream &message ) {
+void	join_command( Server& server, int reply_socket, std::istringstream &message ) {
 	std::cout << "JOIN\n";
 	server.join_channel(server.find_user_from_fd(reply_socket)->get_name(), 
 						message.str());
 }
 
-void	part_command( Server server, int reply_socket, std::istringstream &message ) {
+void	part_command( Server& server, int reply_socket, std::istringstream &message ) {
 	std::string	channel;
 
 	std::cout << "PART\n";
@@ -74,7 +74,7 @@ void	topic_command( Server server, int reply_socket, std::istringstream &message
 
 //NAMES => list all channel and their occupant, then all users outside any channel, under the "channel *"
 //NAMES #CHAN1,#CHAN2 => list all users on channel(s)
-void	names_command( Server server, int reply_socket, std::istringstream &message ) {
+void	names_command( Server& server, int reply_socket, std::istringstream &message ) {
 	//names
 	(void) server;
 	(void) reply_socket;
@@ -82,24 +82,46 @@ void	names_command( Server server, int reply_socket, std::istringstream &message
 
 	std::cout << "NAMES\n";
 	int i = 0;
-	for (std::string channel_name; std::getline(message, channel_name, ' ');i++) {
-		Channel channel = server._get_channel_class(channel_name);
+	User *user = server.find_user_from_fd(reply_socket);
 
-		send(reply_socket, channel_name.c_str(), channel_name.size(), 0);
+	for (std::string channel_name; std::getline(message, channel_name, ','); i++) {
+		try
+		{
+			server._get_channel_class(channel_name).send_userlist(*user);;
+		}
+		catch(const std::exception& e)
+		{
+			std::cerr << e.what() << '\n';
+		}
+		ft_send(reply_socket, channel_name);
 	}
-	if (!message.str().c_str()[0])	//pas d'arguments
-		;
+	if (!i) //aucun parametres
+	{
+		std::vector<Channel*> channel_list = server.get_channels_list();
+		for (int j = 0; channel_list[j] != channel_list.back(); j++)
+		{
+			ft_send(reply_socket, channel_list[j]->get_name());
+			channel_list[j]->send_userlist(*user);
+		}
+		ft_send(reply_socket, "*:\n");
+		std::vector<User*> user_list = server.get_connected_user();
+		for (int j = 0; user_list[j] < user_list.back(); j++)
+		{
+			if (!user_list[j]->get_list_channel().size())
+				ft_send(reply_socket, user_list[j]->get_name());
+		}
+	}
 }
 
 //Liste tous les canaux 
-void	list_command( Server server, int reply_socket, std::istringstream &message ) {
+void	list_command( Server& server, int reply_socket, std::istringstream &message ) {
 	(void) server;
 	(void) reply_socket;
 	(void) message;
 	std::cout << "LIST\n";
 }
 
-void	invite_command( Server server, int reply_socket, std::istringstream &message ) {
+void	invite_command( Server& server, int reply_socket, std::istringstream &message ) {
 	(void) server;
 	(void) reply_socket;
 	(void) message;
@@ -107,7 +129,7 @@ void	invite_command( Server server, int reply_socket, std::istringstream &messag
 
 }
 
-void	kick_command( Server server, int reply_socket, std::istringstream &message ) {
+void	kick_command( Server& server, int reply_socket, std::istringstream &message ) {
 	std::string channel;
 	std::string users_str;
 	std::string user;
@@ -137,7 +159,7 @@ void	kick_command( Server server, int reply_socket, std::istringstream &message 
 	}
 }
 
-void	quit_command( Server server, int reply_socket, std::istringstream &message ) {
+void	quit_command( Server& server, int reply_socket, std::istringstream &message ) {
 	(void) server;
 	(void) reply_socket;
 	(void) message;

@@ -69,10 +69,11 @@ bool	Server::nick_already_taken( std::string name ) const {
 	return (false);
 }
 
-void	Server::change_nick( std::string name ) {
+void	Server::change_nick( User& user, std::string name ) {
 	if (nick_already_taken(name))
 		throw NickAlreadyTakenException();
-	this->_get_user_class(name).change_name(name);
+	std::cout << name << std::endl;
+	user.change_name(name);
 }
 
 User&	Server::_get_user_class( std::string name ) {
@@ -93,6 +94,16 @@ Channel&	Server::_get_channel_class( std::string name ) {
 			return (*this->_active_channels[i]);
 	}
 	throw NoSuchChannelException();
+}
+
+std::vector<Channel *> Server::get_channels_list()
+{
+    return this->_active_channels;
+}
+
+std::vector<User *> Server::get_connected_user()
+{
+    return _connected_users;
 }
 
 int Server::init_server(int ac, char **av) {
@@ -206,19 +217,16 @@ void Server::_read_data(int i)
 	} else {
 		std::cout << "[Server] Got message from client " << sender_fd << ": " << buffer;
 		//Parsing
-		std::cout << "Line 212\n";
 		std::istringstream stream(buffer);
 		parse_commands(*this, sender_fd, stream);
 		msg_to_sent << "Client [" << sender_fd << "] said: " << buffer;
 		for (int j = 0; j < _nb_sockets; j++) {
 			// send(pollfd[j].fd, "PING TEstitesto", 16 , 0);
-			std::cout << "Line 218\n";
 			if (_sockets_fds[j].fd != _server_socket)
 				if (send(_sockets_fds[j].fd, (msg_to_sent.str()).c_str(), msg_to_sent.str().size(), 0) == -1)
 						std::cerr << "[Server] Send error to client " << _sockets_fds[j].fd << ": " << strerror(errno) << std::endl;
 		}
 	}
-	std::cout << "HERE is end of READ DATA func\n";
 }
 User*	Server::find_user_from_fd( int socketfd ) const {
 	const size_t len = this->_connected_users.size();

@@ -1,5 +1,5 @@
 #include "User.hpp"
-
+#include <algorithm>
 User::User( void ) {
 	this->_name = "";
 	this->_socketfd = 0;
@@ -45,4 +45,20 @@ const std::string User::get_name( void ) const {
 
 int			User::get_socketfd( void ) const {
 	return (this->_socketfd);
+}
+
+std::vector<Channel *> User::get_list_channel()
+{
+    return _joined_channel;
+}
+
+void User::add_channel_list(Channel *channel)
+{
+	_joined_channel.push_back(channel);
+}
+
+void User::remove_channel_list(Channel *channel)
+{
+	std::vector<Channel*>::iterator it = find(this->_joined_channel.begin(), _joined_channel.end(), channel);
+	_joined_channel.erase(it);
 }
