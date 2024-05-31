@@ -40,12 +40,17 @@ void	part_command( Server server, int reply_socket, std::istringstream &message 
 void	topic_command( Server server, int reply_socket, std::istringstream &message ) {
 	std::string	channel;
 
-	if (is_on_channel()) {
+	if (is_on_channel(user)) {
 		if (std::getline(message, channel, ' ')) {
 
 		}
 	}
-	else if (_is_op) {
+	else if (_is_op(user)) {
+		if (is_on_channel(user)) {
+			if (std::getline(message, channel, ' ')) {
+				
+			}
+		}
 		
 	}
 
