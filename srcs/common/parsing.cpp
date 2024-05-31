@@ -51,8 +51,6 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 		// Store the lines in reverse order.
 		rev_lines.insert(rev_lines.begin(), rline);
 	}
-
-
 	
 	// while (std::getline(message, line_str)) {
 	for (size_t i = 0; i < rev_lines.size(); i++) {
@@ -76,6 +74,8 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 			cap_command(server, reply_socket, line);
 		else if (cmd == "JOIN")
 			join_command(server, reply_socket, line);
+		else if (cmd == "PRIVMSG")
+			privmsg_command(server, reply_socket, line);
 		else if (cmd == "PART")
 			part_command(server, reply_socket, line);
 		else if (cmd == "TOPIC")
