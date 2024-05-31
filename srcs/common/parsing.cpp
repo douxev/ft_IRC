@@ -50,7 +50,7 @@ void	parse_commands( Server server, int reply_socket, std::istringstream& messag
 		else if (cmd == "NICK")
 			nick_command(server, reply_socket, line.str());
 		else if (cmd == "JOIN")
-			join_command(server, reply_socket, line.str());
+			join_command(server, reply_socket, line);
 		else if (cmd == "PART")
 			part_command(server, reply_socket, line);
 		else if (cmd == "TOPIC")
@@ -63,8 +63,6 @@ void	parse_commands( Server server, int reply_socket, std::istringstream& messag
 			invite_command(server, reply_socket, line);
 		else if (cmd == "KICK")
 			kick_command(server, reply_socket, line);
-		else if (cmd == "WHOIS")
-			whois_command(server, reply_socket, line);
 		else if (cmd == "QUIT")
 			quit_command(server, reply_socket, line);
 	}
