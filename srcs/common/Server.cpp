@@ -269,3 +269,7 @@ bool	Server::is_op( std::string channel, std::string user ) {
 	return this->_get_channel_class(channel)
 		._is_op(this->_get_user_class(user).get_name());
 } 
+
+std::string Server::get_topic( std::string channel ) {
+	return this->_get_channel_class(channel).get_topic();
+}

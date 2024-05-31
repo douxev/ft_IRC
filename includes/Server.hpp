@@ -31,6 +31,8 @@ public:
 
 	User&		_get_user_class( std::string name );
 	Channel&	_get_channel_class( std::string name );
+	std::string get_topic( std::string channel );
+
 	std::vector<Channel*> get_channels_list();
 	std::vector<User*> get_connected_user();
 private:

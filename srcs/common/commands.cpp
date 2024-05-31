@@ -51,7 +51,16 @@ void	topic_command( Server server, int reply_socket, std::istringstream &message
 
 	// if (server.is_op(channel, user))
 	// 	if (server.is_on_channel(channel, user)) {
-	// 		if (message.str().empty())
+	// 		if (message.str().empty()) {
+	// 			if (server.get_topic(channel).empty()) {
+	// 				std::cout << "No topic set for " << channel << std::endl;
+	// 			}
+	// 			else {
+	// 				std::cout << server.get_topic(channel) << std::endl;
+	// 			}
+	// 			std::cout << "Topic set by " << RPL_TOPICWHOTIME << std::endl;
+
+	// 		}
 
 	// }
 	// else if (server.is_op(channel, user)) {

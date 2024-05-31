@@ -175,6 +175,10 @@ std::string Channel::get_name( void ) {
 	return (this->_name);
 }
 
+std::string Channel::get_topic( void ) {
+	return (this->_topic);
+}
+
 void Channel::send_channel( const std::string msg ) {
 	const size_t len = this->_connected_users.size();
 
