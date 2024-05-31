@@ -83,18 +83,16 @@ void	names_command( Server& server, int reply_socket, std::istringstream &messag
 	int i = 0;
 	User *user = server.find_user_from_fd(reply_socket);
 
-	for (std::string channel_name; std::getline(message, channel_name, ',');i++) {
-		Channel *channel;
+	for (std::string channel_name; std::getline(message, channel_name, ','); i++) {
 		try
 		{
-			*channel = server._get_channel_class(channel_name);
+			server._get_channel_class(channel_name).send_userlist(*user);;
 		}
 		catch(const std::exception& e)
 		{
 			std::cerr << e.what() << '\n';
 		}
-		send(reply_socket, channel_name.c_str(), channel_name.size(), 0);
-		channel->send_userlist(*user);
+		ft_send(reply_socket, channel_name);
 	}
 	if (!i) //aucun parametres
 	{
