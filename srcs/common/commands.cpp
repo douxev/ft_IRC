@@ -106,10 +106,12 @@ void	names_command( Server server, int reply_socket, std::istringstream &message
 			send(reply_socket, channel_list[j]->get_name().c_str(), channel_list[j]->get_name().size(), 0);
 			channel_list[j]->send_userlist(*user);
 		}
+		send(reply_socket, "*:\n", 4, 0);
 		std::vector<User*> user_list = server.get_connected_user();
 		for (int j = 0; user_list[j] < user_list.back(); j++)
 		{
 			if (!user_list[j]->get_list_channel().size())
+				send(reply_socket, user_list[j]->get_name().c_str(), user_list[j]->get_name().size(), 0);
 		}
 		
 		
