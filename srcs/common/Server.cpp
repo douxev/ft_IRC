@@ -174,9 +174,6 @@ void Server::_accept_connection()
 	client->set_fd(client_fd);
 	_connected_users.push_back(client);
 	
-	msg_to_sent << "1 [Server] Welcome client " << client_fd << std::endl;
-	if (send(client_fd, msg_to_sent.str().c_str(), msg_to_sent.str().size(), 0) == -1)
-		std::cerr << "[Server] Send error to client " << client_fd << ": " <<  strerror(errno)  << std::endl;
 	
 }
 
