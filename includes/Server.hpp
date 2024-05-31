@@ -12,7 +12,7 @@ public:
 	Server( void );
 	Server& operator=( const Server& Other );
 	Server( const Server& Other );
-	~Server();
+	~Server( void );
 
 	std::string get_motd( void );
 	void	new_user( std::string name, int socketfd, int ip_adress );

@@ -12,6 +12,7 @@ void	init_client( Server server, int reply_socket, std::string message) {
 	std::stringstream msg_to_sent;
 	std::time_t result = std::time(NULL);
 	
+	std::cout << "USER\n";
 	msg_to_sent << RPL_WELCOME << reply_socket << "\n" << std::endl;
 	if (send(reply_socket, msg_to_sent.str().c_str(), msg_to_sent.str().size(), 0) == -1)
 		std::cerr << "[Server] Send error to client " << reply_socket << ": " <<  strerror(errno)  << std::endl;
@@ -67,8 +68,10 @@ void	parse_commands( Server server, int reply_socket, std::istringstream& messag
 			kick_command(server, reply_socket, line);
 		else if (cmd == "QUIT")
 			quit_command(server, reply_socket, line);
+		else
+			return ;
 	}
-	catch (std::exception e) {
+	catch (std::exception& e) {
 		std::cout << e.what() << std::endl;
 	}
 	}

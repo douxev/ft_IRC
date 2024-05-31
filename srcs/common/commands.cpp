@@ -5,10 +5,12 @@
 #include "Server.hpp"
 
 void	pong(int reply_socket, std::string message) {
+	std::cout << "PING\n";
 	ft_send(reply_socket, "PONG " + message.substr(5));
 }
 
 void	motd_command( Server server, int reply_socket ) {
+	std::cout << "MOTD\n";
 	if (server.get_motd().empty())
 		ft_send(reply_socket, "422 :No MOTD set");
 	else
@@ -17,15 +19,18 @@ void	motd_command( Server server, int reply_socket ) {
 }
 
 void	version_command( int reply_socket ) {
+	std::cout << "Version\n";
 	ft_send(reply_socket, RPL_VERSION);
 	ft_send(reply_socket, RPL_ISUPPORT);
 }
 
 void	nick_command( Server server, std::string message ) {
+	std::cout << "NICK\n";
 	server.change_nick(message.substr(5));
 }
 
 void	join_command( Server server, int reply_socket, std::istringstream &message ) {
+	std::cout << "JOIN\n";
 	server.join_channel(server.find_user_from_fd(reply_socket)->get_name(), 
 						message.str());
 }
@@ -33,6 +38,7 @@ void	join_command( Server server, int reply_socket, std::istringstream &message 
 void	part_command( Server server, int reply_socket, std::istringstream &message ) {
 	std::string	channel;
 
+	std::cout << "PART\n";
 	std::getline(message, channel, ' ');
 	server.part_channel(server.find_user_from_fd(reply_socket)->get_name(), channel , message.str());
 }
@@ -42,6 +48,8 @@ void	topic_command( Server server, int reply_socket, std::istringstream &message
 	(void) server;
 	(void) reply_socket;
 	(void) message;
+
+	std::cout << "TOPIC\n";
 }
 
 //NAMES => list all channel and their occupant, then all users outside any channel, under the "channel *"
@@ -51,6 +59,8 @@ void	names_command( Server server, int reply_socket, std::istringstream &message
 	(void) server;
 	(void) reply_socket;
 	(void) message;
+
+	std::cout << "NAMES\n";
 	int i = 0;
 	for (std::string channel_name; std::getline(message, channel_name, ' ');i++) {
 		Channel channel = server._get_channel_class(channel_name);
@@ -66,12 +76,15 @@ void	list_command( Server server, int reply_socket, std::istringstream &message 
 	(void) server;
 	(void) reply_socket;
 	(void) message;
+	std::cout << "LIST\n";
 }
 
 void	invite_command( Server server, int reply_socket, std::istringstream &message ) {
 	(void) server;
 	(void) reply_socket;
 	(void) message;
+	std::cout << "INVITE\n";
+
 }
 
 void	kick_command( Server server, int reply_socket, std::istringstream &message ) {
@@ -80,6 +93,7 @@ void	kick_command( Server server, int reply_socket, std::istringstream &message 
 	std::string user;
 	std::string kick_message;
 
+	std::cout << "KICK\n";
 	std::getline(message, channel, ' ');
 	std::getline(message, users_str, ' ');
 	std::istringstream users(users_str);
@@ -107,4 +121,5 @@ void	quit_command( Server server, int reply_socket, std::istringstream &message 
 	(void) server;
 	(void) reply_socket;
 	(void) message;
+	std::cout << "QUIT\n";
 }

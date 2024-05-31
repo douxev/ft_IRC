@@ -6,7 +6,7 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:22:05 by aauthier          #+#    #+#             */
-/*   Updated: 2024/05/31 15:58:11 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/05/31 16:17:41 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 static void	sig_handler( int sig ) {
 	(void) sig;
-	std::cout << "SIG RECEIVED" << std::endl;
+	std::cout << "\nSIG RECEIVED" << std::endl;
 	exit(0);
 }
 

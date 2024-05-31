@@ -8,7 +8,7 @@
 
 void	check_args(int ac, char **av) {
 	(void) av;
-	if (ac != 3)
+	if (ac != 2)
 		exit(1);
 }
 
@@ -40,7 +40,7 @@ int		create_server_socket( short port ) {
 	if (bind(socket_fd, (const struct sockaddr *)(&sa), sizeof(sa)))
 	{
 		std::cerr << "[Server] Bind error: " <<  strerror(errno) << std::endl;
-        return (-1);
+        exit(1);
 	}
 	std::cout << "[Server] Bound server socket to port: " << port << std::endl;
 
