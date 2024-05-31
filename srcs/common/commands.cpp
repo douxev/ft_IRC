@@ -30,8 +30,7 @@ void	part_command( Server server, int reply_socket, std::istringstream &message 
 	std::string	part_message;
 
 	std::getline(message, channel, ' ');
-	std::getline(message, part_message);
-	server.part_channel(server.find_user_from_fd(reply_socket)->get_name(), channel , part_message);
+	server.part_channel(server.find_user_from_fd(reply_socket)->get_name(), channel , message.str());
 }
 
 void	topic_command( Server server, int reply_socket, std::istringstream &message ) {

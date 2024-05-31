@@ -25,39 +25,38 @@ void	init_client( Server server, int reply_socket, std::string message) {
 void	parse_commands( Server server, int reply_socket, std::istringstream message ) {
 
 	std::string cmd;
-	std::getline(message, cmd);
-	std::istringstream param;
+	std::getline(message, cmd, ' ');
 
 	try {
 
 		if (cmd == "USER")
-			init_client(server, reply_socket, param.str());
+			init_client(server, reply_socket, message.str());
 		else if (cmd == "PING")
-			pong(server, reply_socket, param.str());
+			pong(server, reply_socket, message.str());
 		else if (cmd == "MOTD")
 			motd_command(server, reply_socket);
 		else if (cmd == "VERSION")
 			version_command(server, reply_socket);
 		else if (cmd == "NICK")
-			nick_command(server, reply_socket, param.str());
+			nick_command(server, reply_socket, message.str());
 		else if (cmd == "JOIN")
-			join_command(server, reply_socket, param.str());
+			join_command(server, reply_socket, message.str());
 		else if (cmd == "PART")
-			part_command(server, reply_socket, param);
+			part_command(server, reply_socket, message);
 		else if (cmd == "TOPIC")
-			topic_command(server, reply_socket, param);
+			topic_command(server, reply_socket, message);
 		else if (cmd == "NAMES")
-			names_command(server, reply_socket, param);
+			names_command(server, reply_socket, message);
 		else if (cmd == "LIST")
-			list_command(server, reply_socket, param);
+			list_command(server, reply_socket, message);
 		else if (cmd == "INVITE")
-			invite_command(server, reply_socket, param);
+			invite_command(server, reply_socket, message);
 		else if (cmd == "KICK")
-			kick_command(server, reply_socket, param);
+			kick_command(server, reply_socket, message);
 		else if (cmd == "WHOIS")
-			whois_command(server, reply_socket, param);
+			whois_command(server, reply_socket, message);
 		else if (cmd == "QUIT")
-			quit_command(server, reply_socket, param);
+			quit_command(server, reply_socket, message);
 	}
 	catch (std::exception e) {
 		std::cout << e.what() << std::endl;
