@@ -7,11 +7,12 @@ class User {
 
 public:
 
-	std::string get_name( void ) const;
+	const std::string get_name( void ) const;
 	void		change_name( std::string name );
 	void		set_fd( int fd );
 	int			get_socketfd( void ) const;
 
+	
 	User( void );
 	User& operator=( const User& Other );
 	bool operator==( const User& Other ) const;

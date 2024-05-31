@@ -6,7 +6,7 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 12:59:03 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/05/31 10:44:35 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/05/31 14:19:41 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,8 @@ public:
 	void user_quit( const User& user, const std::string quit_message );
 	void user_kicked( const User& user, const User& target, std::string kick_message );
 
+	bool is_on_channel( const std::string username );
+	
 	void set_mode( t_enum_modes mode, size_t value );
 	void set_mode( t_enum_modes mode, const User& user, const std::string target, bool value );
 	void set_mode( t_enum_modes mode, bool value, std::string password );
@@ -59,12 +61,12 @@ public:
 	bool operator==( const Channel& Other );
 	Channel( const Channel& copied );
 	~Channel();
+	bool _is_op( const User& name );
+	bool _is_op( const std::string user );
 
 private:
 
 	Channel( void );
-	bool _is_op( const User& name );
-	bool _is_op( const std::string user );
 	void _remove_connected_user( const User& user );
 	void _add_connected_user( const User& user );
 	

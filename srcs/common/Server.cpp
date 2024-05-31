@@ -1,4 +1,5 @@
 #include "Server.hpp"
+#include "error_numeric.hpp"
 #include "ft_irc.hpp"
 #include "exceptions.hpp"
 #include <cstddef>
@@ -65,7 +66,7 @@ User&	Server::_get_user_class( std::string name ) {
 		if (this->_connected_users[i]->get_name() == name)
 			return (*this->_connected_users[i]);
 	}
-	throw UserNotFoundException();
+	throw NoSuchNickException();
 }
 
 Channel&	Server::_get_channel_class( std::string name ) {
@@ -75,7 +76,7 @@ Channel&	Server::_get_channel_class( std::string name ) {
 		if (this->_active_channels[i]->get_name() == name)
 			return (*this->_active_channels[i]);
 	}
-	throw ChannelNotFoundException();
+	throw NoSuchChannelException();
 }
 
 int Server::init_server(int ac, char **av)
@@ -226,4 +227,9 @@ void	Server::part_channel( std::string username, std::string channelname, std::s
 
 	channel.user_quit(user, part_message);
 	
+}
+
+bool	Server::is_on_channel( std::string channel, std::string user ) {	
+	return this->_get_channel_class(channel)
+		.is_on_channel(this->_get_user_class(user).get_name());
 }

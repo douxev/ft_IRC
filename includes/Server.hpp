@@ -25,6 +25,8 @@ public:
 	void	change_nick( std::string name );
 	User*	find_user_from_fd( int socketfd ) const ;
 	
+	bool	is_on_channel( std::string channel, std::string user );
+
 	void	join_channel( std::string name, std::string channel );
 	void	part_channel( std::string name, std::string channel, std::string part_message );
 

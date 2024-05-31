@@ -2,12 +2,12 @@
 # define EXCEPTIONS_HPP
 
 # include <iostream>
+# include "error_numeric.hpp"
 
 class SendErrorException: public std::exception {
 	public:
 		virtual const char* what() const throw() {return ("SendErrorException");}
 };
-
 
 
 class NickAlreadyTakenException: public std::exception {
@@ -24,5 +24,6 @@ class ChannelNotFoundException: public std::exception {
 	public:
 		virtual const char* what() const throw() {return ("ChannelNotFoundException");}
 };
+
 
 #endif

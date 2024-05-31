@@ -6,7 +6,7 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 14:56:20 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/05/31 12:39:48 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/05/31 15:10:43 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 
 # include "Server.hpp"
+# include "exceptions.hpp"
 # include "User.hpp"
 # include "Channel.hpp"
 #include <sys/poll.h>
@@ -46,14 +47,13 @@ void	pong(Server server, int reply_socket, std::string message);
 void	motd_command( Server server, int reply_socket );
 void	version_command( Server server, int reply_socket );
 void	nick_command( Server server, int reply_socket, std::string message );
-void	join_command( Server server, int reply_socket, std::string message );
+void	join_command( Server server, int reply_socket, std::istringstream &message );
 void	part_command( Server server, int reply_socket, std::istringstream &message );
 void	topic_command( Server server, int reply_socket, std::istringstream &message );
 void	names_command( Server server, int reply_socket, std::istringstream &message );
 void	list_command( Server server, int reply_socket, std::istringstream &message );
 void	invite_command( Server server, int reply_socket, std::istringstream &message );
 void	kick_command( Server server, int reply_socket, std::istringstream &message );
-void	whois_command( Server server, int reply_socket, std::istringstream &message );
 void	quit_command( Server server, int reply_socket, std::istringstream &message );
 
 #endif
