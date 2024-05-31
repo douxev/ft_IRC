@@ -90,7 +90,7 @@ void	names_command( Server& server, int reply_socket, std::istringstream &messag
 		}
 		catch(const std::exception& e)
 		{
-			std::cerr << e.what() << '\n';
+			//do_nothing
 		}
 		ft_send(reply_socket, channel_name);
 	}
