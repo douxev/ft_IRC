@@ -1,5 +1,6 @@
 #include "ft_irc.hpp"
 #include "numeric_replies.hpp"
+#include <sstream>
 
 void	pong(Server server, int reply_socket, std::string message) {
 	ft_send(reply_socket, "PONG " + message.substr(5));
@@ -22,8 +23,9 @@ void	nick_command( Server server, int reply_socket, std::string message ) {
 	server.change_nick(message.substr(5));
 }
 
-void	join_command( Server server, int reply_socket, std::string message ) {
-	
+void	join_command( Server server, int reply_socket, std::istringstream &message ) {
+	server.join_channel(server.find_user_from_fd(reply_socket)->get_name(), 
+						message.str());
 }
 
 void	part_command( Server server, int reply_socket, std::istringstream &message ) {

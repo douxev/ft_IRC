@@ -6,7 +6,7 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 14:56:20 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/05/31 12:39:48 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/05/31 13:29:01 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	pong(Server server, int reply_socket, std::string message);
 void	motd_command( Server server, int reply_socket );
 void	version_command( Server server, int reply_socket );
 void	nick_command( Server server, int reply_socket, std::string message );
-void	join_command( Server server, int reply_socket, std::string message );
+void	join_command( Server server, int reply_socket, std::istringstream &message );
 void	part_command( Server server, int reply_socket, std::istringstream &message );
 void	topic_command( Server server, int reply_socket, std::istringstream &message );
 void	names_command( Server server, int reply_socket, std::istringstream &message );
