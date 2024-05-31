@@ -55,10 +55,10 @@ void	names_command( Server server, int reply_socket, std::istringstream &message
 	for (std::string channel_name; std::getline(message, channel_name, ' ');i++) {
 		Channel channel = server._get_channel_class(channel_name);
 
-		send(reply_socket, channel_name.c_str(), std);
+		send(reply_socket, channel_name.c_str(), channel_name.size(), 0);
 	}
 	if (!message.str().c_str()[0])	//pas d'arguments
-
+		;
 }
 
 //Liste tous les canaux 
