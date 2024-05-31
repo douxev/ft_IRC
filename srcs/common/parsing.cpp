@@ -5,10 +5,6 @@
 #include <sstream>
 #include <string>
 
-static std::string	get_command( std::istringstream cmd ) {
-	
-}
-
 void	init_client( Server server, int reply_socket, std::string message) {
 	std::stringstream msg_to_sent;
 	std::time_t result = std::time(nullptr);
@@ -30,7 +26,7 @@ void	init_client( Server server, int reply_socket, std::string message) {
 }
 
 //ADD TRY CATCH EXCEPTIONS FOR SENDING GOOD REPLIES
-void	parse_commands( Server server, int reply_socket, std::istringstream message ) {
+void	parse_commands( Server server, int reply_socket, std::istringstream& message ) {
 
 	std::string cmd;
 	std::getline(message, cmd, ' ');

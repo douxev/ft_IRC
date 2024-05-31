@@ -6,7 +6,7 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 14:56:20 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/05/31 12:24:44 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/05/31 12:39:48 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void	accept_connection( int server_fd, struct pollfd **poll_fds, int& poll_count
 void	init_client( Server server, int reply_socket, std::string message );
 
 //Parsing commands
-void	parse_commands( Server server, int reply_socket, std::istringstream message );
+void	parse_commands( Server server, int reply_socket, std::istringstream &message );
 void	pong(Server server, int reply_socket, std::string message);
 void	motd_command( Server server, int reply_socket );
 void	version_command( Server server, int reply_socket );

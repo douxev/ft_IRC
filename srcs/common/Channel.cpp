@@ -11,8 +11,8 @@ Channel::Channel( void ) {
 	this->_modes.limit = 0;
 }
 
-Channel::Channel( const std::string name, const User& user, std::string join_message ) {
-	this->user_join(user, join_message);
+Channel::Channel( const std::string name, const User& user ) {
+	this->user_join(user);
 	this->_op_users.push_back(user.get_name());
 	this->_name = name;
 	this->_modes.invite_only = 0;

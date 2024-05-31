@@ -23,7 +23,7 @@ private:
 	int			_ip_address;
 	int			_socketfd;
 	std::string	_name;
-
+	std::string _realname;
 
 };
 
