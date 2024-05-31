@@ -94,6 +94,7 @@ void	names_command( Server& server, int reply_socket, std::istringstream &messag
 	int i = 0;
 	User *user = server.find_user_from_fd(reply_socket);
 
+	ft_send(reply_socket, "353 ")
 	for (std::string channel_name; std::getline(message, channel_name, ','); i++) {
 		try
 		{
@@ -121,6 +122,7 @@ void	names_command( Server& server, int reply_socket, std::istringstream &messag
 				ft_send(reply_socket, user_list[j]->get_name());
 		}
 	}
+	ft_send(reply_socket, "366 ")
 }
 
 //Liste tous les canaux 
