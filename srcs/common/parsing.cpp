@@ -6,8 +6,10 @@
 #include <string>
 
 void	init_client( Server server, int reply_socket, std::string message) {
+
 	std::stringstream msg_to_sent;
 	std::time_t result = std::time(nullptr);
+	
 	msg_to_sent << RPL_WELCOME << reply_socket << std::endl;
 	if (send(reply_socket, msg_to_sent.str().c_str(), msg_to_sent.str().size(), 0) == -1)
 		std::cerr << "[Server] Send error to client " << reply_socket << ": " <<  strerror(errno)  << std::endl;
