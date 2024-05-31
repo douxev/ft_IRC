@@ -44,13 +44,19 @@ void	topic_command( Server server, int reply_socket, std::istringstream &message
 	(void) message;
 }
 
-//NAMES => list all visible users
-//NAMES #CHAN1,#CHAN2 => list all on channel(s)
+//NAMES => list all channel and their occupant, then all users outside any channel, under the "channel *"
+//NAMES #CHAN1,#CHAN2 => list all users on channel(s)
 void	names_command( Server server, int reply_socket, std::istringstream &message ) {
-	//names 
+	//names
 	(void) server;
 	(void) reply_socket;
 	(void) message;
+	int i = 0;
+	for (std::string argument; std::getline(message, argument, ' ');i++) {
+		send 
+	}
+	if (!message.str().c_str()[0])	//pas d'arguments
+
 }
 
 //Liste tous les canaux 
