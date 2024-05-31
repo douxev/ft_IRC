@@ -3,6 +3,7 @@
 #include <string>
 #include <stdlib.h>
 #include <ft_irc.hpp>
+#include <fcntl.h>
 
 
 void	check_args(int ac, char **av) {
@@ -35,7 +36,7 @@ int		create_server_socket( short port ) {
 		return (-1);
 	}
 	std::cout << "[Server] Created server socket fd: " << socket_fd << std::endl;
-	
+	fcntl(socket_fd, F_SETFL, O_NONBLOCK);
 	if (bind(socket_fd, (const struct sockaddr *)(&sa), sizeof(sa)))
 	{
 		std::cerr << "[Server] Bind error: " <<  strerror(errno) << std::endl;

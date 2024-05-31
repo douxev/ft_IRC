@@ -24,7 +24,7 @@ Server::Server( const Server& copied ) {
 
 Server::~Server() {}
 
-void Server::_add_active_channel( const std::string channel ) {
+void Server::_add_active_channel( Channel* channel ) {
 	this->_active_channels.push_back(channel);
 }
 
@@ -55,7 +55,7 @@ bool	Server::nick_already_taken( std::string name ) const {
 void	Server::change_nick( std::string name ) {
 	if (nick_already_taken(name))
 		throw NickAlreadyTakenException();
-	this->_get_user_class(name)->change_name(name);
+	this->_get_user_class(name).change_name(name);
 }
 
 User&	Server::_get_user_class( std::string name ) {
@@ -210,7 +210,7 @@ void	Server::join_channel( std::string username, std::string channelname ) {
 	User&		user = this->_get_user_class(username);
 	try {
 		Channel&	channel = this->_get_channel_class(channelname);
-		channel.user_join(user)
+		channel.user_join(user);
 	}
 	catch (ChannelNotFoundException e) {
 		Channel *new_channel = new Channel(channelname, user);
