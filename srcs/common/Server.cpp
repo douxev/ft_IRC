@@ -250,3 +250,8 @@ bool	Server::is_on_channel( std::string channel, std::string user ) {
 	return this->_get_channel_class(channel)
 		.is_on_channel(this->_get_user_class(user).get_name());
 }
+
+bool	Server::is_op( std::string channel, std::string user ) {
+	return this->_get_channel_class(channel)
+		._is_op(this->_get_user_class(user).get_name());
+} 

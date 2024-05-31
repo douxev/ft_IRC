@@ -39,14 +39,16 @@ void	part_command( Server server, int reply_socket, std::istringstream &message 
 
 void	topic_command( Server server, int reply_socket, std::istringstream &message ) {
 	std::string	channel;
+	std::getline(message, channel, ' ');
+	std::string user = server.find_user_from_fd(reply_socket)->get_name();
 
-	if (is_on_channel(user)) {
-		if (std::getline(message, channel, ' ')) {
+	if (server.is_on_channel(channel, user)) {
+		 {
 
 		}
 	}
-	else if (_is_op(user)) {
-		if (is_on_channel(user)) {
+	else if (server.is_op(channel, user)) {
+		if (server.is_on_channel(channel, user)) {
 			if (std::getline(message, channel, ' ')) {
 				
 			}
