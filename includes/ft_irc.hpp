@@ -6,7 +6,7 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 14:56:20 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/05/31 17:05:54 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/05/31 18:28:20 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@
 
 void	check_args(int ac, char **av);
 
-void	ft_send(int socketfd, std::string msg);
+int		ft_send(int socketfd, std::string msg);
 short	get_port(int ac, char **av);
 
 int		create_server_socket( short port );
@@ -47,7 +47,9 @@ void	pong(int reply_socket, std::string message);
 void	motd_command( Server& server, int reply_socket );
 void	version_command( int reply_socket );
 void	nick_command( Server& server, int reply_socket, std::string message );
+void	cap_command( Server& server, int reply_socket, std::istringstream &message );
 void	join_command( Server& server, int reply_socket, std::istringstream &message );
+void	privmsg_command( Server& server, int reply_socket, std::istringstream &message );
 void	part_command( Server& server, int reply_socket, std::istringstream &message );
 void	topic_command( Server& server, int reply_socket, std::istringstream &message );
 void	names_command( Server& server, int reply_socket, std::istringstream &message );

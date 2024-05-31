@@ -10,25 +10,31 @@ void	init_client( Server& server, int reply_socket, std::string message) {
 
 	(void) server;
 	(void) message;
-	std::stringstream msg_to_sent;
+	std::stringstream msg_to_send;
 	std::time_t result = std::time(NULL);
 	
+	//Parsing de message
 	std::cout << "USER" << std::endl;
-	msg_to_sent << RPL_WELCOME << reply_socket << "\n" << std::endl;
-	if (send(reply_socket, msg_to_sent.str().c_str(), msg_to_sent.str().size(), 0) == -1)
-		std::cerr << "[Server] Send error to client " << reply_socket << ": " <<  strerror(errno)  << std::endl;
-	msg_to_sent << RPL_YOURHOST << "\n" << std::endl;
-	if (send(reply_socket, msg_to_sent.str().c_str(), msg_to_sent.str().size(), 0) == -1)
-		std::cerr << "[Server] Send error to client " << reply_socket << ": " <<  strerror(errno)  << std::endl;
-	msg_to_sent << RPL_CREATED << std::asctime(std::localtime(&result)) << "\n" << std::endl;
-	if (send(reply_socket, msg_to_sent.str().c_str(), msg_to_sent.str().size(), 0) == -1)
-		std::cerr << "[Server] Send error to client " << reply_socket << ": " <<  strerror(errno)  << std::endl;
-	msg_to_sent << RPL_MYNFO << "\n"/*<available user modes><available channel modes> [<channel modes with a parameter>]*/ << std::endl;
-	if (send(reply_socket, msg_to_sent.str().c_str(), msg_to_sent.str().size(), 0) == -1)
-		std::cerr << "[Server] Send error to client " << reply_socket << ": " <<  strerror(errno)  << std::endl;
-	msg_to_sent << RPL_ISUPPORT << "\n"/* tous les parametres qu'on utilisera pour ISUPPORT */ << std::endl;
-	if (send(reply_socket, msg_to_sent.str().c_str(), msg_to_sent.str().size(), 0) == -1)
-		std::cerr << "[Server] Send error to client " << reply_socket << ": " <<  strerror(errno)  << std::endl;
+	msg_to_send.str("");
+	msg_to_send << RPL_WELCOME << server.find_user_from_fd(reply_socket)->get_name() << "\n";
+	if (ft_send(reply_socket, msg_to_send.str()) == -1)
+		std::cerr << "[Server] Send error to client " << server.find_user_from_fd(reply_socket)->get_name() << ": " <<  strerror(errno)  << std::endl;
+	msg_to_send.str("");
+	msg_to_send << RPL_YOURHOST << "\n";
+	if (ft_send(reply_socket, msg_to_send.str()) == -1)
+		std::cerr << "[Server] Send error to client " << server.find_user_from_fd(reply_socket)->get_name() << ": " <<  strerror(errno)  << std::endl;
+	msg_to_send.str("");
+	msg_to_send << RPL_CREATED << std::asctime(std::localtime(&result)) << "\n";
+	if (ft_send(reply_socket, msg_to_send.str()) == -1)
+		std::cerr << "[Server] Send error to client " << server.find_user_from_fd(reply_socket)->get_name() << ": " <<  strerror(errno)  << std::endl;
+	msg_to_send.str("");
+	msg_to_send << RPL_MYNFO << "\n"/*<available user modes><available channel modes> [<channel modes with a parameter>]*/;
+	if (ft_send(reply_socket, msg_to_send.str()) == -1)
+		std::cerr << "[Server] Send error to client " << server.find_user_from_fd(reply_socket)->get_name() << ": " <<  strerror(errno)  << std::endl;
+	msg_to_send.str("");
+	msg_to_send << RPL_ISUPPORT << "\n"/* tous les parametres qu'on utilisera pour ISUPPORT */;
+	if (ft_send(reply_socket, msg_to_send.str()) == -1)
+		std::cerr << "[Server] Send error to client " << server.find_user_from_fd(reply_socket)->get_name() << ": " <<  strerror(errno)  << std::endl;
 
 }
 
@@ -45,8 +51,6 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 		// Store the lines in reverse order.
 		rev_lines.insert(rev_lines.begin(), rline);
 	}
-
-
 	
 	// while (std::getline(message, line_str)) {
 	for (size_t i = 0; i < rev_lines.size(); i++) {
@@ -66,8 +70,12 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 			version_command(reply_socket);
 		else if (cmd == "NICK")
 			nick_command(server, reply_socket, line.str());
+		else if (cmd == "CAP")
+			cap_command(server, reply_socket, line);
 		else if (cmd == "JOIN")
 			join_command(server, reply_socket, line);
+		else if (cmd == "PRIVMSG")
+			privmsg_command(server, reply_socket, line);
 		else if (cmd == "PART")
 			part_command(server, reply_socket, line);
 		else if (cmd == "TOPIC")

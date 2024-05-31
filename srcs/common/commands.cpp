@@ -29,10 +29,26 @@ void	nick_command( Server& server, int reply_socket, std::string message ) {
 	server.change_nick(*server.find_user_from_fd(reply_socket), message.substr(5));
 }
 
+void	cap_command( Server& server, int reply_socket, std::istringstream &message ) {
+	std::cout << "CAP\n";
+	(void) server;
+	std::string	param;
+	std::getline(message, param, ' ');
+	if (param == "LS") {
+		ft_send(reply_socket, "CAP * LS: ");
+	}
+}
+
 void	join_command( Server& server, int reply_socket, std::istringstream &message ) {
 	std::cout << "JOIN\n";
 	server.join_channel(server.find_user_from_fd(reply_socket)->get_name(), 
 						message.str());
+}
+
+void	privmsg_command( Server& server, int reply_socket, std::istringstream &message ) {
+	(void) server;
+	(void) reply_socket;
+	(void) message;
 }
 
 void	part_command( Server& server, int reply_socket, std::istringstream &message ) {
@@ -43,7 +59,7 @@ void	part_command( Server& server, int reply_socket, std::istringstream &message
 	server.part_channel(server.find_user_from_fd(reply_socket)->get_name(), channel , message.str());
 }
 
-void	topic_command( Server server, int reply_socket, std::istringstream &message ) {
+void	topic_command( Server& server, int reply_socket, std::istringstream &message ) {
 	// std::string	channel;
 	// std::string topic_message;
 	// std::getline(message, channel, ' ');
@@ -93,6 +109,7 @@ void	names_command( Server& server, int reply_socket, std::istringstream &messag
 	int i = 0;
 	User *user = server.find_user_from_fd(reply_socket);
 
+	ft_send(reply_socket, "353 ");
 	for (std::string channel_name; std::getline(message, channel_name, ','); i++) {
 		try
 		{
@@ -100,7 +117,7 @@ void	names_command( Server& server, int reply_socket, std::istringstream &messag
 		}
 		catch(const std::exception& e)
 		{
-			std::cerr << e.what() << '\n';
+			//do_nothing
 		}
 		ft_send(reply_socket, channel_name);
 	}
@@ -120,6 +137,7 @@ void	names_command( Server& server, int reply_socket, std::istringstream &messag
 				ft_send(reply_socket, user_list[j]->get_name());
 		}
 	}
+	ft_send(reply_socket, "366 ");
 }
 
 //Liste tous les canaux 

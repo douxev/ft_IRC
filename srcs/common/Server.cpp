@@ -72,7 +72,6 @@ bool	Server::nick_already_taken( std::string name ) const {
 void	Server::change_nick( User& user, std::string name ) {
 	if (nick_already_taken(name))
 		throw NickAlreadyTakenException();
-	std::cout << name << std::endl;
 	user.change_name(name);
 }
 
@@ -145,11 +144,9 @@ void Server::manage_loop()
 				continue;
 			if (_sockets_fds[i].fd == _server_socket) {
 				_accept_connection();
-				std::cout << "\nAccept connection" << std::endl;
 			}
 			else {
 				_read_data(i);
-				std::cout << "\nREAD DATA" << std::endl;
 
 			}
 
@@ -202,8 +199,7 @@ void Server::_read_data(int i)
 		close(sender_fd);
 		_sockets_fds[i] = _sockets_fds[_nb_sockets - 1];
 		_nb_sockets--;
-		try
-		{
+		try {
 			User *client = find_user_from_fd(sender_fd);
 			//user_quit(client);
 			std::vector<User*>::iterator it = find(_connected_users.begin(), _connected_users.end(), client);
@@ -216,16 +212,16 @@ void Server::_read_data(int i)
 		}
 	} else {
 		std::cout << "[Server] Got message from client " << sender_fd << ": " << buffer;
-		//Parsing
+		// //Parsing
 		std::istringstream stream(buffer);
 		parse_commands(*this, sender_fd, stream);
-		msg_to_sent << "Client [" << sender_fd << "] said: " << buffer;
-		for (int j = 0; j < _nb_sockets; j++) {
-			// send(pollfd[j].fd, "PING TEstitesto", 16 , 0);
-			if (_sockets_fds[j].fd != _server_socket)
-				if (send(_sockets_fds[j].fd, (msg_to_sent.str()).c_str(), msg_to_sent.str().size(), 0) == -1)
-						std::cerr << "[Server] Send error to client " << _sockets_fds[j].fd << ": " << strerror(errno) << std::endl;
-		}
+		// msg_to_sent << "Client [" << sender_fd << "] said: " << buffer;
+		// for (int j = 0; j < _nb_sockets; j++) {
+		// 	// send(pollfd[j].fd, "PING TEstitesto", 16 , 0);
+		// 	if (_sockets_fds[j].fd != _server_socket)
+		// 		if (send(_sockets_fds[j].fd, (msg_to_sent.str()).c_str(), msg_to_sent.str().size(), 0) == -1)
+		// 				std::cerr << "[Server] Send error to client " << _sockets_fds[j].fd << ": " << strerror(errno) << std::endl;
+		// }
 	}
 }
 User*	Server::find_user_from_fd( int socketfd ) const {
