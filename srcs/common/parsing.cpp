@@ -12,19 +12,19 @@ void	init_client( Server server, int reply_socket, std::string message) {
 	std::stringstream msg_to_sent;
 	std::time_t result = std::time(NULL);
 	
-	msg_to_sent << RPL_WELCOME << reply_socket << std::endl;
+	msg_to_sent << RPL_WELCOME << reply_socket << "\n" << std::endl;
 	if (send(reply_socket, msg_to_sent.str().c_str(), msg_to_sent.str().size(), 0) == -1)
 		std::cerr << "[Server] Send error to client " << reply_socket << ": " <<  strerror(errno)  << std::endl;
-	msg_to_sent << RPL_YOURHOST << std::endl;
+	msg_to_sent << RPL_YOURHOST << "\n" << std::endl;
 	if (send(reply_socket, msg_to_sent.str().c_str(), msg_to_sent.str().size(), 0) == -1)
 		std::cerr << "[Server] Send error to client " << reply_socket << ": " <<  strerror(errno)  << std::endl;
-	msg_to_sent << RPL_CREATED << std::asctime(std::localtime(&result)) << std::endl;
+	msg_to_sent << RPL_CREATED << std::asctime(std::localtime(&result)) << "\n" << std::endl;
 	if (send(reply_socket, msg_to_sent.str().c_str(), msg_to_sent.str().size(), 0) == -1)
 		std::cerr << "[Server] Send error to client " << reply_socket << ": " <<  strerror(errno)  << std::endl;
-	msg_to_sent << RPL_MYNFO << ""/*<available user modes><available channel modes> [<channel modes with a parameter>]*/ << std::endl;
+	msg_to_sent << RPL_MYNFO << "\n"/*<available user modes><available channel modes> [<channel modes with a parameter>]*/ << std::endl;
 	if (send(reply_socket, msg_to_sent.str().c_str(), msg_to_sent.str().size(), 0) == -1)
 		std::cerr << "[Server] Send error to client " << reply_socket << ": " <<  strerror(errno)  << std::endl;
-	msg_to_sent << RPL_ISUPPORT << ""/* tous les parametres qu'on utilisera pour ISUPPORT */ << std::endl;
+	msg_to_sent << RPL_ISUPPORT << "\n"/* tous les parametres qu'on utilisera pour ISUPPORT */ << std::endl;
 	if (send(reply_socket, msg_to_sent.str().c_str(), msg_to_sent.str().size(), 0) == -1)
 		std::cerr << "[Server] Send error to client " << reply_socket << ": " <<  strerror(errno)  << std::endl;
 }

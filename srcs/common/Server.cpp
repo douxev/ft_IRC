@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <iostream>
 #include <sstream>
+#include <sys/poll.h>
 
 Server::Server( void ) {}
 
@@ -91,8 +92,11 @@ int Server::init_server(int ac, char **av) {
 	}
 	std::cout << "[Server] Listening on port " << _server_socket << std::endl;
 
+	struct pollfd new_poll_fd = {};
+	this->_sockets_fds.push_back((new_poll_fd));
 	_sockets_fds[0].fd = _server_socket;
 	_sockets_fds[0].events = POLLIN;
+	_sockets_fds[0].revents = 0;
 	_nb_sockets = 1;
 	return (0);
 }
@@ -137,8 +141,12 @@ void Server::_accept_connection()
 	}
 	std::cout << "[Server] Accepted connection from client " << client_fd << std::endl;
 	
+
+	struct pollfd new_poll_fd = {};
+	this->_sockets_fds.push_back((new_poll_fd));
 	_sockets_fds[_nb_sockets].fd = client_fd;
 	_sockets_fds[_nb_sockets].events = POLLIN;
+	_sockets_fds[_nb_sockets].revents = 0;
 	_nb_sockets++;
 	
 	name << "Client" << client_fd;
