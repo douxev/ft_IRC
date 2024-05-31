@@ -53,22 +53,23 @@ void	part_command( Server& server, int reply_socket, std::istringstream &message
 	server.part_channel(server.find_user_from_fd(reply_socket)->get_name(), channel , message.str());
 }
 
-void	topic_command( Server& server, int reply_socket, std::istringstream &message ) {
-	std::string	channel;
-	std::getline(message, channel, ' ');
-	std::string user = server.find_user_from_fd(reply_socket)->get_name();
+void	topic_command( Server server, int reply_socket, std::istringstream &message ) {
+	// std::string	channel;
+	// std::string topic_message;
+	// std::getline(message, channel, ' ');
+	// std::string user = server.find_user_from_fd(reply_socket)->get_name();
 
-	if (server.is_on_channel(channel, user)) {
-		;
-	}
-	else if (server.is_op(channel, user)) {
-		if (server.is_on_channel(channel, user)) {
-			if (std::getline(message, channel, ' ')) {
-				
-			}
-		}
+	// if (server.is_op(channel, user))
+	// 	if (server.is_on_channel(channel, user)) {
+	// 		if (message.str().empty())
+
+	// }
+	// else if (server.is_op(channel, user)) {
+	// 	if (server.is_on_channel(channel, user)) {
+
+	// 	}
 		
-	}
+	// }
 
 
 
@@ -100,7 +101,7 @@ void	names_command( Server& server, int reply_socket, std::istringstream &messag
 		}
 		catch(const std::exception& e)
 		{
-			std::cerr << e.what() << '\n';
+			//do_nothing
 		}
 		ft_send(reply_socket, channel_name);
 	}
@@ -109,18 +110,16 @@ void	names_command( Server& server, int reply_socket, std::istringstream &messag
 		std::vector<Channel*> channel_list = server.get_channels_list();
 		for (int j = 0; channel_list[j] != channel_list.back(); j++)
 		{
-			send(reply_socket, channel_list[j]->get_name().c_str(), channel_list[j]->get_name().size(), 0);
+			ft_send(reply_socket, channel_list[j]->get_name());
 			channel_list[j]->send_userlist(*user);
 		}
-		send(reply_socket, "*:\n", 4, 0);
+		ft_send(reply_socket, "*:\n");
 		std::vector<User*> user_list = server.get_connected_user();
 		for (int j = 0; user_list[j] < user_list.back(); j++)
 		{
 			if (!user_list[j]->get_list_channel().size())
-				send(reply_socket, user_list[j]->get_name().c_str(), user_list[j]->get_name().size(), 0);
+				ft_send(reply_socket, user_list[j]->get_name());
 		}
-		
-		
 	}
 }
 
