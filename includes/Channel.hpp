@@ -6,7 +6,7 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 12:59:03 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/05/31 15:19:43 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/05/31 15:45:14 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 # include <vector>
 # include <string>
 # include "User.hpp"
+
+class User;
 
 typedef enum e_modes {
 	INVITE,

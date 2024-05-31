@@ -2,6 +2,11 @@
 # define USER_HPP
 
 # include <string>
+# include <vector>
+# include "Channel.hpp"
+
+class Channel;
+
 
 class User {
 

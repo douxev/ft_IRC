@@ -53,10 +53,10 @@ void	names_command( Server server, int reply_socket, std::istringstream &message
 	(void) message;
 	int i = 0;
 	for (std::string argument; std::getline(message, argument, ' ');i++) {
-		send 
+		;
 	}
 	if (!message.str().c_str()[0])	//pas d'arguments
-
+		;
 }
 
 //Liste tous les canaux 
