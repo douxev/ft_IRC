@@ -8,6 +8,7 @@
 void	init_client( Server server, int reply_socket, std::string message) {
 	std::stringstream msg_to_sent;
 	std::time_t result = std::time(nullptr);
+
 	msg_to_sent << RPL_WELCOME << "Welcome to the GuiRaMa Internet Relay Chat Network " << reply_socket << std::endl;
 	msg_to_sent << RPL_YOURHOST << "You host is irc.guirama.42, running on version " << RPL_VERSION << std::endl;
 	msg_to_sent << RPL_CREATED << "this server was created "<< std::asctime(std::localtime(&result)) << std::endl;
@@ -21,40 +22,45 @@ void	init_client( Server server, int reply_socket, std::string message) {
 void	parse_commands( Server server, int reply_socket, std::istringstream& message ) {
 
 	std::string cmd;
-	std::getline(message, cmd, ' ');
+	std::string line_str;
 
+	while (std::getline(message, line_str)) {
+	
+	std::istringstream line(line_str);
+	std::getline(line, cmd, ' ');
 	try {
 
 		if (cmd == "USER")
-			init_client(server, reply_socket, message.str());
+			init_client(server, reply_socket, line.str());
 		else if (cmd == "PING")
-			pong(server, reply_socket, message.str());
+			pong(server, reply_socket, line.str());
 		else if (cmd == "MOTD")
 			motd_command(server, reply_socket);
 		else if (cmd == "VERSION")
 			version_command(server, reply_socket);
 		else if (cmd == "NICK")
-			nick_command(server, reply_socket, message.str());
+			nick_command(server, reply_socket, line.str());
 		else if (cmd == "JOIN")
-			join_command(server, reply_socket, message.str());
+			join_command(server, reply_socket, line.str());
 		else if (cmd == "PART")
-			part_command(server, reply_socket, message);
+			part_command(server, reply_socket, line);
 		else if (cmd == "TOPIC")
-			topic_command(server, reply_socket, message);
+			topic_command(server, reply_socket, line);
 		else if (cmd == "NAMES")
-			names_command(server, reply_socket, message);
+			names_command(server, reply_socket, line);
 		else if (cmd == "LIST")
-			list_command(server, reply_socket, message);
+			list_command(server, reply_socket, line);
 		else if (cmd == "INVITE")
-			invite_command(server, reply_socket, message);
+			invite_command(server, reply_socket, line);
 		else if (cmd == "KICK")
-			kick_command(server, reply_socket, message);
+			kick_command(server, reply_socket, line);
 		else if (cmd == "WHOIS")
-			whois_command(server, reply_socket, message);
+			whois_command(server, reply_socket, line);
 		else if (cmd == "QUIT")
-			quit_command(server, reply_socket, message);
+			quit_command(server, reply_socket, line);
 	}
 	catch (std::exception e) {
 		std::cout << e.what() << std::endl;
+	}
 	}
 }
