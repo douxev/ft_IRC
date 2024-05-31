@@ -29,6 +29,16 @@ void	nick_command( Server& server, int reply_socket, std::string message ) {
 	server.change_nick(*server.find_user_from_fd(reply_socket), message.substr(5));
 }
 
+void	cap_command( Server& server, int reply_socket, std::istringstream &message ) {
+	std::cout << "CAP\n";
+	(void) server;
+	std::string	param;
+	std::getline(message, param, ' ');
+	if (param == "LS") {
+		ft_send(reply_socket, "CAP * LS: ");
+	}
+}
+
 void	join_command( Server& server, int reply_socket, std::istringstream &message ) {
 	std::cout << "JOIN\n";
 	server.join_channel(server.find_user_from_fd(reply_socket)->get_name(), 

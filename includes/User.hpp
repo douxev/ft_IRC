@@ -29,11 +29,11 @@ public:
 
 private:
 
-	int			_ip_address;
-	int			_socketfd;
-	std::string	_name;
-	std::string _realname;
-	std::vector<Channel*> _joined_channel;
+	std::string				_ip_address;
+	int						_socketfd;
+	std::string				_name;
+	std::string				_realname;
+	std::vector<Channel*>	_joined_channel;
 
 };
 

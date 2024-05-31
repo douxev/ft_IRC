@@ -3,7 +3,7 @@
 User::User( void ) {
 	this->_name = "";
 	this->_socketfd = 0;
-	this->_ip_address = 0;
+	this->_ip_address = "";
 }
 
 User::User( const User& Other ) {
