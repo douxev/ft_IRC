@@ -9,6 +9,17 @@
 
 Server::Server( void ) {}
 
+Server::~Server() {
+	const size_t users_len = this->_connected_users.size();
+	const size_t chans_len = this->_active_channels.size();
+	for (size_t i = 0; i < users_len; i++) {
+		delete this->_connected_users[i];
+	}
+	for (size_t i = 0; i < chans_len; i++) {
+		delete this->_active_channels[i];
+	}
+}
+
 Server& Server::operator=( const Server& Other ) {
 
 	this->_ip_str = Other._ip_str;
@@ -25,7 +36,6 @@ Server::Server( const Server& copied ) {
 	*this = copied;
 }
 
-Server::~Server() {}
 
 void Server::_add_active_channel( Channel* channel ) {
 	this->_active_channels.push_back(channel);
