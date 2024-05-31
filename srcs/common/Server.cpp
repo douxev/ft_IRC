@@ -7,7 +7,22 @@
 #include <sstream>
 #include <sys/poll.h>
 
-Server::Server( void ) {}
+Server::Server( void ): 
+_ip_address(0), _port(0), _server_socket(0), _nb_sockets(0) {}
+
+Server::~Server() {
+	const size_t users_len = this->_connected_users.size();
+	const size_t chans_len = this->_active_channels.size();
+
+	std::cout << "Server is being detroyed." << std::endl;
+
+	for (size_t i = 0; i < users_len; i++) {
+		delete this->_connected_users[i];
+	}
+	for (size_t i = 0; i < chans_len; i++) {
+		delete this->_active_channels[i];
+	}
+}
 
 Server& Server::operator=( const Server& Other ) {
 
@@ -25,7 +40,6 @@ Server::Server( const Server& copied ) {
 	*this = copied;
 }
 
-Server::~Server() {}
 
 void Server::_add_active_channel( Channel* channel ) {
 	this->_active_channels.push_back(channel);
@@ -128,10 +142,15 @@ void Server::manage_loop()
 		{
 			if ((_sockets_fds[i].revents & POLLIN) != 1)
 				continue;
-			if (_sockets_fds[i].fd == _server_socket)
+			if (_sockets_fds[i].fd == _server_socket) {
 				_accept_connection();
-			else
+				std::cout << "\nAccept connection" << std::endl;
+			}
+			else {
 				_read_data(i);
+				std::cout << "\nREAD DATA" << std::endl;
+
+			}
 
 			
 		}
@@ -165,9 +184,6 @@ void Server::_accept_connection()
 	client->set_fd(client_fd);
 	_connected_users.push_back(client);
 	
-	msg_to_sent << "1 [Server] Welcome client " << client_fd << std::endl;
-	if (send(client_fd, msg_to_sent.str().c_str(), msg_to_sent.str().size(), 0) == -1)
-		std::cerr << "[Server] Send error to client " << client_fd << ": " <<  strerror(errno)  << std::endl;
 	
 }
 
@@ -195,24 +211,24 @@ void Server::_read_data(int i)
 		}
 		catch(const std::exception& e)
 		{
-			std::cerr << e.what() << '\n';
+			std::cerr << e.what() << "\n";
 		}
 	} else {
 		std::cout << "[Server] Got message from client " << sender_fd << ": " << buffer;
 		//Parsing
-		std::istringstream stream;
-		stream.str(buffer);
+		std::cout << "Line 212\n";
+		std::istringstream stream(buffer);
 		parse_commands(*this, sender_fd, stream);
 		msg_to_sent << "Client [" << sender_fd << "] said: " << buffer;
-			for (int j = 0; j < _nb_sockets; j++)
-			{
-				// send(pollfd[j].fd, "PING TEstitesto", 16 , 0);
-				if (_sockets_fds[j].fd != _server_socket)
-					if (send(_sockets_fds[j].fd, (msg_to_sent.str()).c_str(), msg_to_sent.str().size(), 0) == -1)
-							std::cerr << "[Server] Send error to client " << _sockets_fds[j].fd << ": " << strerror(errno) << std::endl;
-			}
+		for (int j = 0; j < _nb_sockets; j++) {
+			// send(pollfd[j].fd, "PING TEstitesto", 16 , 0);
+			std::cout << "Line 218\n";
+			if (_sockets_fds[j].fd != _server_socket)
+				if (send(_sockets_fds[j].fd, (msg_to_sent.str()).c_str(), msg_to_sent.str().size(), 0) == -1)
+						std::cerr << "[Server] Send error to client " << _sockets_fds[j].fd << ": " << strerror(errno) << std::endl;
+		}
 	}
-	
+	std::cout << "HERE is end of READ DATA func\n";
 }
 User*	Server::find_user_from_fd( int socketfd ) const {
 	const size_t len = this->_connected_users.size();
@@ -250,3 +266,8 @@ bool	Server::is_on_channel( std::string channel, std::string user ) {
 	return this->_get_channel_class(channel)
 		.is_on_channel(this->_get_user_class(user).get_name());
 }
+
+bool	Server::is_op( std::string channel, std::string user ) {
+	return this->_get_channel_class(channel)
+		._is_op(this->_get_user_class(user).get_name());
+} 

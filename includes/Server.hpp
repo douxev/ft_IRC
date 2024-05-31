@@ -12,7 +12,7 @@ public:
 	Server( void );
 	Server& operator=( const Server& Other );
 	Server( const Server& Other );
-	~Server();
+	~Server( void );
 
 	std::string get_motd( void );
 	void	new_user( std::string name, int socketfd, int ip_adress );
@@ -24,6 +24,7 @@ public:
 	User*	find_user_from_fd( int socketfd ) const ;
 	
 	bool	is_on_channel( std::string channel, std::string user );
+	bool	is_op( std::string channel, std::string user );
 
 	void	join_channel( std::string name, std::string channel );
 	void	part_channel( std::string name, std::string channel, std::string part_message );

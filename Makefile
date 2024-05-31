@@ -6,7 +6,7 @@
 #    By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/07 16:11:15 by jdoukhan          #+#    #+#              #
-#    Updated: 2024/05/31 15:28:15 by jdoukhan         ###   ########.fr        #
+#    Updated: 2024/05/31 16:22:33 by jdoukhan         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,7 +27,6 @@ URL = https://cdn.intra.42.fr/pdf/pdf/89250/en.subject.pdf
 COMMON_SOURCES = \
 		main.cpp\
 		init_server.cpp\
-		connections.cpp\
 		Channel.cpp\
 		User.cpp\
 		Server.cpp\
