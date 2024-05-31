@@ -31,7 +31,8 @@ public:
 
 	User&		_get_user_class( std::string name );
 	Channel&	_get_channel_class( std::string name );
-
+	std::vector<Channel*> get_channels_list();
+	std::vector<User*> get_connected_user();
 private:
 
 	void 		_add_active_channel( Channel *channel );

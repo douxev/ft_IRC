@@ -96,6 +96,16 @@ Channel&	Server::_get_channel_class( std::string name ) {
 	throw NoSuchChannelException();
 }
 
+std::vector<Channel *> Server::get_channels_list()
+{
+    return this->_active_channels;
+}
+
+std::vector<User *> Server::get_connected_user()
+{
+    return _connected_users;
+}
+
 int Server::init_server(int ac, char **av) {
 	_server_socket = create_server_socket(get_port(ac, av));
 	if (_server_socket == -1)
