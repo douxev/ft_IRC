@@ -6,7 +6,11 @@ void	pong(Server server, int reply_socket, std::string message) {
 }
 
 void	motd_command( Server server, int reply_socket, std::string message ) {
-	ft_send(reply_socket, "MOTD " + server.get_motd());
+	if (server.get_motd().empty())
+		ft_send(reply_socket, "422 :No MOTD set");
+	else
+		ft_send(reply_socket, "375 :Message of the Day \n372 :" + 
+				server.get_motd() + "\n376 :End of MOTD.");
 }
 
 void	version_command( Server server, int reply_socket, std::string message ) {
