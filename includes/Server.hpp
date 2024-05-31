@@ -33,7 +33,7 @@ public:
 
 private:
 
-	void 		_add_active_channel( const Channel *channel );
+	void 		_add_active_channel( Channel *channel );
 	void 		_remove_unactive_channel( const Channel *channel );
 	void		_accept_connection( void );
 	void		_read_data( int i );
