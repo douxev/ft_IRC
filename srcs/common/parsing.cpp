@@ -57,7 +57,7 @@ void	parse_commands( Server server, int reply_socket, std::istringstream message
 		else if (cmd == "WHOIS")
 			whois_command(server, reply_socket, param);
 		else if (cmd == "QUIT")
-			quit_command(server, reply_socket, param1);
+			quit_command(server, reply_socket, param);
 	}
 	catch (std::exception e) {
 		std::cout << e.what() << std::endl;
