@@ -6,7 +6,7 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 14:56:20 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/05/31 15:26:14 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/05/31 17:05:54 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,21 +39,21 @@ short	get_port(int ac, char **av);
 
 int		create_server_socket( short port );
 void	accept_connection( int server_fd, struct pollfd **poll_fds, int& poll_count, int& poll_capacity );
-void	init_client( Server server, int reply_socket, std::string message );
+void	init_client( Server& server, int reply_socket, std::string message );
 
 //Parsing commands
-void	parse_commands( Server server, int reply_socket, std::istringstream &message );
+void	parse_commands( Server& server, int reply_socket, std::istringstream &message );
 void	pong(int reply_socket, std::string message);
-void	motd_command( Server server, int reply_socket );
+void	motd_command( Server& server, int reply_socket );
 void	version_command( int reply_socket );
-void	nick_command( Server server, std::string message );
-void	join_command( Server server, int reply_socket, std::istringstream &message );
-void	part_command( Server server, int reply_socket, std::istringstream &message );
-void	topic_command( Server server, int reply_socket, std::istringstream &message );
-void	names_command( Server server, int reply_socket, std::istringstream &message );
-void	list_command( Server server, int reply_socket, std::istringstream &message );
-void	invite_command( Server server, int reply_socket, std::istringstream &message );
-void	kick_command( Server server, int reply_socket, std::istringstream &message );
-void	quit_command( Server server, int reply_socket, std::istringstream &message );
+void	nick_command( Server& server, int reply_socket, std::string message );
+void	join_command( Server& server, int reply_socket, std::istringstream &message );
+void	part_command( Server& server, int reply_socket, std::istringstream &message );
+void	topic_command( Server& server, int reply_socket, std::istringstream &message );
+void	names_command( Server& server, int reply_socket, std::istringstream &message );
+void	list_command( Server& server, int reply_socket, std::istringstream &message );
+void	invite_command( Server& server, int reply_socket, std::istringstream &message );
+void	kick_command( Server& server, int reply_socket, std::istringstream &message );
+void	quit_command( Server& server, int reply_socket, std::istringstream &message );
 
 #endif

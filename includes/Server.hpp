@@ -20,7 +20,7 @@ public:
 	int		init_server( int ac, char **av );
 	void	manage_loop( void );
 	bool	nick_already_taken( std::string name ) const;
-	void	change_nick( std::string name );
+	void	change_nick( User& user, std::string name );
 	User*	find_user_from_fd( int socketfd ) const ;
 	
 	bool	is_on_channel( std::string channel, std::string user );
