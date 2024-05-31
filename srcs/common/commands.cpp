@@ -52,8 +52,10 @@ void	names_command( Server server, int reply_socket, std::istringstream &message
 	(void) reply_socket;
 	(void) message;
 	int i = 0;
-	for (std::string argument; std::getline(message, argument, ' ');i++) {
-		send 
+	for (std::string channel_name; std::getline(message, channel_name, ' ');i++) {
+		Channel channel = server._get_channel_class(channel_name);
+
+		send(reply_socket, channel_name.c_str(), std);
 	}
 	if (!message.str().c_str()[0])	//pas d'arguments
 
