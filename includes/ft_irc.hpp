@@ -6,7 +6,7 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 14:56:20 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/05/31 13:29:01 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/05/31 14:08:15 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 
 # include "Server.hpp"
+# include "exceptions.hpp"
 # include "User.hpp"
 # include "Channel.hpp"
 #include <sys/poll.h>

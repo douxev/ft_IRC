@@ -39,7 +39,7 @@ void User::set_fd(int fd)
 	_socketfd = fd;
 }
 
-std::string User::get_name( void ) const {
+const std::string User::get_name( void ) const {
 	return (this->_name);
 }
 

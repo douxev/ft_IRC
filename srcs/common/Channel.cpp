@@ -149,7 +149,6 @@ void Channel::set_mode( t_enum_modes mode, size_t value ) {
 	}
 }
 
-
 bool Channel::_is_op( const User& user ) {
 	const size_t len = this->_op_users.size();
 	for (size_t i = 0; i < len; i++) {
@@ -182,4 +181,14 @@ void Channel::send_channel( const std::string msg ) {
 	for (size_t i = 0; i < len; i++) {
 		ft_send(this->_connected_users[i].get_socketfd(), msg);
 	}
+}
+
+bool Channel::is_on_channel( const std::string username ) {
+	const size_t len = this->_connected_users.size();
+
+	for (size_t i = 0; i < len; i++) {
+		if (this->_connected_users[i].get_name() == username)
+			return (true);
+	}
+	return (false);
 }
