@@ -2,8 +2,9 @@
 #include <exception>
 #include "numeric_replies.hpp"
 #include <ctime>
+#include <sstream>
 
-static std::string	get_command( std::string cmd ) {
+static std::string	get_command( std::istringstream cmd ) {
 	
 }
 
@@ -20,40 +21,41 @@ void	init_client( Server server, int reply_socket, std::string message) {
 }
 
 //ADD TRY CATCH EXCEPTIONS FOR SENDING GOOD REPLIES
-void	parse_commands( Server server, int reply_socket, std::string message ) {
+void	parse_commands( Server server, int reply_socket, std::istringstream message ) {
 
-	const std::string cmd = get_command(message);
+	std::string cmd = get_command(message);
+	std::istringstream param1;
 
 	try {
 
 		if (cmd == "USER")
-			init_client(server, reply_socket, message);
+			init_client(server, reply_socket, param1.str());
 		else if (cmd == "PING")
-			pong(server, reply_socket, message);
+			pong(server, reply_socket, param1.str());
 		else if (cmd == "MOTD")
-			motd_command(server, reply_socket, message);
+			motd_command(server, reply_socket);
 		else if (cmd == "VERSION")
-			version_command(server, reply_socket, message);
+			version_command(server, reply_socket);
 		else if (cmd == "NICK")
-			nick_command(server, reply_socket, message);
+			nick_command(server, reply_socket, param1.str());
 		else if (cmd == "JOIN")
-			join_command(server, reply_socket, message);
+			join_command(server, reply_socket, param1.str());
 		else if (cmd == "PART")
-			part_command(server, reply_socket, message);
+			part_command(server, reply_socket, param1);
 		else if (cmd == "TOPIC")
-			topic_command(server, reply_socket, message);
+			topic_command(server, reply_socket, param1);
 		else if (cmd == "NAMES")
-			names_command(server, reply_socket, message);
+			names_command(server, reply_socket, param1);
 		else if (cmd == "LIST")
-			list_command(server, reply_socket, message);
+			list_command(server, reply_socket, param1);
 		else if (cmd == "INVITE")
-			invite_command(server, reply_socket, message);
+			invite_command(server, reply_socket, param1);
 		else if (cmd == "KICK")
-			kick_command(server, reply_socket, message);
+			kick_command(server, reply_socket, param1);
 		else if (cmd == "WHOIS")
-			whois_command(server, reply_socket, message);
+			whois_command(server, reply_socket, param1);
 		else if (cmd == "QUIT")
-			quit_command(server, reply_socket, message);
+			quit_command(server, reply_socket, param1);
 	}
 	catch (std::exception e) {
 		std::cout << e.what() << std::endl;

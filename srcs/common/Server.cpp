@@ -3,6 +3,7 @@
 #include "exceptions.hpp"
 #include <cstddef>
 #include <iostream>
+#include <sstream>
 
 Server::Server( void ) {}
 
@@ -187,6 +188,9 @@ void Server::_read_data(int i)
 	} else {
 		std::cout << "[Server] Got message from client " << sender_fd << ": " << buffer;
 		//Parsing
+		std::istringstream stream;
+		stream.str(buffer);
+		parse_commands(*this, sender_fd, stream);
 		msg_to_sent << "Client [" << sender_fd << "] said: " << buffer;
 			for (int j = 0; j < _nb_sockets; j++)
 			{
