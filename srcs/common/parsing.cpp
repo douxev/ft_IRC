@@ -3,6 +3,7 @@
 #include "numeric_replies.hpp"
 #include <ctime>
 #include <sstream>
+#include <string>
 
 static std::string	get_command( std::istringstream cmd ) {
 	
@@ -23,37 +24,38 @@ void	init_client( Server server, int reply_socket, std::string message) {
 //ADD TRY CATCH EXCEPTIONS FOR SENDING GOOD REPLIES
 void	parse_commands( Server server, int reply_socket, std::istringstream message ) {
 
-	std::string cmd = get_command(message);
-	std::istringstream param1;
+	std::string cmd;
+	std::getline(message, cmd);
+	std::istringstream param;
 
 	try {
 
 		if (cmd == "USER")
-			init_client(server, reply_socket, param1.str());
+			init_client(server, reply_socket, param.str());
 		else if (cmd == "PING")
-			pong(server, reply_socket, param1.str());
+			pong(server, reply_socket, param.str());
 		else if (cmd == "MOTD")
 			motd_command(server, reply_socket);
 		else if (cmd == "VERSION")
 			version_command(server, reply_socket);
 		else if (cmd == "NICK")
-			nick_command(server, reply_socket, param1.str());
+			nick_command(server, reply_socket, param.str());
 		else if (cmd == "JOIN")
-			join_command(server, reply_socket, param1.str());
+			join_command(server, reply_socket, param.str());
 		else if (cmd == "PART")
-			part_command(server, reply_socket, param1);
+			part_command(server, reply_socket, param);
 		else if (cmd == "TOPIC")
-			topic_command(server, reply_socket, param1);
+			topic_command(server, reply_socket, param);
 		else if (cmd == "NAMES")
-			names_command(server, reply_socket, param1);
+			names_command(server, reply_socket, param);
 		else if (cmd == "LIST")
-			list_command(server, reply_socket, param1);
+			list_command(server, reply_socket, param);
 		else if (cmd == "INVITE")
-			invite_command(server, reply_socket, param1);
+			invite_command(server, reply_socket, param);
 		else if (cmd == "KICK")
-			kick_command(server, reply_socket, param1);
+			kick_command(server, reply_socket, param);
 		else if (cmd == "WHOIS")
-			whois_command(server, reply_socket, param1);
+			whois_command(server, reply_socket, param);
 		else if (cmd == "QUIT")
 			quit_command(server, reply_socket, param1);
 	}
