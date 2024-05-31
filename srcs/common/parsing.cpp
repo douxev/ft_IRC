@@ -1,9 +1,6 @@
 #include "ft_irc.hpp"
-<<<<<<< HEAD
 #include <exception>
-=======
 #include "numeric_replies.hpp"
->>>>>>> refs/remotes/origin/main
 #include <ctime>
 
 static std::string	get_command( std::string cmd ) {
