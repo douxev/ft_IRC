@@ -14,7 +14,7 @@ void	init_client( Server& server, int reply_socket, std::string message) {
 	std::time_t result = std::time(NULL);
 	
 	//Parsing de message
-	std::cout << "USER" << std::endl;
+
 	msg_to_send.str("");
 	msg_to_send << RPL_WELCOME << server.find_user_from_fd(reply_socket)->get_name() << "\n";
 	if (ft_send(reply_socket, msg_to_send.str()) == -1)
@@ -58,6 +58,12 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 	line_str = rev_lines[i];
 	std::istringstream line(line_str);
 	std::getline(line, cmd, ' ');
+	if (line.str()[cmd.size() + 1] == '#')
+		line.str(&line.str()[cmd.size() + 2]);
+	else
+		line.str(&line.str()[cmd.size() + 1]);
+	std::cout << "cmd: " << cmd;
+	std::cout << " | params: " << line.str() << std::endl;
 	try {
 
 		if (cmd == "USER")

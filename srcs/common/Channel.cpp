@@ -62,7 +62,6 @@ void Channel::user_join( const User& user ) {
 	this->_add_connected_user(user);
 
 	std::stringstream msg_to_send;
-	msg_to_send << ":" << user.get_name() << " JOIN #" << this->_name;
 	std::cout << msg_to_send.str();
 	this->send_channel(msg_to_send.str());
 	ft_send(user.get_socketfd(), "TOPIC #" + this->get_name() + " :" + this->_topic);

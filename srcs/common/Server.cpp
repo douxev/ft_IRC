@@ -211,7 +211,7 @@ void Server::_read_data(int i)
 			std::cerr << e.what() << "\n";
 		}
 	} else {
-		std::cout << "[Server] Got message from client " << sender_fd << ": " << buffer;
+		std::cout << "[" << sender_fd << "] sent: " << buffer;
 		// //Parsing
 		std::istringstream stream(buffer);
 		parse_commands(*this, sender_fd, stream);
@@ -236,14 +236,16 @@ User*	Server::find_user_from_fd( int socketfd ) const {
 
 void	Server::join_channel( std::string username, std::string channelname ) {
 	User&		user = this->get_user_class(username);
+
 	try {
 		Channel&	channel = this->get_channel_class(channelname);
 		channel.user_join(user);
 	}
-	catch (ChannelNotFoundException e) {
+	catch (NoSuchChannelException& e) {
 		Channel *new_channel = new Channel(channelname, user);
 		this->_active_channels.push_back(new_channel);
 		new_channel->force_op(user);
+		std::cout << "Created channel #" << this->get_channel_class(channelname).get_name() << std::endl;
 		return ;
 	}
 }
