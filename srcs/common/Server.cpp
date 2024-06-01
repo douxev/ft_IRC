@@ -75,7 +75,7 @@ void	Server::change_nick( User& user, std::string name ) {
 	user.change_name(name);
 }
 
-User&	Server::_get_user_class( std::string name ) {
+User&	Server::get_user_class( std::string name ) {
 	const size_t len = this->_connected_users.size();
 
 	for (size_t i = 0; i < len; i++) {
@@ -85,7 +85,7 @@ User&	Server::_get_user_class( std::string name ) {
 	throw NoSuchNickException();
 }
 
-Channel&	Server::_get_channel_class( std::string name ) {
+Channel&	Server::get_channel_class( std::string name ) {
 	const size_t len = this->_active_channels.size();
 
 	for (size_t i = 0; i < len; i++) {
@@ -235,9 +235,9 @@ User*	Server::find_user_from_fd( int socketfd ) const {
 }
 
 void	Server::join_channel( std::string username, std::string channelname ) {
-	User&		user = this->_get_user_class(username);
+	User&		user = this->get_user_class(username);
 	try {
-		Channel&	channel = this->_get_channel_class(channelname);
+		Channel&	channel = this->get_channel_class(channelname);
 		channel.user_join(user);
 	}
 	catch (ChannelNotFoundException e) {
@@ -249,23 +249,23 @@ void	Server::join_channel( std::string username, std::string channelname ) {
 }
 
 void	Server::part_channel( std::string username, std::string channelname, std::string part_message ) {
-	Channel&	channel = this->_get_channel_class(channelname);
-	User&		user = this->_get_user_class(username);
+	Channel&	channel = this->get_channel_class(channelname);
+	User&		user = this->get_user_class(username);
 
 	channel.user_quit(user, part_message);
 	
 }
 
 bool	Server::is_on_channel( std::string channel, std::string user ) {	
-	return this->_get_channel_class(channel)
-		.is_on_channel(this->_get_user_class(user).get_name());
+	return this->get_channel_class(channel)
+		.is_on_channel(this->get_user_class(user).get_name());
 }
 
 bool	Server::is_op( std::string channel, std::string user ) {
-	return this->_get_channel_class(channel)
-		._is_op(this->_get_user_class(user).get_name());
+	return this->get_channel_class(channel)
+		.is_op(this->get_user_class(user).get_name());
 } 
 
 std::string Server::get_topic( std::string channel ) {
-	return this->_get_channel_class(channel).get_topic();
+	return this->get_channel_class(channel).get_topic();
 }

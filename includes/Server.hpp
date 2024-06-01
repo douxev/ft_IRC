@@ -29,8 +29,8 @@ public:
 	void	join_channel( std::string name, std::string channel );
 	void	part_channel( std::string name, std::string channel, std::string part_message );
 
-	User&		_get_user_class( std::string name );
-	Channel&	_get_channel_class( std::string name );
+	User&		get_user_class( std::string name );
+	Channel&	get_channel_class( std::string name );
 	std::string get_topic( std::string channel );
 
 	std::vector<Channel*> get_channels_list();

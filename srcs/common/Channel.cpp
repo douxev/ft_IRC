@@ -50,7 +50,7 @@ void	Channel::send_userlist( const User& user ) {
 	msg_to_send << "353 " + this->get_name() + " ";
 	const size_t len = this->_connected_users.size();
 	for (size_t i = 0; i < len; i++) {
-		if (this->_is_op(this->_connected_users[i]))
+		if (this->is_op(this->_connected_users[i]))
 			msg_to_send << "@";
 		msg_to_send << this->_connected_users[i].get_name() << " ";
 	}
@@ -103,8 +103,8 @@ void Channel::change_role( const User& user, const User& target, bool is_op ) {
 void Channel::set_mode( t_enum_modes mode, const User& user, const std::string target, bool value ) {
 	if (mode != OP)
 		return ;
-	if (this->_is_op(user)) {
-		if (value == false && this->_is_op(target)) {
+	if (this->is_op(user)) {
+		if (value == false && this->is_op(target)) {
 			const size_t len = this->_op_users.size();
 			for (size_t i = 0; i < len; i++) {
 				if (this->_op_users[i] == target) {
@@ -149,7 +149,7 @@ void Channel::set_mode( t_enum_modes mode, size_t value ) {
 	}
 }
 
-bool Channel::_is_op( const User& user ) {
+bool Channel::is_op( const User& user ) {
 	const size_t len = this->_op_users.size();
 	for (size_t i = 0; i < len; i++) {
 		if (this->_op_users[i] == user.get_name())
@@ -162,7 +162,7 @@ void	Channel::force_op( const User& user) {
 	this->_op_users.push_back(user.get_name());
 }
 
-bool Channel::_is_op( const std::string user ) {
+bool Channel::is_op( const std::string user ) {
 	const size_t len = this->_op_users.size();
 	for (size_t i = 0; i < len; i++) {
 		if (this->_op_users[i] == user)

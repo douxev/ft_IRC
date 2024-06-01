@@ -113,7 +113,7 @@ void	names_command( Server& server, int reply_socket, std::istringstream &messag
 	for (std::string channel_name; std::getline(message, channel_name, ','); i++) {
 		try
 		{
-			server._get_channel_class(channel_name).send_userlist(*user);;
+			server.get_channel_class(channel_name).send_userlist(*user);;
 		}
 		catch(const std::exception& e)
 		{
@@ -173,7 +173,7 @@ void	kick_command( Server& server, int reply_socket, std::istringstream &message
 
 	if (users_str.empty())
 		throw NeedMoreParamsException();
-	if (!(server._get_channel_class(channel))._is_op(server.find_user_from_fd(reply_socket)->get_name()))
+	if (!(server.get_channel_class(channel)).is_op(server.find_user_from_fd(reply_socket)->get_name()))
 		throw ChanOPrivsNeededException();
 	if (!server.is_on_channel(channel, server.find_user_from_fd(reply_socket)->get_name()))
 		throw NotOnChannelException();
@@ -181,7 +181,7 @@ void	kick_command( Server& server, int reply_socket, std::istringstream &message
 		if (!server.is_on_channel(channel, user)) //user not in channel
 			ft_send(reply_socket, "441 " + user + " " + channel + ":They Aren't on that channel");
 		else {
-			server._get_channel_class(channel).send_channel("NOTICE " + channel + kick_message);
+			server.get_channel_class(channel).send_channel("NOTICE " + channel + kick_message);
 		}
 	}
 }
