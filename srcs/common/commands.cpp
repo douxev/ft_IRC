@@ -137,15 +137,15 @@ void	names_command( Server& server, int reply_socket, std::istringstream &messag
 	(void) reply_socket;
 	(void) message;
 
-	int i = 0;
+	int i = 0;	// le nombre de channel passés en parametre
 	User user(server.get_user_class(reply_socket));
 
 	ft_send(reply_socket, "353 ");
-	for (std::string channel_name; std::getline(message, channel_name, ',');) {
+	for (std::string channel_name; std::getline(message, channel_name, ',');i++) {
 		try
 		{
 			server.get_channel_class(channel_name).send_userlist(user);
-			i++;
+			
 		}
 		catch(const std::exception& e)
 		{
@@ -153,7 +153,7 @@ void	names_command( Server& server, int reply_socket, std::istringstream &messag
 		}
 		ft_send(reply_socket, channel_name);
 	}
-	if (!i ) //aucun parametres
+	if (!i ) //aucuns parametres
 	{
 		std::vector<Channel*> channel_list = server.get_channels_list();
 		for (int j = 0; channel_list[j] != channel_list.back(); j++)
