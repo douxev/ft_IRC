@@ -45,7 +45,7 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 	(void) reply_socket;
 	(void) message;
 	
-	if (!message.str().size()) {
+	if (find(message.str().begin(), message.str().end(), ':') == message.str().end()) {
 		ft_send(reply_socket, "411: No recipient given (PRIVMSG " + message.str() + " )");
 		return ;
 	}
@@ -58,6 +58,7 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 		ft_send(reply_socket, "412: No text to send");
 		return ;
 	}
+
 	std::istringstream stream;
 	stream.str(recipients_list);
 	for(std::string recipient; std::getline(stream, recipient, ',');) {
@@ -68,14 +69,14 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 			User user = server.get_user_class(recipient);
 			ft_send(user.get_socketfd(), msg);
 		}
-		catch(const std::exception& e)
+		catch(const std::exception& e)	//ce n'est pas un user
 		{
 			try
 			{
 				Channel channel = server.get_channel_class(recipient);
 				channel.send_channel(msg);
 			}
-			catch(const std::exception& e)
+			catch(const std::exception& e) //ce n'est pas un channel non plus
 			{
 				ft_send(reply_socket, "401: " + recipient + " :No such nick/channel");
 			}
