@@ -45,7 +45,7 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 	(void) reply_socket;
 	(void) message;
 	
-	if (find(message.str().begin(), message.str().end(), ':') == message.str().end()) {
+	if (find(message.str().begin(), message.str().end(), ':') == message.str().end()) {	//detection de l'absence de cible
 		ft_send(reply_socket, "411: No recipient given (PRIVMSG " + message.str() + " )");
 		return ;
 	}
