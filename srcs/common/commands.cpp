@@ -44,6 +44,44 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 	(void) server;
 	(void) reply_socket;
 	(void) message;
+	
+	if (!message.str().size()) {
+		ft_send(reply_socket, "411: No recipient given (PRIVMSG " + message.str() + " )");
+		return ;
+	}
+
+	std::string recipients_list;
+	std::getline(message, recipients_list, ':');
+	std::string msg;
+	std::getline(message, msg);
+	if (!msg.size()) {
+		ft_send(reply_socket, "412: No text to send");
+		return ;
+	}
+	std::istringstream stream;
+	stream.str(recipients_list);
+	for(std::string recipient; std::getline(stream, recipient, ',');) {
+		if (recipient[recipient.size() - 1] == ' ')
+			recipient.erase(recipient.end() - 2); //-2 pour enlever l'espace et pas le /0
+		try
+		{
+			User user = server.get_user_class(recipient);
+			ft_send(user.get_socketfd(), msg);
+		}
+		catch(const std::exception& e)
+		{
+			try
+			{
+				Channel channel = server.get_channel_class(recipient);
+				channel.send_channel(msg);
+			}
+			catch(const std::exception& e)
+			{
+				ft_send(reply_socket, "401: " + recipient + " :No such nick/channel");
+			}
+		}
+	}
+	
 }
 
 void	part_command( Server& server, int reply_socket, std::istringstream &message ) {
@@ -102,10 +140,11 @@ void	names_command( Server& server, int reply_socket, std::istringstream &messag
 	User user(server.get_user_class(reply_socket));
 
 	ft_send(reply_socket, "353 ");
-	for (std::string channel_name; std::getline(message, channel_name, ','); i++) {
+	for (std::string channel_name; std::getline(message, channel_name, ',');) {
 		try
 		{
-			server.get_channel_class(channel_name).send_userlist(user);;
+			server.get_channel_class(channel_name).send_userlist(user);
+			i++;
 		}
 		catch(const std::exception& e)
 		{
@@ -113,7 +152,7 @@ void	names_command( Server& server, int reply_socket, std::istringstream &messag
 		}
 		ft_send(reply_socket, channel_name);
 	}
-	if (!i) //aucun parametres
+	if (!i ) //aucun parametres
 	{
 		std::vector<Channel*> channel_list = server.get_channels_list();
 		for (int j = 0; channel_list[j] != channel_list.back(); j++)
