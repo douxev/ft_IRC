@@ -72,7 +72,7 @@ bool	Server::nick_already_taken( std::string name ) const {
 void	Server::change_nick( User& user, std::string name ) {
 	if (nick_already_taken(name))
 		throw NickAlreadyTakenException();
-	user.change_name(name);
+	user.set_name(name);
 }
 
 User&	Server::get_user_class( std::string name ) {
@@ -178,7 +178,7 @@ void Server::_accept_connection()
 	
 	name << "Client" << client_fd;
 	User *client = new User();
-	client->change_name(name.str());
+	client->set_name(name.str());
 	client->set_fd(client_fd);
 	_connected_users.push_back(client);
 	
@@ -200,11 +200,10 @@ void Server::_read_data(int i)
 		_sockets_fds[i] = _sockets_fds[_nb_sockets - 1];
 		_nb_sockets--;
 		try {
-			User *client = find_user_from_fd(sender_fd);
 			//user_quit(client);
-			std::vector<User*>::iterator it = find(_connected_users.begin(), _connected_users.end(), client);
+			std::vector<User*>::iterator it = find(_connected_users.begin(), _connected_users.end(), 
+													&get_user_class(sender_fd));
 			_connected_users.erase(it);
-			delete client;
 		}
 		catch(const std::exception& e)
 		{
@@ -224,12 +223,12 @@ void Server::_read_data(int i)
 		// }
 	}
 }
-User*	Server::find_user_from_fd( int socketfd ) const {
+User&	Server::get_user_class( int socketfd ) {
 	const size_t len = this->_connected_users.size();
 
 	for (size_t i = 0; i < len; i++) {
 		if (this->_connected_users[i]->get_socketfd() == socketfd)
-			return (this->_connected_users[i]);
+			return (*this->_connected_users[i]);
 	}
 	throw UserNotFoundException();
 }

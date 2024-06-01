@@ -13,13 +13,14 @@ class User {
 
 public:
 
-	const std::string get_name( void ) const;
-	void		change_name( std::string name );
-	void		set_fd( int fd );
-	int			get_socketfd( void ) const;
-	std::vector<Channel*> get_list_channel();
-	void		add_channel_list(Channel* channel);
-	void		remove_channel_list(Channel* channel);
+	const std::string 		get_name( void ) const;
+	void					set_name( std::string name );
+	void					set_realname( std::string name );
+	void					set_fd( int fd );
+	int						get_socketfd( void ) const;
+	std::vector<Channel*>	get_list_channel();
+	void					add_channel_list(Channel* channel);
+	void					remove_channel_list(Channel* channel);
 
 	User( void );
 	User& operator=( const User& Other );

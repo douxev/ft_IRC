@@ -1,5 +1,7 @@
 #include "User.hpp"
 #include <algorithm>
+#include <iostream>
+
 User::User( void ) {
 	this->_name = "";
 	this->_socketfd = 0;
@@ -30,8 +32,12 @@ User::~User() {
 
 }
 
-void User::change_name( std::string name ) {
+void User::set_name( std::string name ) {
 	this->_name = name;
+}
+
+void User::set_realname( std::string name ) {
+	this->_realname = name;
 }
 
 void User::set_fd(int fd)

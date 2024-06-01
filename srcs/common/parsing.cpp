@@ -3,6 +3,7 @@
 #include <exception>
 #include "numeric_replies.hpp"
 #include <ctime>
+#include <ostream>
 #include <sstream>
 #include <string>
 
@@ -14,27 +15,37 @@ void	init_client( Server& server, int reply_socket, std::string message) {
 	std::time_t result = std::time(NULL);
 	
 	//Parsing de message
+	std::istringstream msg(message);
+	std::string username;
+	std::getline(msg, username, ' ');
+	if (!server.nick_already_taken(username))
+		server.get_user_class(reply_socket).set_name(username); //set username
+	else
+		std::cout << "NICKNAME ALREADY TAKEN" << std::endl;
+
+	std::getline(msg, username, ' ');
+	server.get_user_class(reply_socket).set_realname(username); //set realname
 
 	msg_to_send.str("");
-	msg_to_send << RPL_WELCOME << server.find_user_from_fd(reply_socket)->get_name() << "\n";
+	msg_to_send << RPL_WELCOME << server.get_user_class(reply_socket).get_name() << "\n";
 	if (ft_send(reply_socket, msg_to_send.str()) == -1)
-		std::cerr << "[Server] Send error to client " << server.find_user_from_fd(reply_socket)->get_name() << ": " <<  strerror(errno)  << std::endl;
+		std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
 	msg_to_send.str("");
 	msg_to_send << RPL_YOURHOST << "\n";
 	if (ft_send(reply_socket, msg_to_send.str()) == -1)
-		std::cerr << "[Server] Send error to client " << server.find_user_from_fd(reply_socket)->get_name() << ": " <<  strerror(errno)  << std::endl;
+		std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
 	msg_to_send.str("");
 	msg_to_send << RPL_CREATED << std::asctime(std::localtime(&result)) << "\n";
 	if (ft_send(reply_socket, msg_to_send.str()) == -1)
-		std::cerr << "[Server] Send error to client " << server.find_user_from_fd(reply_socket)->get_name() << ": " <<  strerror(errno)  << std::endl;
+		std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
 	msg_to_send.str("");
 	msg_to_send << RPL_MYNFO << "\n"/*<available user modes><available channel modes> [<channel modes with a parameter>]*/;
 	if (ft_send(reply_socket, msg_to_send.str()) == -1)
-		std::cerr << "[Server] Send error to client " << server.find_user_from_fd(reply_socket)->get_name() << ": " <<  strerror(errno)  << std::endl;
+		std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
 	msg_to_send.str("");
 	msg_to_send << RPL_ISUPPORT << "\n"/* tous les parametres qu'on utilisera pour ISUPPORT */;
 	if (ft_send(reply_socket, msg_to_send.str()) == -1)
-		std::cerr << "[Server] Send error to client " << server.find_user_from_fd(reply_socket)->get_name() << ": " <<  strerror(errno)  << std::endl;
+		std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
 
 }
 
@@ -46,6 +57,9 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 
 	std::vector<std::string> rev_lines;
 	std::string rline;
+
+	std::cout << "User is: " << server.get_user_class(reply_socket).get_name() << std::endl;
+
 	while (std::getline(message, rline))
 	{
 		// Store the lines in reverse order.

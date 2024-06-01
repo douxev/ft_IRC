@@ -21,7 +21,6 @@ public:
 	void	manage_loop( void );
 	bool	nick_already_taken( std::string name ) const;
 	void	change_nick( User& user, std::string name );
-	User*	find_user_from_fd( int socketfd ) const ;
 	
 	bool	is_on_channel( std::string channel, std::string user );
 	bool	is_op( std::string channel, std::string user );
@@ -29,6 +28,7 @@ public:
 	void	join_channel( std::string name, std::string channel );
 	void	part_channel( std::string name, std::string channel, std::string part_message );
 
+	User&		get_user_class( int socketfd );
 	User&		get_user_class( std::string name );
 	Channel&	get_channel_class( std::string name );
 	std::string get_topic( std::string channel );
