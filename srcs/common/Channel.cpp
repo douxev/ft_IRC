@@ -63,20 +63,20 @@ void Channel::user_join( const User& user ) {
 
 	std::stringstream msg_to_send;
 	std::cout << msg_to_send.str();
-	this->send_channel(msg_to_send.str());
+	this->send_channel(0, msg_to_send.str());
 	ft_send(user.get_socketfd(), "TOPIC #" + this->get_name() + " :" + this->_topic);
 	this->send_userlist(user);
 }
 
 void Channel::user_quit( const User& user, const std::string quit_message ) {
 	this->_remove_connected_user(user);
-	this->send_channel(":" + user.get_name() + " PART #" + this->get_name() + 
+	this->send_channel(user.get_socketfd(), ":" + user.get_name() + " PART #" + this->get_name() + 
 						" :" + quit_message);
 }
 
 void Channel::user_kicked( const User& user, const User& target, std::string kick_message ) {
 	this->_remove_connected_user(user);
-	this->send_channel(":" + user.get_name() + " KICK #" + this->get_name() + 
+	this->send_channel(user.get_socketfd(), ":" + user.get_name() + " KICK #" + this->get_name() + 
 						" " + target.get_name() + " :" + kick_message);
 }
 
@@ -178,11 +178,12 @@ std::string Channel::get_topic( void ) {
 	return (this->_topic);
 }
 
-void Channel::send_channel( const std::string msg ) {
+void Channel::send_channel( int sender_fd, const std::string msg ) {
 	const size_t len = this->_connected_users.size();
 
 	for (size_t i = 0; i < len; i++) {
-		ft_send(this->_connected_users[i].get_socketfd(), msg);
+		if (this->_connected_users[i].get_socketfd() != sender_fd)
+			ft_send(this->_connected_users[i].get_socketfd(), msg);
 	}
 }
 

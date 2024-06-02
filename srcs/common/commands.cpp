@@ -74,7 +74,7 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 			try
 			{
 				Channel channel = server.get_channel_class(recipient);
-				channel.send_channel(msg);
+				channel.send_channel(reply_socket, msg);
 			}
 			catch(const std::exception& e) //ce n'est pas un channel non plus
 			{
@@ -210,7 +210,7 @@ void	kick_command( Server& server, int reply_socket, std::istringstream &message
 		if (!server.is_on_channel(channel, user)) //user not in channel
 			ft_send(reply_socket, "441 " + user + " " + channel + ":They Aren't on that channel");
 		else {
-			server.get_channel_class(channel).send_channel("NOTICE " + channel + kick_message);
+			server.get_channel_class(channel).send_channel(reply_socket, "NOTICE " + channel + kick_message);
 		}
 	}
 }
