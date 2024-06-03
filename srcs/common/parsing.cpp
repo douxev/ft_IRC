@@ -26,26 +26,33 @@ void	init_client( Server& server, int reply_socket, std::string message) {
 	std::getline(msg, username, ' ');
 	server.get_user_class(reply_socket).set_realname(username); //set realname
 
+
 	msg_to_send.str("");
 	msg_to_send << RPL_WELCOME << server.get_user_class(reply_socket).get_name() << " :Welcome to the GuiRaMa Internet Relay Chat Network\n";
 	if (ft_send(reply_socket, msg_to_send.str()) == -1)
 		std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
+
 	msg_to_send.str("");
-	msg_to_send << RPL_YOURHOST << "\n";
+	msg_to_send << RPL_YOURHOST << server.get_user_class(reply_socket).get_name() << " :Your host is irc.guirama.42, running on version Server version: 1.0 \n";
 	if (ft_send(reply_socket, msg_to_send.str()) == -1)
 		std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
+
 	msg_to_send.str("");
-	msg_to_send << RPL_CREATED << std::asctime(std::localtime(&result)) << "\n";
+	msg_to_send << RPL_CREATED << server.get_user_class(reply_socket).get_name() << " :This server was created " << std::asctime(std::localtime(&result)) << "\n";
 	if (ft_send(reply_socket, msg_to_send.str()) == -1)
 		std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
+
 	msg_to_send.str("");
-	msg_to_send << RPL_MYNFO << "\n"/*<available user modes><available channel modes> [<channel modes with a parameter>]*/;
+	msg_to_send << RPL_MYNFO << server.get_user_class(reply_socket).get_name() << " :irc.guirama.42 Server version: 1.0 \n"/*<available user modes><available channel modes> [<channel modes with a parameter>]*/;
 	if (ft_send(reply_socket, msg_to_send.str()) == -1)
 		std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
+
 	msg_to_send.str("");
-	msg_to_send << RPL_ISUPPORT << "\n"/* tous les parametres qu'on utilisera pour ISUPPORT */;
+	msg_to_send << RPL_ISUPPORT << server.get_user_class(reply_socket).get_name() << " :Des trucs... \n"/* tous les parametres qu'on utilisera pour ISUPPORT */;
 	if (ft_send(reply_socket, msg_to_send.str()) == -1)
 		std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
+
+	// ft_send(reply_socket, "NICK :" + server.get_user_class(reply_socket).get_name());
 
 }
 
@@ -58,24 +65,30 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 	std::vector<std::string> rev_lines;
 	std::string rline;
 
-	std::cout << "User is: " << server.get_user_class(reply_socket).get_name() << std::endl;
+	// std::cout << "User is: " << server.get_user_class(reply_socket).get_name() << std::endl;
 
 	while (std::getline(message, rline))
 	{
 		// Store the lines in reverse order.
 		rev_lines.insert(rev_lines.begin(), rline);
-		std::cout << rline << std::endl;
 	}
 	
 	// while (std::getline(message, line_str)) {
 	for (size_t i = 0; i < rev_lines.size(); i++) {
+
+
 		line_str = rev_lines[i];
 		std::istringstream line(line_str);
 		std::getline(line, cmd, ' ');
 		line.str(&line.str()[cmd.size() + 1]);
-		std::cout << "cmd: " << cmd;
-		std::cout << " | params: " << line.str() << std::endl;
 		try {
+
+
+			std::cout << "[RECV] "<< line.str() << std::endl;
+
+
+			if (!std::isprint(line.str().at(line.str().size() - 1)))
+				line.str(line.str().substr(0, line.str().size() - 1)); //remove weird char
 
 			if (cmd == "USER")
 				init_client(server, reply_socket, line.str());
