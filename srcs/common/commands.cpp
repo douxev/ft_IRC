@@ -152,39 +152,41 @@ void	names_command( Server& server, int reply_socket, std::istringstream &messag
 	(void) reply_socket;
 	(void) message;
 
-	int i = 0;	// le nombre de channel passés en parametre
-	User user(server.get_user_class(reply_socket));
+	server.get_channel_class(message.str()).send_userlist(server.get_user_class(reply_socket));
 
-	ft_send(reply_socket, "353 ");
-	for (std::string channel_name; std::getline(message, channel_name, ',');i++) {
-		try
-		{
-			server.get_channel_class(channel_name).send_userlist(user);
+	// int i = 0;	// le nombre de channel passés en parametre
+	// User user(server.get_user_class(reply_socket));
+
+	// // ft_send(reply_socket, "353 ");
+	// for (std::string channel_name; std::getline(message, channel_name, ',');i++) {
+	// 	try
+	// 	{
+	// 		server.get_channel_class(channel_name).send_userlist(user);
 			
-		}
-		catch(const std::exception& e)
-		{
-			//do_nothing
-		}
-		ft_send(reply_socket, channel_name);
-	}
-	if (!i ) //aucuns parametres
-	{
-		std::vector<Channel*> channel_list = server.get_channels_list();
-		for (int j = 0; channel_list[j] != channel_list.back(); j++)
-		{
-			ft_send(reply_socket, channel_list[j]->get_name());
-			channel_list[j]->send_userlist(user);
-		}
-		ft_send(reply_socket, "*:\n");
-		std::vector<User*> user_list = server.get_connected_user();
-		for (int j = 0; user_list[j] < user_list.back(); j++)
-		{
-			if (!user_list[j]->get_list_channel().size())
-				ft_send(reply_socket, user_list[j]->get_name());
-		}
-	}
-	ft_send(reply_socket, "366 ");
+	// 	}
+	// 	catch(const std::exception& e)
+	// 	{
+	// 		//do_nothing
+	// 	}
+	// 	ft_send(reply_socket, channel_name);
+	// }
+	// if (!i ) //aucuns parametres
+	// {
+	// 	std::vector<Channel*> channel_list = server.get_channels_list();
+	// 	for (int j = 0; channel_list[j] != channel_list.back(); j++)
+	// 	{
+	// 		ft_send(reply_socket, channel_list[j]->get_name());
+	// 		channel_list[j]->send_userlist(user);
+	// 	}
+	// 	ft_send(reply_socket, "*:\n");
+	// 	std::vector<User*> user_list = server.get_connected_user();
+	// 	for (int j = 0; user_list[j] < user_list.back(); j++)
+	// 	{
+	// 		if (!user_list[j]->get_list_channel().size())
+	// 			ft_send(reply_socket, user_list[j]->get_name());
+	// 	}
+	// }
+	// ft_send(reply_socket, "366 ");
 }
 
 //Liste tous les canaux 

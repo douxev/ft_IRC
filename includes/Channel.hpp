@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gbonnard <gbonnard@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 12:59:03 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/06/03 14:54:33 by gbonnard         ###   ########.fr       */
+/*   Updated: 2024/06/03 18:00:24 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ class Channel {
 
 public:
 
+	void send_channel( const std::string msg );
 	void send_channel( int sender_fd, const std::string msg );
 	void send_userlist( const User& user );
 

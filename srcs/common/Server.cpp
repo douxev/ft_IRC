@@ -255,7 +255,8 @@ void	Server::part_channel( std::string username, std::string channelname, std::s
 	User&		user = this->get_user_class(username);
 
 	channel.user_quit(user, part_message);
-	
+
+	//SEND MESSAGE
 }
 
 bool	Server::is_on_channel( std::string channel, std::string user ) {	
