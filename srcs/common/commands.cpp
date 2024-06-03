@@ -98,7 +98,7 @@ void	topic_command( Server& server, int reply_socket, std::istringstream &messag
 	// std::string	channel;
 	// std::string topic_message;
 	// std::getline(message, channel, ' ');
-	// std::string user = server.find_user_from_fd(reply_socket)->get_name();
+	// std::string user = server.get_user_class(reply_socket).get_name();
 
 	// if (server.is_op(channel, user))
 	// 	if (server.is_on_channel(channel, user)) {
