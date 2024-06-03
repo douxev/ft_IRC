@@ -280,7 +280,6 @@ void	Server::send_all( std::string msg ) {
 	}
 }
 
-
 void Server::set_topic( std::string channelname, std::string topic, std::string topic_whotime ) {
 
 		Channel &channel = this->get_channel_class(channelname);
