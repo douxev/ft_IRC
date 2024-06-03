@@ -9,6 +9,8 @@ Channel::Channel( void ) {
 	this->_name = "Unknown";
 	this->_modes.password = "";
 	this->_modes.limit = 0;
+	this->_topic = "";
+	this->_topic_whotime = "";
 }
 
 Channel::Channel( const std::string name, const User& user ) {
@@ -19,6 +21,8 @@ Channel::Channel( const std::string name, const User& user ) {
 	this->_modes.op_topic = 0;
 	this->_modes.password = "";
 	this->_modes.limit = 0;
+	this->_topic = "";
+	this->_topic_whotime = "";
 }
 
 Channel::Channel( const Channel& Other ):
@@ -146,6 +150,12 @@ void Channel::set_mode( t_enum_modes mode, size_t value ) {
 	default:
 		break;
 	}
+}
+
+bool Channel::topic_mode_is_off () {
+
+	if (this->_modes.op_topic = false)
+		return (true);
 }
 
 bool Channel::is_op( const User& user ) {

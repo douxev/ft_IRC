@@ -97,38 +97,54 @@ void	part_command( Server& server, int reply_socket, std::istringstream &message
 
 void	topic_command( Server& server, int reply_socket, std::istringstream &message ) {
 	// std::string	channel;
-	// std::string topic_message;
-	// std::string topic_whotime;
+	// std::string topic_whotime = "";
+	// std::stringstream msg_to_send;
 	// std::getline(message, channel, ' ');
 	// std::string user = server.get_user_class(reply_socket).get_name();
 	// std::time_t result = std::time(NULL);
 
-	// if (server.is_op(channel, user))
-	// 	if (server.is_on_channel(channel, user)) {
+	// if (server.is_on_channel(channel, user)) {
+	// 	if (server.is_op(channel, user) || server.get_channel_class(channel).topic_mode_is_off() == true) {
 	// 		if (message.str().empty()) {
 	// 			if (server.get_topic(channel).empty()) {
-	// 				std::cout << "No topic set for"  << channel << std::endl;
+	// 				msg_to_send << RPL_NOTOPIC <<  "No topic set for"  << channel << "/n";
+	// 					if (ft_send(reply_socket, msg_to_send.str()) == -1)
+	// 						std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
+	// 				if (topic_whotime != "") {
+	// 					msg_to_send.str("");
+	// 					msg_to_send << RPL_TOPICWHOTIME << "Topic set by " << topic_whotime << "/n";
+	// 				}
 	// 			}
 	// 			else {
-	// 				std::cout << server.get_topic(channel) << std::endl;
-	// 			}
-	// 			if (RPL_TOPICWHOTIME) {
-	// 				std::cout << "Topic set by " << RPL_TOPICWHOTIME << std::endl;
+	// 				msg_to_send << RPL_TOPIC << server.get_topic(channel) << "/n";
+	// 				if (ft_send(reply_socket, msg_to_send.str()) == -1)
+	// 					std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
+	// 				msg_to_send.str("");
+	// 				msg_to_send << RPL_TOPICWHOTIME << "Topic set by " << topic_whotime << "/n";
+	// 				if (ft_send(reply_socket, msg_to_send.str()) == -1)
+	// 					std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
 	// 			}
 	// 		}
 	// 		else {
-	// 			topic_whotime = RPL_TOPICWHOTIME + user + std::asctime(std::localtime(&result));
+	// 			topic_whotime = user + std::asctime(std::localtime(&result));
 	// 			server.set_topic(channel, message.str(), topic_whotime);
+	// 			msg_to_send << server.get_user_class(reply_socket).get_name() << "changed the topic of " << channel << "to: " << message.str() << "/n";
+	// 			server.send_channel(channel, reply_socket, msg_to_send.str());
+	// 			if (ft_send(reply_socket, msg_to_send.str()) == -1)
+	// 				std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
 	// 		}
-
-	// }
-	// else if (server.is_op(channel, user)) {
-	// 	if (server.is_on_channel(channel, user)) {
-
 	// 	}
-		
+	// else {
+	// 	if (server.channel_exist(channel) == true) {
+	// 		if (server.is_op(channel, user) || server.get_channel_class(channel).topic_mode_is_off() == true) {
+	// 			if (message.str().empty()) {
+	// 				if (server.get_topic(channel).empty()) {
+	// 				}
+	// 			}
+	// 		}
+	// 	}
 	// }
-
+	// }
 
 
 

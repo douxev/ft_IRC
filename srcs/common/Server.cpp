@@ -271,6 +271,11 @@ bool	Server::is_op( std::string channel, std::string user ) {
 		.is_op(this->get_user_class(user).get_name());
 } 
 
+bool	Server::channel_exist( std::string channel ) {
+	(void) channel;
+	return true;
+}
+
 std::string Server::get_topic( std::string channel ) {
 	return this->get_channel_class(channel).get_topic();
 }
@@ -279,4 +284,10 @@ void Server::set_topic( std::string channelname, std::string topic, std::string 
 
 		Channel &channel = this->get_channel_class(channelname);
 		channel.set_topic(topic, topic_whotime);
+}
+
+void Server::send_channel( std::string channelname, int sender_fd, std::string msg ) {
+
+	Channel &channel = this->get_channel_class(channelname);
+	channel.send_channel(sender_fd, msg);
 }

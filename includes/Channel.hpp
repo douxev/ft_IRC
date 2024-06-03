@@ -6,7 +6,7 @@
 /*   By: gbonnard <gbonnard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 12:59:03 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/06/03 14:54:33 by gbonnard         ###   ########.fr       */
+/*   Updated: 2024/06/03 17:57:57 by gbonnard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ public:
 	void set_mode( t_enum_modes mode, size_t value );
 	void set_mode( t_enum_modes mode, const User& user, const std::string target, bool value );
 	void set_mode( t_enum_modes mode, bool value, std::string password );
+	bool topic_mode_is_off ();
 
 	std::string get_name( void );
 	std::string get_topic( void );

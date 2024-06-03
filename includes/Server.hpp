@@ -24,6 +24,7 @@ public:
 	
 	bool	is_on_channel( std::string channel, std::string user );
 	bool	is_op( std::string channel, std::string user );
+	bool	channel_exist( std::string channel );
 
 	void	join_channel( std::string name, std::string channel );
 	void	part_channel( std::string name, std::string channel, std::string part_message );
@@ -33,6 +34,7 @@ public:
 	Channel&	get_channel_class( std::string name );
 	std::string get_topic( std::string channel );
 	void		set_topic( std::string channel, std::string topic, std::string topic_whotime );
+	void		send_channel( std::string channelname, int sender_fd, std::string msg );
 
 	std::vector<Channel*> get_channels_list();
 	std::vector<User*> get_connected_user();
