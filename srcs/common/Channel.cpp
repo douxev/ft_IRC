@@ -180,10 +180,10 @@ std::string Channel::get_topic( void ) {
 
 void Channel::send_channel( int sender_fd, const std::string msg ) {
 	const size_t len = this->_connected_users.size();
-
+	(void) sender_fd;
 	for (size_t i = 0; i < len; i++) {
-		if (this->_connected_users[i].get_socketfd() != sender_fd)
-			ft_send(this->_connected_users[i].get_socketfd(), msg);
+		//if (this->_connected_users[i].get_socketfd() != sender_fd)
+		ft_send(this->_connected_users[i].get_socketfd(), msg);
 	}
 }
 

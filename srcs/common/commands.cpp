@@ -72,20 +72,18 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 		{
 			User user = server.get_user_class(recipient);
 			std::cout << recipient << " is a user\n";
-			ft_send(user.get_socketfd(), msg);
+			ft_send(user.get_socketfd(), ":" + server.get_user_class(reply_socket).get_name() + " PRIVMSG " + recipient + " :" + msg);
 		}
 		catch(const std::exception& e)	//ce n'est pas un user
 		{
-			std::cout << recipient << " isn't a user\n";
 			try
 			{
 				Channel channel = server.get_channel_class(recipient);
 				std::cout << recipient << " is a channel\n";
-				channel.send_channel(reply_socket, msg);
+				channel.send_channel(reply_socket, ":" + server.get_user_class(reply_socket).get_name() + " PRIVMSG " + recipient + " :" + msg);
 			}
 			catch(const std::exception& e) //ce n'est pas un channel non plus
 			{
-				std::cout << recipient << " isn't a channel\n";
 				ft_send(reply_socket, "401 : " + recipient + " :No such nick/channel");
 			}
 		}
