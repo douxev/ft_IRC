@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rastie <rastie@student.42.fr>              +#+  +:+       +#+        */
+/*   By: gbonnard <gbonnard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 12:59:03 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/06/02 12:03:20 by rastie           ###   ########.fr       */
+/*   Updated: 2024/06/03 14:54:33 by gbonnard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ public:
 
 	std::string get_name( void );
 	std::string get_topic( void );
+	void set_topic( std::string topic, std::string topic_whotime );
 	
 
 	Channel( const std::string name, const User& user );
@@ -74,6 +75,7 @@ private:
 	
 	t_modes						_modes;
 	std::string					_topic;
+	std::string					_topic_whotime;
 	std::string					_name;
 	std::vector<std::string> 	_op_users;
 	std::vector<User> 			_connected_users;

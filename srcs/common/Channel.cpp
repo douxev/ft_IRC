@@ -196,3 +196,8 @@ bool Channel::is_on_channel( const std::string username ) {
 	}
 	return (false);
 }
+
+void Channel::set_topic( std::string topic, std::string topic_whotime ) {
+	this->_topic = topic;
+	this->_topic_whotime = topic_whotime;
+}

@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include "Server.hpp"
+#include <ctime>
 
 void	pong(int reply_socket, std::string message) {
 	ft_send(reply_socket, "PONG " + message.substr(5));
@@ -97,21 +98,27 @@ void	part_command( Server& server, int reply_socket, std::istringstream &message
 void	topic_command( Server& server, int reply_socket, std::istringstream &message ) {
 	// std::string	channel;
 	// std::string topic_message;
+	// std::string topic_whotime;
 	// std::getline(message, channel, ' ');
 	// std::string user = server.get_user_class(reply_socket).get_name();
+	// std::time_t result = std::time(NULL);
 
 	// if (server.is_op(channel, user))
 	// 	if (server.is_on_channel(channel, user)) {
 	// 		if (message.str().empty()) {
 	// 			if (server.get_topic(channel).empty()) {
-	// 				std::cout << "No topic set for " << channel << std::endl;
+	// 				std::cout << "No topic set for"  << channel << std::endl;
 	// 			}
 	// 			else {
 	// 				std::cout << server.get_topic(channel) << std::endl;
 	// 			}
-	// 			if (RPL_TOPICWHOTIME)
+	// 			if (RPL_TOPICWHOTIME) {
 	// 				std::cout << "Topic set by " << RPL_TOPICWHOTIME << std::endl;
-
+	// 			}
+	// 		}
+	// 		else {
+	// 			topic_whotime = RPL_TOPICWHOTIME + user + std::asctime(std::localtime(&result));
+	// 			server.set_topic(channel, message.str(), topic_whotime);
 	// 		}
 
 	// }

@@ -270,3 +270,9 @@ bool	Server::is_op( std::string channel, std::string user ) {
 std::string Server::get_topic( std::string channel ) {
 	return this->get_channel_class(channel).get_topic();
 }
+
+void Server::set_topic( std::string channelname, std::string topic, std::string topic_whotime ) {
+
+		Channel &channel = this->get_channel_class(channelname);
+		channel.set_topic(topic, topic_whotime);
+}
