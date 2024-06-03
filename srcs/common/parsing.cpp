@@ -72,10 +72,7 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 		line_str = rev_lines[i];
 		std::istringstream line(line_str);
 		std::getline(line, cmd, ' ');
-		if (line.str()[cmd.size() + 1] == '#')
-			line.str(&line.str()[cmd.size() + 2]);
-		else
-			line.str(&line.str()[cmd.size() + 1]);
+		line.str(&line.str()[cmd.size() + 1]);
 		std::cout << "cmd: " << cmd;
 		std::cout << " | params: " << line.str() << std::endl;
 		try {
