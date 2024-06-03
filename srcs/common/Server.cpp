@@ -2,6 +2,7 @@
 #include "error_numeric.hpp"
 #include "ft_irc.hpp"
 #include "exceptions.hpp"
+#include <cctype>
 #include <cstddef>
 #include <iostream>
 #include <sstream>
@@ -236,6 +237,9 @@ User&	Server::get_user_class( int socketfd ) {
 void	Server::join_channel( std::string username, std::string channelname ) {
 	User&		user = this->get_user_class(username);
 
+	if (!std::isprint(channelname.at(channelname.size() - 1)))
+		channelname.erase(channelname.end() - 1); //remove weird char
+
 	try {
 		Channel&	channel = this->get_channel_class(channelname);
 		channel.user_join(user);
@@ -244,7 +248,7 @@ void	Server::join_channel( std::string username, std::string channelname ) {
 		Channel *new_channel = new Channel(channelname, user);
 		this->_active_channels.push_back(new_channel);
 		new_channel->force_op(user);
-		std::cout << "Created channel #" << this->get_channel_class(channelname).get_name() << std::endl;
+		std::cout << "Created channel " << this->get_channel_class(channelname).get_name() << std::endl;
 		return ;
 	}
 }
