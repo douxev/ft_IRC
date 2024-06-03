@@ -43,7 +43,7 @@ void	join_command( Server& server, int reply_socket, std::istringstream &message
 void	privmsg_command( Server& server, int reply_socket, std::istringstream &message ) {
 
 	if (find(message.str().begin(), message.str().end(), ':') == message.str().end()) {	//detection de l'absence de cible
-		ft_send(reply_socket, "411: No recipient given (PRIVMSG " + message.str() + " )");
+		ft_send(reply_socket, "411 : No recipient given (PRIVMSG " + message.str() + " )");
 		return ;
 	}
 
@@ -52,7 +52,7 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 	std::string msg;
 	std::getline(message, msg);
 	if (!msg.size()) {
-		ft_send(reply_socket, "412: No text to send");
+		ft_send(reply_socket, "412 : No text to send");
 		return ;
 	}
 
@@ -70,7 +70,7 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 		}
 		catch(const std::exception& e)	//ce n'est pas un user
 		{
-			std::cout << recipient << "isn't a user\n";
+			std::cout << recipient << " isn't a user\n";
 			try
 			{
 				Channel channel = server.get_channel_class(recipient);
@@ -79,8 +79,8 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 			}
 			catch(const std::exception& e) //ce n'est pas un channel non plus
 			{
-				std::cout << recipient << "isn't a channel\n";
-				ft_send(reply_socket, "401: " + recipient + " :No such nick/channel");
+				std::cout << recipient << " isn't a channel\n";
+				ft_send(reply_socket, "401 : " + recipient + " :No such nick/channel");
 			}
 		}
 	}
