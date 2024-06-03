@@ -74,7 +74,8 @@ void	topic_command( Server& server, int reply_socket, std::istringstream &messag
 	// 			else {
 	// 				std::cout << server.get_topic(channel) << std::endl;
 	// 			}
-	// 			std::cout << "Topic set by " << RPL_TOPICWHOTIME << std::endl;
+	// 			if (RPL_TOPICWHOTIME)
+	// 				std::cout << "Topic set by " << RPL_TOPICWHOTIME << std::endl;
 
 	// 		}
 

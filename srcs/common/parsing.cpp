@@ -13,7 +13,7 @@ void	init_client( Server& server, int reply_socket, std::string message) {
 	std::stringstream msg_to_send;
 	std::time_t result = std::time(NULL);
 	
-	//Parsing de message
+	//Parsing de message user - nickname - ip adress
 	std::cout << "USER" << std::endl;
 	msg_to_send.str("");
 	msg_to_send << RPL_WELCOME << server.find_user_from_fd(reply_socket)->get_name() << "\n";
