@@ -27,7 +27,7 @@ void	init_client( Server& server, int reply_socket, std::string message) {
 	server.get_user_class(reply_socket).set_realname(username); //set realname
 
 	msg_to_send.str("");
-	msg_to_send << RPL_WELCOME << server.get_user_class(reply_socket).get_name() << "\n";
+	msg_to_send << RPL_WELCOME << server.get_user_class(reply_socket).get_name() << " :Welcome to the GuiRaMa Internet Relay Chat Network\n";
 	if (ft_send(reply_socket, msg_to_send.str()) == -1)
 		std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
 	msg_to_send.str("");
