@@ -72,10 +72,10 @@ bool	Server::nick_already_taken( std::string name ) const {
 void	Server::change_nick( User& user, std::string name ) {
 	if (nick_already_taken(name))
 		throw NickAlreadyTakenException();
-	user.change_name(name);
+	user.set_name(name);
 }
 
-User&	Server::_get_user_class( std::string name ) {
+User&	Server::get_user_class( std::string name ) {
 	const size_t len = this->_connected_users.size();
 
 	for (size_t i = 0; i < len; i++) {
@@ -85,7 +85,7 @@ User&	Server::_get_user_class( std::string name ) {
 	throw NoSuchNickException();
 }
 
-Channel&	Server::_get_channel_class( std::string name ) {
+Channel&	Server::get_channel_class( std::string name ) {
 	const size_t len = this->_active_channels.size();
 
 	for (size_t i = 0; i < len; i++) {
@@ -178,7 +178,7 @@ void Server::_accept_connection()
 	
 	name << "Client" << client_fd;
 	User *client = new User();
-	client->change_name(name.str());
+	client->set_name(name.str());
 	client->set_fd(client_fd);
 	_connected_users.push_back(client);
 	
@@ -200,18 +200,17 @@ void Server::_read_data(int i)
 		_sockets_fds[i] = _sockets_fds[_nb_sockets - 1];
 		_nb_sockets--;
 		try {
-			User *client = find_user_from_fd(sender_fd);
 			//user_quit(client);
-			std::vector<User*>::iterator it = find(_connected_users.begin(), _connected_users.end(), client);
+			std::vector<User*>::iterator it = find(_connected_users.begin(), _connected_users.end(), 
+													&get_user_class(sender_fd));
 			_connected_users.erase(it);
-			delete client;
 		}
 		catch(const std::exception& e)
 		{
 			std::cerr << e.what() << "\n";
 		}
 	} else {
-		std::cout << "[Server] Got message from client " << sender_fd << ": " << buffer;
+		std::cout << "[" << sender_fd << "] sent: " << buffer;
 		// //Parsing
 		std::istringstream stream(buffer);
 		parse_commands(*this, sender_fd, stream);
@@ -224,48 +223,50 @@ void Server::_read_data(int i)
 		// }
 	}
 }
-User*	Server::find_user_from_fd( int socketfd ) const {
+User&	Server::get_user_class( int socketfd ) {
 	const size_t len = this->_connected_users.size();
 
 	for (size_t i = 0; i < len; i++) {
 		if (this->_connected_users[i]->get_socketfd() == socketfd)
-			return (this->_connected_users[i]);
+			return (*this->_connected_users[i]);
 	}
 	throw UserNotFoundException();
 }
 
 void	Server::join_channel( std::string username, std::string channelname ) {
-	User&		user = this->_get_user_class(username);
+	User&		user = this->get_user_class(username);
+
 	try {
-		Channel&	channel = this->_get_channel_class(channelname);
+		Channel&	channel = this->get_channel_class(channelname);
 		channel.user_join(user);
 	}
-	catch (ChannelNotFoundException e) {
+	catch (NoSuchChannelException& e) {
 		Channel *new_channel = new Channel(channelname, user);
 		this->_active_channels.push_back(new_channel);
 		new_channel->force_op(user);
+		std::cout << "Created channel #" << this->get_channel_class(channelname).get_name() << std::endl;
 		return ;
 	}
 }
 
 void	Server::part_channel( std::string username, std::string channelname, std::string part_message ) {
-	Channel&	channel = this->_get_channel_class(channelname);
-	User&		user = this->_get_user_class(username);
+	Channel&	channel = this->get_channel_class(channelname);
+	User&		user = this->get_user_class(username);
 
 	channel.user_quit(user, part_message);
 	
 }
 
 bool	Server::is_on_channel( std::string channel, std::string user ) {	
-	return this->_get_channel_class(channel)
-		.is_on_channel(this->_get_user_class(user).get_name());
+	return this->get_channel_class(channel)
+		.is_on_channel(this->get_user_class(user).get_name());
 }
 
 bool	Server::is_op( std::string channel, std::string user ) {
-	return this->_get_channel_class(channel)
-		._is_op(this->_get_user_class(user).get_name());
+	return this->get_channel_class(channel)
+		.is_op(this->get_user_class(user).get_name());
 } 
 
 std::string Server::get_topic( std::string channel ) {
-	return this->_get_channel_class(channel).get_topic();
+	return this->get_channel_class(channel).get_topic();
 }

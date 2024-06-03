@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gbonnard <gbonnard@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rastie <rastie@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 12:59:03 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/05/31 17:57:56 by gbonnard         ###   ########.fr       */
+/*   Updated: 2024/06/02 12:03:20 by rastie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ class Channel {
 
 public:
 
-	void send_channel( const std::string msg );
+	void send_channel( int sender_fd, const std::string msg );
 	void send_userlist( const User& user );
 
 
@@ -63,8 +63,8 @@ public:
 	bool operator==( const Channel& Other );
 	Channel( const Channel& copied );
 	~Channel();
-	bool _is_op( const User& name );
-	bool _is_op( const std::string user );
+	bool is_op( const User& name );
+	bool is_op( const std::string user );
 
 private:
 

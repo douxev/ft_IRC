@@ -5,12 +5,10 @@
 #include "Server.hpp"
 
 void	pong(int reply_socket, std::string message) {
-	std::cout << "PING\n";
 	ft_send(reply_socket, "PONG " + message.substr(5));
 }
 
 void	motd_command( Server& server, int reply_socket ) {
-	std::cout << "MOTD\n";
 	if (server.get_motd().empty())
 		ft_send(reply_socket, "422 :No MOTD set");
 	else
@@ -19,18 +17,16 @@ void	motd_command( Server& server, int reply_socket ) {
 }
 
 void	version_command( int reply_socket ) {
-	std::cout << "Version\n";
 	ft_send(reply_socket, RPL_VERSION);
 	ft_send(reply_socket, RPL_ISUPPORT);
 }
 
 void	nick_command( Server& server, int reply_socket, std::string message ) {
-	std::cout << "NICK\n";
-	server.change_nick(*server.find_user_from_fd(reply_socket), message.substr(5));
+	//checks needed here change if not already taken by SOMEONE ELSE
+	server.change_nick(server.get_user_class(reply_socket), message);
 }
 
 void	cap_command( Server& server, int reply_socket, std::istringstream &message ) {
-	std::cout << "CAP\n";
 	(void) server;
 	std::string	param;
 	std::getline(message, param, ' ');
@@ -40,23 +36,62 @@ void	cap_command( Server& server, int reply_socket, std::istringstream &message 
 }
 
 void	join_command( Server& server, int reply_socket, std::istringstream &message ) {
-	std::cout << "JOIN\n";
-	server.join_channel(server.find_user_from_fd(reply_socket)->get_name(), 
+	server.join_channel(server.get_user_class(reply_socket).get_name(), 
 						message.str());
 }
 
 void	privmsg_command( Server& server, int reply_socket, std::istringstream &message ) {
-	(void) server;
-	(void) reply_socket;
-	(void) message;
+
+	if (find(message.str().begin(), message.str().end(), ':') == message.str().end()) {	//detection de l'absence de cible
+		ft_send(reply_socket, "411: No recipient given (PRIVMSG " + message.str() + " )");
+		return ;
+	}
+
+	std::string recipients_list;
+	std::getline(message, recipients_list, ':');
+	std::string msg;
+	std::getline(message, msg);
+	if (!msg.size()) {
+		ft_send(reply_socket, "412: No text to send");
+		return ;
+	}
+
+	std::istringstream stream;
+	stream.str(recipients_list);
+	for(std::string recipient; std::getline(stream, recipient, ',');) {
+		if (recipient[recipient.size() - 1] == ' ')
+			recipient.erase(recipient.end() - 1); //-1 pour enlever l'espace
+		std::cout << "recipient name: \"" << recipient << "\"\n";
+		try
+		{
+			User user = server.get_user_class(recipient);
+			std::cout << recipient << " is a user\n";
+			ft_send(user.get_socketfd(), msg);
+		}
+		catch(const std::exception& e)	//ce n'est pas un user
+		{
+			std::cout << recipient << "isn't a user\n";
+			try
+			{
+				Channel channel = server.get_channel_class(recipient);
+				std::cout << recipient << " is a channel\n";
+				channel.send_channel(reply_socket, msg);
+			}
+			catch(const std::exception& e) //ce n'est pas un channel non plus
+			{
+				std::cout << recipient << "isn't a channel\n";
+				ft_send(reply_socket, "401: " + recipient + " :No such nick/channel");
+			}
+		}
+	}
+	
 }
 
 void	part_command( Server& server, int reply_socket, std::istringstream &message ) {
 	std::string	channel;
 
-	std::cout << "PART\n";
 	std::getline(message, channel, ' ');
-	server.part_channel(server.find_user_from_fd(reply_socket)->get_name(), channel , message.str());
+	server.part_channel(server.get_user_class(reply_socket).get_name(), channel , message.str());
 }
 
 void	topic_command( Server& server, int reply_socket, std::istringstream &message ) {
@@ -95,7 +130,6 @@ void	topic_command( Server& server, int reply_socket, std::istringstream &messag
 	(void) reply_socket;
 	(void) message;
 
-	std::cout << "TOPIC\n";
 }
 
 //NAMES => list all channel and their occupant, then all users outside any channel, under the "channel *"
@@ -106,15 +140,15 @@ void	names_command( Server& server, int reply_socket, std::istringstream &messag
 	(void) reply_socket;
 	(void) message;
 
-	std::cout << "NAMES\n";
-	int i = 0;
-	User *user = server.find_user_from_fd(reply_socket);
+	int i = 0;	// le nombre de channel passés en parametre
+	User user(server.get_user_class(reply_socket));
 
 	ft_send(reply_socket, "353 ");
-	for (std::string channel_name; std::getline(message, channel_name, ','); i++) {
+	for (std::string channel_name; std::getline(message, channel_name, ',');i++) {
 		try
 		{
-			server._get_channel_class(channel_name).send_userlist(*user);;
+			server.get_channel_class(channel_name).send_userlist(user);
+			
 		}
 		catch(const std::exception& e)
 		{
@@ -122,13 +156,13 @@ void	names_command( Server& server, int reply_socket, std::istringstream &messag
 		}
 		ft_send(reply_socket, channel_name);
 	}
-	if (!i) //aucun parametres
+	if (!i ) //aucuns parametres
 	{
 		std::vector<Channel*> channel_list = server.get_channels_list();
 		for (int j = 0; channel_list[j] != channel_list.back(); j++)
 		{
 			ft_send(reply_socket, channel_list[j]->get_name());
-			channel_list[j]->send_userlist(*user);
+			channel_list[j]->send_userlist(user);
 		}
 		ft_send(reply_socket, "*:\n");
 		std::vector<User*> user_list = server.get_connected_user();
@@ -146,14 +180,12 @@ void	list_command( Server& server, int reply_socket, std::istringstream &message
 	(void) server;
 	(void) reply_socket;
 	(void) message;
-	std::cout << "LIST\n";
 }
 
 void	invite_command( Server& server, int reply_socket, std::istringstream &message ) {
 	(void) server;
 	(void) reply_socket;
 	(void) message;
-	std::cout << "INVITE\n";
 
 }
 
@@ -163,26 +195,25 @@ void	kick_command( Server& server, int reply_socket, std::istringstream &message
 	std::string user;
 	std::string kick_message;
 
-	std::cout << "KICK\n";
 	std::getline(message, channel, ' ');
 	std::getline(message, users_str, ' ');
 	std::istringstream users(users_str);
 	if (message.str().empty())
-		kick_message = "kicked from channel by " + server.find_user_from_fd(reply_socket)->get_name();
+		kick_message = "kicked from channel by " + server.get_user_class(reply_socket).get_name();
 	else
 		kick_message = message.str();
 
 	if (users_str.empty())
 		throw NeedMoreParamsException();
-	if (!(server._get_channel_class(channel))._is_op(server.find_user_from_fd(reply_socket)->get_name()))
+	if (!(server.get_channel_class(channel)).is_op(server.get_user_class(reply_socket).get_name()))
 		throw ChanOPrivsNeededException();
-	if (!server.is_on_channel(channel, server.find_user_from_fd(reply_socket)->get_name()))
+	if (!server.is_on_channel(channel, server.get_user_class(reply_socket).get_name()))
 		throw NotOnChannelException();
 	while (std::getline(users, user, ',')) {
 		if (!server.is_on_channel(channel, user)) //user not in channel
 			ft_send(reply_socket, "441 " + user + " " + channel + ":They Aren't on that channel");
 		else {
-			server._get_channel_class(channel).send_channel("NOTICE " + channel + kick_message);
+			server.get_channel_class(channel).send_channel(reply_socket, "NOTICE " + channel + kick_message);
 		}
 	}
 }
@@ -191,5 +222,4 @@ void	quit_command( Server& server, int reply_socket, std::istringstream &message
 	(void) server;
 	(void) reply_socket;
 	(void) message;
-	std::cout << "QUIT\n";
 }

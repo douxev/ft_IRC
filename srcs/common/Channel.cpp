@@ -50,7 +50,7 @@ void	Channel::send_userlist( const User& user ) {
 	msg_to_send << "353 " + this->get_name() + " ";
 	const size_t len = this->_connected_users.size();
 	for (size_t i = 0; i < len; i++) {
-		if (this->_is_op(this->_connected_users[i]))
+		if (this->is_op(this->_connected_users[i]))
 			msg_to_send << "@";
 		msg_to_send << this->_connected_users[i].get_name() << " ";
 	}
@@ -62,22 +62,21 @@ void Channel::user_join( const User& user ) {
 	this->_add_connected_user(user);
 
 	std::stringstream msg_to_send;
-	msg_to_send << ":" << user.get_name() << " JOIN #" << this->_name;
 	std::cout << msg_to_send.str();
-	this->send_channel(msg_to_send.str());
+	this->send_channel(0, msg_to_send.str());
 	ft_send(user.get_socketfd(), "TOPIC #" + this->get_name() + " :" + this->_topic);
 	this->send_userlist(user);
 }
 
 void Channel::user_quit( const User& user, const std::string quit_message ) {
 	this->_remove_connected_user(user);
-	this->send_channel(":" + user.get_name() + " PART #" + this->get_name() + 
+	this->send_channel(user.get_socketfd(), ":" + user.get_name() + " PART #" + this->get_name() + 
 						" :" + quit_message);
 }
 
 void Channel::user_kicked( const User& user, const User& target, std::string kick_message ) {
 	this->_remove_connected_user(user);
-	this->send_channel(":" + user.get_name() + " KICK #" + this->get_name() + 
+	this->send_channel(user.get_socketfd(), ":" + user.get_name() + " KICK #" + this->get_name() + 
 						" " + target.get_name() + " :" + kick_message);
 }
 
@@ -103,8 +102,8 @@ void Channel::change_role( const User& user, const User& target, bool is_op ) {
 void Channel::set_mode( t_enum_modes mode, const User& user, const std::string target, bool value ) {
 	if (mode != OP)
 		return ;
-	if (this->_is_op(user)) {
-		if (value == false && this->_is_op(target)) {
+	if (this->is_op(user)) {
+		if (value == false && this->is_op(target)) {
 			const size_t len = this->_op_users.size();
 			for (size_t i = 0; i < len; i++) {
 				if (this->_op_users[i] == target) {
@@ -149,7 +148,7 @@ void Channel::set_mode( t_enum_modes mode, size_t value ) {
 	}
 }
 
-bool Channel::_is_op( const User& user ) {
+bool Channel::is_op( const User& user ) {
 	const size_t len = this->_op_users.size();
 	for (size_t i = 0; i < len; i++) {
 		if (this->_op_users[i] == user.get_name())
@@ -162,7 +161,7 @@ void	Channel::force_op( const User& user) {
 	this->_op_users.push_back(user.get_name());
 }
 
-bool Channel::_is_op( const std::string user ) {
+bool Channel::is_op( const std::string user ) {
 	const size_t len = this->_op_users.size();
 	for (size_t i = 0; i < len; i++) {
 		if (this->_op_users[i] == user)
@@ -179,11 +178,12 @@ std::string Channel::get_topic( void ) {
 	return (this->_topic);
 }
 
-void Channel::send_channel( const std::string msg ) {
+void Channel::send_channel( int sender_fd, const std::string msg ) {
 	const size_t len = this->_connected_users.size();
 
 	for (size_t i = 0; i < len; i++) {
-		ft_send(this->_connected_users[i].get_socketfd(), msg);
+		if (this->_connected_users[i].get_socketfd() != sender_fd)
+			ft_send(this->_connected_users[i].get_socketfd(), msg);
 	}
 }
 
