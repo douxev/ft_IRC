@@ -35,6 +35,12 @@ int		create_server_socket( short port ) {
 		std::cerr << "[Server] Socket error: " << strerror(errno) << std::endl;
 		return (-1);
 	}
+	const int enable = 1;
+	if (setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0) {
+		std::cerr << "[Server] Socket option error: " << strerror(errno) << std::endl;
+		return (-1);
+	}
+
 	std::cout << "[Server] Created server socket fd: " << socket_fd << std::endl;
 	fcntl(socket_fd, F_SETFL, O_NONBLOCK);
 	if (bind(socket_fd, (const struct sockaddr *)(&sa), sizeof(sa)))
