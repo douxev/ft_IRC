@@ -64,57 +64,57 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 	{
 		// Store the lines in reverse order.
 		rev_lines.insert(rev_lines.begin(), rline);
+		std::cout << rline << std::endl;
 	}
 	
 	// while (std::getline(message, line_str)) {
 	for (size_t i = 0; i < rev_lines.size(); i++) {
-
-	line_str = rev_lines[i];
-	std::istringstream line(line_str);
-	std::getline(line, cmd, ' ');
-	if (line.str()[cmd.size() + 1] == '#')
-		line.str(&line.str()[cmd.size() + 2]);
-	else
-		line.str(&line.str()[cmd.size() + 1]);
-	std::cout << "cmd: " << cmd;
-	std::cout << " | params: " << line.str() << std::endl;
-	try {
-
-		if (cmd == "USER")
-			init_client(server, reply_socket, line.str());
-		else if (cmd == "PING")
-			pong(reply_socket, line.str());
-		else if (cmd == "MOTD")
-			motd_command(server, reply_socket);
-		else if (cmd == "VERSION")
-			version_command(reply_socket);
-		else if (cmd == "NICK")
-			nick_command(server, reply_socket, line.str());
-		else if (cmd == "CAP")
-			cap_command(server, reply_socket, line);
-		else if (cmd == "JOIN")
-			join_command(server, reply_socket, line);
-		else if (cmd == "PRIVMSG")
-			privmsg_command(server, reply_socket, line);
-		else if (cmd == "PART")
-			part_command(server, reply_socket, line);
-		else if (cmd == "TOPIC")
-			topic_command(server, reply_socket, line);
-		else if (cmd == "NAMES")
-			names_command(server, reply_socket, line);
-		else if (cmd == "LIST")
-			list_command(server, reply_socket, line);
-		else if (cmd == "INVITE")
-			invite_command(server, reply_socket, line);
-		else if (cmd == "KICK")
-			kick_command(server, reply_socket, line);
-		else if (cmd == "QUIT")
-			quit_command(server, reply_socket, line);
+		line_str = rev_lines[i];
+		std::istringstream line(line_str);
+		std::getline(line, cmd, ' ');
+		if (line.str()[cmd.size() + 1] == '#')
+			line.str(&line.str()[cmd.size() + 2]);
 		else
-			return ;
-	}
-	catch (std::exception& e) {
-		std::cout << e.what() << std::endl;
-	}
+			line.str(&line.str()[cmd.size() + 1]);
+		std::cout << "cmd: " << cmd;
+		std::cout << " | params: " << line.str() << std::endl;
+		try {
+
+			if (cmd == "USER")
+				init_client(server, reply_socket, line.str());
+			else if (cmd == "PING")
+				pong(reply_socket, line.str());
+			else if (cmd == "MOTD")
+				motd_command(server, reply_socket);
+			else if (cmd == "VERSION")
+				version_command(reply_socket);
+			else if (cmd == "NICK")
+				nick_command(server, reply_socket, line.str());
+			else if (cmd == "CAP")
+				cap_command(server, reply_socket, line);
+			else if (cmd == "JOIN")
+				join_command(server, reply_socket, line);
+			else if (cmd == "PRIVMSG")
+				privmsg_command(server, reply_socket, line);
+			else if (cmd == "PART")
+				part_command(server, reply_socket, line);
+			else if (cmd == "TOPIC")
+				topic_command(server, reply_socket, line);
+			else if (cmd == "NAMES")
+				names_command(server, reply_socket, line);
+			else if (cmd == "LIST")
+				list_command(server, reply_socket, line);
+			else if (cmd == "INVITE")
+				invite_command(server, reply_socket, line);
+			else if (cmd == "KICK")
+				kick_command(server, reply_socket, line);
+			else if (cmd == "QUIT")
+				quit_command(server, reply_socket, line);
+			else
+				return ;
+		}
+		catch (std::exception& e) {
+			std::cout << e.what() << std::endl;
+		}
 	}
 }
