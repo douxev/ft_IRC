@@ -25,6 +25,7 @@ public:
 	bool	is_on_channel( std::string channel, std::string user );
 	bool	is_op( std::string channel, std::string user );
 
+	void	send_all( std::string msg );
 	void	join_channel( std::string name, std::string channel );
 	void	part_channel( std::string name, std::string channel, std::string part_message );
 

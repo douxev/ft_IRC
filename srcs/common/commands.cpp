@@ -23,7 +23,12 @@ void	version_command( int reply_socket ) {
 
 void	nick_command( Server& server, int reply_socket, std::string message ) {
 	//checks needed here change if not already taken by SOMEONE ELSE
+	std::string oldnick = server.get_user_class(reply_socket).get_name();
+
 	server.change_nick(server.get_user_class(reply_socket), message);
+
+	server.send_all(":" + oldnick + " NICK " + server.get_user_class(reply_socket).get_name());
+	std::cout << ":" + oldnick + " NICK " + server.get_user_class(reply_socket).get_name() << std::endl;
 }
 
 void	cap_command( Server& server, int reply_socket, std::istringstream &message ) {

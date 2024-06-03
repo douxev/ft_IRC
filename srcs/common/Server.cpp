@@ -237,9 +237,6 @@ User&	Server::get_user_class( int socketfd ) {
 void	Server::join_channel( std::string username, std::string channelname ) {
 	User&		user = this->get_user_class(username);
 
-	if (!std::isprint(channelname.at(channelname.size() - 1)))
-		channelname.erase(channelname.end() - 1); //remove weird char
-
 	try {
 		Channel&	channel = this->get_channel_class(channelname);
 		channel.user_join(user);
@@ -273,4 +270,12 @@ bool	Server::is_op( std::string channel, std::string user ) {
 
 std::string Server::get_topic( std::string channel ) {
 	return this->get_channel_class(channel).get_topic();
+}
+
+void	Server::send_all( std::string msg ) {
+	const size_t len = this->_connected_users.size();
+
+	for (size_t i = 0; i < len; i++) {
+		ft_send(this->_connected_users[i]->get_socketfd(), msg);
+	}
 }
