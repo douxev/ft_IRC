@@ -7,5 +7,8 @@
 # define RPL_YOURHOST "002 : Your host is irc.guirama.42, running on version Server version: 1.0 "
 # define RPL_CREATED "003 : This server was created "
 # define RPL_MYNFO "004 : irc.guirama.42 Server version: 1.0 "
+// # define RPL_TOPIC "332 : "
+// # define RPL_TOPICWHOTIME "333 : "
+// # define RPL_NOTOPIC "331 : No topic set for "
 
 #endif

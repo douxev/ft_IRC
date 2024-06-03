@@ -279,3 +279,10 @@ void	Server::send_all( std::string msg ) {
 		ft_send(this->_connected_users[i]->get_socketfd(), msg);
 	}
 }
+
+
+void Server::set_topic( std::string channelname, std::string topic, std::string topic_whotime ) {
+
+		Channel &channel = this->get_channel_class(channelname);
+		channel.set_topic(topic, topic_whotime);
+}
