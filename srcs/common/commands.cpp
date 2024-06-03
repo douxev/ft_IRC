@@ -6,15 +6,15 @@
 #include <ctime>
 
 void	pong(int reply_socket, std::string message) {
-	ft_send(reply_socket, "PONG " + message.substr(5));
+	ft_send(reply_socket, "PONG " + message + "\n");
 }
 
 void	motd_command( Server& server, int reply_socket ) {
 	if (server.get_motd().empty())
-		ft_send(reply_socket, "422 :No MOTD set");
+		ft_send(reply_socket, "422 " + server.get_user_class(reply_socket).get_name() + " :No MOTD set");
 	else
-		ft_send(reply_socket, "375 :Message of the Day \n372 :" + 
-				server.get_motd() + "\n376 :End of MOTD.");
+		ft_send(reply_socket, "375 " + server.get_user_class(reply_socket).get_name() + " :Message of the Day \n372 :" + 
+				server.get_motd() + "\n376 " + server.get_user_class(reply_socket).get_name() + " :End of MOTD.");
 }
 
 void	version_command( int reply_socket ) {
@@ -28,17 +28,19 @@ void	nick_command( Server& server, int reply_socket, std::string message ) {
 
 	server.change_nick(server.get_user_class(reply_socket), message);
 
-	server.send_all(":" + oldnick + " NICK " + server.get_user_class(reply_socket).get_name());
-	std::cout << ":" + oldnick + " NICK " + server.get_user_class(reply_socket).get_name() << std::endl;
+	server.send_all(":" + oldnick + " NICK " + server.get_user_class(reply_socket).get_name() + "\n");
+	// ft_send(reply_socket, "NICK :" + server.get_user_class(reply_socket).get_name());
+	// std::cout << ":" + oldnick + " NICK " + server.get_user_class(reply_socket).get_name() << std::endl;
 }
 
 void	cap_command( Server& server, int reply_socket, std::istringstream &message ) {
 	(void) server;
 	std::string	param;
 	std::getline(message, param, ' ');
-	if (param == "LS") {
-		ft_send(reply_socket, "CAP * LS: ");
-	}
+	if (param == "LS")
+		ft_send(reply_socket, "CAP * LS :");
+	else if (param == "LIST")
+		ft_send(reply_socket, "CAP * LIST :");
 }
 
 void	join_command( Server& server, int reply_socket, std::istringstream &message ) {
@@ -80,7 +82,7 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 			{
 				Channel channel = server.get_channel_class(recipient);
 				std::cout << recipient << " is a channel\n";
-				channel.send_channel(reply_socket, ":" + server.get_user_class(reply_socket).get_name() + " PRIVMSG " + recipient + " :" + msg);
+					channel.send_channel(reply_socket, ":" + server.get_user_class(reply_socket).get_name() + " PRIVMSG " + recipient + " :" + msg + "\n");
 			}
 			catch(const std::exception& e) //ce n'est pas un channel non plus
 			{

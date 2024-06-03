@@ -280,6 +280,16 @@ void	Server::send_all( std::string msg ) {
 	}
 }
 
+void	Server::send_all( int reply_socket, std::string msg ) {
+	const size_t len = this->_connected_users.size();
+
+	for (size_t i = 0; i < len; i++) {
+		if (!(this->_connected_users[i]->get_socketfd() == reply_socket))
+			ft_send(this->_connected_users[i]->get_socketfd(), msg);
+	}
+}
+
+
 void Server::set_topic( std::string channelname, std::string topic, std::string topic_whotime ) {
 
 		Channel &channel = this->get_channel_class(channelname);
