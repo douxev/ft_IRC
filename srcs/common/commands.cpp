@@ -59,7 +59,7 @@ void	join_command( Server& server, int reply_socket, std::istringstream &message
 void	privmsg_command( Server& server, int reply_socket, std::istringstream &message ) {
 
 	if (find(message.str().begin(), message.str().end(), ':') == message.str().end()) {	//detection de l'absence de cible
-		ft_send(reply_socket, "411 : No recipient given (PRIVMSG " + message.str() + " )");
+		ft_send(reply_socket, "411 " + server.get_user_class(reply_socket).get_name() + ": No recipient given (PRIVMSG " + message.str() + " )\n");
 		return ;
 	}
 
