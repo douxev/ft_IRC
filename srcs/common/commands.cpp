@@ -117,8 +117,9 @@ void	part_command( Server& server, int reply_socket, std::istringstream &message
 	std::string	channel;
 
 	std::getline(message, channel, ' ');
-	
+
 	server.part_channel(server.get_user_class(reply_socket).get_name(), channel , message.str());
+	server.get_user_class(reply_socket).remove_channel_list(&server.get_channel_class(message.str()));
 }
 
 void	topic_command( Server& server, int reply_socket, std::istringstream &message ) {
