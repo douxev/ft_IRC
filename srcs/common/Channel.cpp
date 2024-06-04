@@ -2,6 +2,7 @@
 #include "utils.tpp"
 #include <cstddef>
 #include <sys/socket.h>
+#include "Channel.hpp"
 
 Channel::Channel( void ) {
 	this->_modes.invite_only = 0;
@@ -88,6 +89,12 @@ void Channel::user_join( User& user ) {
 	this->_add_connected_user(user);
 
 	this->send_userlist(user);
+}
+
+void Channel::user_quit( const User& user, const std::string quit_message ) {
+	this->_remove_connected_user(user);
+	this->send_channel(user.get_socketfd(), ":" + user.get_name() + " QUIT :Quit: " + part_message);
+	
 }
 
 void Channel::user_part( const User& user, const std::string part_message ) {
