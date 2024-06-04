@@ -26,6 +26,7 @@ Channel::Channel( const std::string name, const User& user ) {
 	this->_modes.limit = 0;
 	this->_topic = "";
 	this->_topic_whotime = "";
+	this->send_userlist(user);
 }
 
 Channel::Channel( const Channel& Other ):
@@ -72,7 +73,6 @@ void Channel::user_join( const User& user ) {
 	this->_add_connected_user(user);
 
 	ft_send(user.get_socketfd(), "TOPIC #" + this->get_name() + " :" + this->_topic + "\n");
-	this->send_userlist(user);
 }
 
 void Channel::user_quit( const User& user, const std::string quit_message ) {

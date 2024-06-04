@@ -211,7 +211,7 @@ void Server::_read_data(int i)
 			std::cerr << e.what() << "\n";
 		}
 	} else {
-		std::cout << "[" << sender_fd << "] sent: " << buffer;
+		std::cout << "[RECV" << sender_fd << "] " << buffer;
 		// //Parsing
 		std::istringstream stream(buffer);
 		parse_commands(*this, sender_fd, stream);
