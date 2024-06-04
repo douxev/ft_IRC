@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rastie <rastie@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 12:59:03 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/06/04 15:25:46 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/06/04 15:31:10 by rastie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,9 @@ public:
 	void force_op( const User& user);
 	void change_role( const User& user, const User& target, bool is_op );
 	void user_join( User& user );
-	void user_part( const User& user, const std::string part_message );
-	void user_kicked( const User& user, const User& target, std::string kick_message );
+    void user_quit(const User &user, const std::string quit_message);
+    void user_part(const User &user, const std::string part_message);
+    void user_kicked( const User& user, const User& target, std::string kick_message );
 
 	bool is_on_channel( const std::string username );
 	

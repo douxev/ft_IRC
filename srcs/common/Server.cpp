@@ -209,12 +209,6 @@ void Server::_read_data(int i)
 		{
 			std::cerr << e.what() << "\n";
 		}
-			}
-		}
-		catch(const std::exception& e)
-		{
-			std::cerr << e.what() << '\n';
-		}
 		if (!byte_read) {
 			std::cout << "[Server] Connection closed with client " << sender_fd << std::endl;
 		}
