@@ -222,7 +222,7 @@ void	list_command( Server& server, int reply_socket, std::istringstream &message
 	(void) message;
 }
 
-//TODO EMPTY
+//TODO How to answer an invite???
 void	invite_command( Server& server, int reply_socket, std::istringstream &message ) {
 	(void) server;
 	(void) reply_socket;
