@@ -50,6 +50,7 @@ void	cap_command( Server& server, int reply_socket, std::istringstream &message 
 void	join_command( Server& server, int reply_socket, std::istringstream &message ) {
 	server.join_channel(server.get_user_class(reply_socket).get_name(), 
 						message.str());
+	server.get_user_class(reply_socket).add_channel_list(&server.get_channel_class(message.str()));
 	if (server.get_channel_class(message.str()).get_topic().empty())
 		no_topic_set(reply_socket, message.str());
 	else
@@ -59,7 +60,7 @@ void	join_command( Server& server, int reply_socket, std::istringstream &message
 void	privmsg_command( Server& server, int reply_socket, std::istringstream &message ) {
 
 	if (find(message.str().begin(), message.str().end(), ':') == message.str().end()) {	//detection de l'absence de cible
-		ft_send(reply_socket, "411 : No recipient given (PRIVMSG " + message.str() + " )");
+		ft_send(reply_socket, "411 " + server.get_user_class(reply_socket).get_name() + ": No recipient given (PRIVMSG " + message.str() + " )\n");
 		return ;
 	}
 
@@ -121,7 +122,9 @@ void	part_command( Server& server, int reply_socket, std::istringstream &message
 	std::string	channel;
 
 	std::getline(message, channel, ' ');
+
 	server.part_channel(server.get_user_class(reply_socket).get_name(), channel , message.str());
+	server.get_user_class(reply_socket).remove_channel_list(&server.get_channel_class(message.str()));
 }
 
 void	topic_command( Server& server, int reply_socket, std::istringstream &message ) {
@@ -158,7 +161,7 @@ try {
 		}
 		else {
 			if (!server.is_op(channel, user)) {
-				msg_to_send << ERR_CHANOPRIVSNEEDED << " :You're not channel operator\n"; //?NO_OP?
+				msg_to_send << ERR_CHANOPRIVSNEEDED << user << " " << channel << " :You're not channel operator\n";
 				if (ft_send(reply_socket, msg_to_send.str()) == -1)
 					std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
 			}

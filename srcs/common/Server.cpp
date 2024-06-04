@@ -197,8 +197,27 @@ void Server::_read_data(int i)
 	const int sender_fd = _sockets_fds[i].fd;
 	const int byte_read = recv(sender_fd, buffer, BUFSIZ, 0);
 	if (byte_read <= 0) {
-		if (!byte_read)
+		try
+		{
+			User user = get_user_class(i);
+			std::vector<Channel*> channel_list = user.get_list_channel();
+			for (int j = 0; j < channel_list.size(); j++)
+				channel_list[i]->user_quit(user, " left the server\n");
+			
+		}
+		catch(const std::exception& e)
+		{
+			std::cerr << e.what() << "\n";
+		}
+			}
+		}
+		catch(const std::exception& e)
+		{
+			std::cerr << e.what() << '\n';
+		}
+		if (!byte_read) {
 			std::cout << "[Server] Connection closed with client " << sender_fd << std::endl;
+		}
 		else
 			std::cerr << "[Server] Recv error: " << strerror(errno) << std::endl;
 		close(sender_fd);
@@ -258,9 +277,7 @@ void	Server::part_channel( std::string username, std::string channelname, std::s
 	Channel&	channel = this->get_channel_class(channelname);
 	User&		user = this->get_user_class(username);
 
-	channel.user_quit(user, part_message);
-
-	//SEND MESSAGE
+	channel.user_part(user, part_message);
 }
 
 bool	Server::is_on_channel( std::string channel, std::string user ) {	
