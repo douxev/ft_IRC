@@ -109,12 +109,12 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 //?Target is channel or user?
 	//?if channel param is password?
 		//yes
-// 	server.get_channel_class(message.str()).set_mode(KEY, value, password);
-// //if not password
-// 	server.get_channel_class(message.str()).set_mode( mode, value ) ;
-// //if user
-// 	server.get_channel_class(message.str()).set_mode( OP,  user, target, value ) ;
-	ft_send (reply_socket, message.str());
+	server.get_channel_class(message.str()).set_mode(KEY, value, password);
+//if not password
+	server.get_channel_class(message.str()).set_mode( mode, value ) ;
+//if user
+	server.get_channel_class(message.str()).set_mode( OP,  user, target, value ) ;
+
 	(void) server;
 	(void) reply_socket;
 	(void) message;
