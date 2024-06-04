@@ -6,6 +6,7 @@
 #include <string>
 #include "Server.hpp"
 #include <ctime>
+#include <vector>
 
 void	pong(int reply_socket, std::string message) {
 	ft_send(reply_socket, "PONG " + message + "\n");
@@ -227,11 +228,42 @@ void	names_command( Server& server, int reply_socket, std::istringstream &messag
 	// ft_send(reply_socket, "366 ");
 }
 
-//TODO EMPTY Liste tous les canaux 
 void	list_command( Server& server, int reply_socket, std::istringstream &message ) {
 	(void) server;
 	(void) reply_socket;
 	(void) message;
+
+	if (!message.str().empty()) 
+		return ;
+	const User& user = server.get_user_class(reply_socket);
+	const std::vector<Channel *> chans = server.get_channels_list();
+	const size_t len = chans.size();
+	for (size_t i = 0; i < len; i++) {
+		ft_send(reply_socket, RPL_LIST + user.get_name() + " " + chans[i]->get_name() + " " +
+		chans[i]->user_count() + " :" + chans[i]->get_topic() + "\n");
+	}
+	ft_send(reply_socket, RPL_LISTEND + user.get_name() + " :End of /LIST\n");
+}
+
+void	whois_command( Server& server, int reply_socket, std::istringstream &message ) {
+	const User& user = server.get_user_class(reply_socket);
+	std::string target;
+
+	if (message.str().empty()) {
+		ft_send(reply_socket, ERR_NONICKNAMEGIVEN + user.get_name() + " :No nickname given\n");
+		return ;
+	}
+	
+	std::getline(message, target);
+	try {
+		ft_send(reply_socket, RPL_WHOISUSER + user.get_name() + " " + target + " " + target +
+			server.get_user_class(target).get_ip() + " * :" + server.get_user_class(target).get_realname());
+		ft_send(reply_socket, RPL_ENDOFWHOIS + user.get_name() + " " + target + " :End of /WHOIS list\n");
+	}
+	catch(const NoSuchNickException& e) {
+		ft_send(reply_socket, ERR_NOSUCHNICK + user.get_name() + " " + target + " :No such nick\n");
+		return ;
+	}
 }
 
 //TODO How to answer an invite???
@@ -293,12 +325,12 @@ void	quit_command( Server& server, int reply_socket, std::istringstream &message
 	{
 		User user = server.get_user_class(reply_socket);
 		std::vector<Channel*> channel_list = user.get_list_channel();
-		for (int j = 0; j < channel_list.size(); j++)
-			channel_list[j]->user_quit(user, " left the server\n");
+		for (size_t j = 0; j < channel_list.size(); j++)
+			channel_list[j]->user_quit(user, message.str() + "\n");
 		std::vector<User*>::iterator it = find(server.get_connected_user().begin(), server.get_connected_user().end(), &user);
 		server.get_connected_user().erase(it);
 
-		delete(&user);
+		//delete(&user);
 	}
 	catch(const std::exception& e)
 	{
