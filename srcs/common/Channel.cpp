@@ -90,10 +90,10 @@ void Channel::user_join( User& user ) {
 	this->send_userlist(user);
 }
 
-void Channel::user_quit( const User& user, const std::string quit_message ) {
+void Channel::user_part( const User& user, const std::string part_message ) {
 	this->_remove_connected_user(user);
 	this->send_channel(user.get_socketfd(), ":" + user.get_name() + " PART " + this->get_name() + 
-						" :" + quit_message);
+						" :" + part_message);
 }
 
 void Channel::user_kicked( const User& user, const User& target, std::string kick_message ) {

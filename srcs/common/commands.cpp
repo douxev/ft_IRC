@@ -50,6 +50,7 @@ void	cap_command( Server& server, int reply_socket, std::istringstream &message 
 void	join_command( Server& server, int reply_socket, std::istringstream &message ) {
 	server.join_channel(server.get_user_class(reply_socket).get_name(), 
 						message.str());
+	server.get_user_class(reply_socket).add_channel_list(&server.get_channel_class(message.str()));
 	if (server.get_channel_class(message.str()).get_topic().empty())
 		no_topic_set(reply_socket, message.str());
 	else
@@ -116,6 +117,7 @@ void	part_command( Server& server, int reply_socket, std::istringstream &message
 	std::string	channel;
 
 	std::getline(message, channel, ' ');
+	
 	server.part_channel(server.get_user_class(reply_socket).get_name(), channel , message.str());
 }
 
