@@ -1,3 +1,4 @@
+#include "error_numeric.hpp"
 #include "ft_irc.hpp"
 #include "numeric_replies.hpp"
 #include <cstddef>
@@ -125,8 +126,12 @@ void	topic_command( Server& server, int reply_socket, std::istringstream &messag
 	std::string topic_message;
 	std::getline(message, topic_message, ':');
 	std::getline(message, topic_message);
-	std::string user = server.get_user_class(reply_socket).get_name();
+	const std::string user = server.get_user_class(reply_socket).get_name();
 
+if (channel.empty())
+	ft_send(reply_socket, ERR_NEEDMOREPARAMS + user + "TOPIC :Not enough parameters");
+
+try {
 	if (server.is_on_channel(channel, user)) {
 		if (server.is_op(channel, user) || server.get_channel_class(channel).topic_mode_is_off() == true || topic_message.empty()) {
 			if (topic_message.empty()) {
@@ -147,17 +152,19 @@ void	topic_command( Server& server, int reply_socket, std::istringstream &messag
 			}
 		}
 		else {
-			//!IS IT OP
+			if (!server.is_op(channel, user)) {
 				msg_to_send << ERR_CHANOPRIVSNEEDED << " :You're not channel operator\n"; //?NO_OP?
 				if (ft_send(reply_socket, msg_to_send.str()) == -1)
 					std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
+			}
 		}
 	}
-	else {
-		//TODO CHANNEL DOESNT EXIST
-		//TODO NO ENOUGH PARAM | NO ON CHANNEL
-		
+	else
+		ft_send(reply_socket, "442 " + user + " " + channel + "You are not on channel " + channel + "\n");
 	}
+catch(const NoSuchChannelException& e) {
+	ft_send(reply_socket, ERR_NOSUCHCHANNEL + user + " " + channel + " :No such channel " + channel + "\n");
+}
 }
 
 //NAMES => list all channel and their occupant, then all users outside any channel, under the "channel *"
