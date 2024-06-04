@@ -281,12 +281,12 @@ void	quit_command( Server& server, int reply_socket, std::istringstream &message
 	{
 		User user = server.get_user_class(reply_socket);
 		std::vector<Channel*> channel_list = user.get_list_channel();
-		for (int j = 0; j < channel_list.size(); j++)
-			channel_list[j]->user_quit(user, " left the server\n");
+		for (size_t j = 0; j < channel_list.size(); j++)
+			channel_list[j]->user_quit(user, message.str() + "\n");
 		std::vector<User*>::iterator it = find(server.get_connected_user().begin(), server.get_connected_user().end(), &user);
 		server.get_connected_user().erase(it);
 
-		delete(&user);
+		//delete(&user);
 	}
 	catch(const std::exception& e)
 	{
