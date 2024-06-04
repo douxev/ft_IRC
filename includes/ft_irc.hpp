@@ -6,7 +6,7 @@
 /*   By: rastie <rastie@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 14:56:20 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/06/04 17:38:52 by rastie           ###   ########.fr       */
+/*   Updated: 2024/06/04 18:26:18 by rastie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ void	list_command( Server& server, int reply_socket, std::istringstream &message
 void	invite_command( Server& server, int reply_socket, std::istringstream &message );
 void	kick_command( Server& server, int reply_socket, std::istringstream &message );
 void	quit_command( Server& server, int reply_socket, std::istringstream &message );
+void	whois_command( Server& server, int reply_socket, std::istringstream &message );
 
 
 void	no_topic_set( int reply_socket, std::string channel );

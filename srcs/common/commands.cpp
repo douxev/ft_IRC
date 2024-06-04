@@ -104,6 +104,23 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 
 //TODO EMPTY
 void	mode_command( Server& server, int reply_socket, std::istringstream &message ) {
+// 	std::string target;
+// 	std::string value;
+
+// 	std::getline(message, target, ' ');
+// 	std::getline(message, value, ' ');
+// /*    Command: MODE
+// 		Parameters: <target> [<modestring> [<mode arguments>...]]*/
+// //?Target is channel or user?
+// 	//?if channel param is password?
+// 		//yes
+// 	std::string password;
+// 	server.get_channel_class(message.str()).set_mode(KEY, value, password);
+// //if not password
+// 	server.get_channel_class(message.str()).set_mode( mode, value ) ;
+// //if user
+// 	server.get_channel_class(message.str()).set_mode( OP,  user, target, value ) ;
+
 	(void) server;
 	(void) reply_socket;
 	(void) message;
@@ -259,8 +276,8 @@ void	whois_command( Server& server, int reply_socket, std::istringstream &messag
 	
 	std::getline(message, target);
 	try {
-		ft_send(reply_socket, RPL_WHOISUSER + user.get_name() + " " + target + " " + target +
-			server.get_user_class(target).get_ip() + " * :" + server.get_user_class(target).get_realname());
+		ft_send(reply_socket, RPL_WHOISUSER + user.get_name() + " " + target + " " + target + " " +
+			server.get_user_class(target).get_ip() + " * :" + server.get_user_class(target).get_realname() + "\n");
 		ft_send(reply_socket, RPL_ENDOFWHOIS + user.get_name() + " " + target + " :End of /WHOIS list\n");
 	}
 	catch(const NoSuchNickException& e) {

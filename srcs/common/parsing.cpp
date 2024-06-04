@@ -103,6 +103,8 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 				who_command(server, reply_socket, line);
 			else if (cmd == "PART")
 				part_command(server, reply_socket, line);
+			else if (cmd == "WHOIS")
+				whois_command(server, reply_socket, line);
 			else if (cmd == "TOPIC")
 				topic_command(server, reply_socket, line);
 			else if (cmd == "NAMES")
