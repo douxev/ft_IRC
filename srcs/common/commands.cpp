@@ -68,7 +68,7 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 	std::string msg;
 	std::getline(message, msg);
 	if (!msg.size()) {
-		ft_send(reply_socket, "412 : No text to send");
+		ft_send(reply_socket, "412 " + server.get_user_class(reply_socket).get_name() + " : No text to send\n");
 		return ;
 	}
 
@@ -81,7 +81,7 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 		{
 			User user = server.get_user_class(recipient);
 			std::cout << recipient << " is a user\n";
-			ft_send(user.get_socketfd(), ":" + server.get_user_class(reply_socket).get_name() + " PRIVMSG " + recipient + " :" + msg);
+			ft_send(user.get_socketfd(), ":" + server.get_user_class(reply_socket).get_name() + " PRIVMSG " + recipient + " :" + msg + "\n");
 		}
 		catch(const std::exception& e)	//ce n'est pas un user
 		{
