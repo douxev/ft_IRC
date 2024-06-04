@@ -3,7 +3,7 @@
 
 # include <string>
 # include <vector>
-# include <algorithm>
+// # include <algorithm>
 # include "Channel.hpp"
 
 class Channel;
@@ -28,7 +28,7 @@ public:
 	User( void );
 	User& operator=( const User& Other );
 	bool operator==( const User& Other ) const;
-	User( const User& copied);
+	User( const User& Other );
 	~User();
 
 private:

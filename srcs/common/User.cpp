@@ -4,7 +4,7 @@
 User::User( void ) {
 	this->_name = "";
 	this->_socketfd = 0;
-	this->_ip_address = "";
+	this->_ip_address = "127.0.0.1";
 }
 
 User::User( const User& Other ) {

@@ -70,15 +70,15 @@ void Channel::send_who( Server& server, int reply_socket ) {
 	User& user = server.get_user_class(reply_socket);
 	for (size_t i = 0; i < len; i++) {
 		// if (this->_connected_users[i].get_socketfd() != reply_socket)
-			ft_send(reply_socket, 
-				"352 " + user.get_name() + 
-				" " + 
-				this->_name + " " + 
-				this->_connected_users[i].get_name() + " " + 
-				this->_connected_users[i].get_ip() + " " + 
-				server.get_ip() + " " + 
-				this->_connected_users[i].get_name() + " H : 0 " + 
-				this->_connected_users[i].get_realname() + "\n");
+		ft_send(reply_socket, 
+			"352 " + user.get_name() + 
+			" " + 
+			this->_name + " " + 
+			this->_connected_users[i].get_name() + " " + 
+			this->_connected_users[i].get_ip() + " " + 
+			server.get_ip() + " " + 
+			this->_connected_users[i].get_name() + " H : 0 " + 
+			this->_connected_users[i].get_realname() + "\n");
 	}
 	ft_send(reply_socket, "315 " + user.get_name() + " :End of WHO list");
 }
