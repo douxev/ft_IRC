@@ -37,9 +37,11 @@ public:
 	Channel&	get_channel_class( std::string name );
 	std::string get_topic( std::string channel );
 	std::string get_ip( void );
+	std::string get_pass( void );
 
 	void		set_topic( std::string channel, std::string topic, std::string topic_whotime );
 	void		send_channel( std::string channelname, int sender_fd, std::string msg );
+	void		remove_poll_fd( int fd );
 
 	std::vector<Channel*> get_channels_list();
 	std::vector<User*> get_connected_user();
@@ -59,6 +61,7 @@ private:
 	std::vector<User *>					_connected_users;
 	std::vector<struct pollfd> 			_sockets_fds;
 	int									_nb_sockets;
+	std::string 						_password;
 };
 
 #endif

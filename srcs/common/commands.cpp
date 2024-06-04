@@ -113,15 +113,30 @@ void	who_command( Server& server, int reply_socket, std::istringstream &message 
 	server.get_channel_class(message.str()).send_who(server, reply_socket);
 }
 
-
-void	part_command( Server& server, int reply_socket, std::istringstream &message ) {
-	std::string	channel;
-
-	std::getline(message, channel, ' ');
-
-	server.part_channel(server.get_user_class(reply_socket).get_name(), channel , message.str());
-	server.get_user_class(reply_socket).remove_channel_list(&server.get_channel_class(message.str()));
+void pass_command(Server &server, int reply_socket, std::istringstream &message)
+{
+	if (message.str() != server.get_pass())
+		ft_send(reply_socket, "Wrong password\n");
+	try
+	{
+		User user = server.get_user_class(reply_socket);
+		server.user_quit(&user);
+		const size_t len = server.get_connected_user().size();
+			for (size_t i = 0; i < len; i++) {
+				if (server.get_connected_user()[i] == &user) {
+					server.get_connected_user().erase(server.get_connected_user().begin() + i);
+					break ;
+				}
+		}
+		delete(&user);
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
+	server.remove_poll_fd(reply_socket);
 }
+
 
 void	topic_command( Server& server, int reply_socket, std::istringstream &message ) {
 	std::string	channel;
@@ -307,6 +322,14 @@ void	kick_command( Server& server, int reply_socket, std::istringstream &message
 	}
 }
 
+void	part_command( Server& server, int reply_socket, std::istringstream &message ) {
+	std::string	channel;
+
+	std::getline(message, channel, ' ');
+
+	server.part_channel(server.get_user_class(reply_socket).get_name(), channel , message.str());
+	server.get_user_class(reply_socket).remove_channel_list(&server.get_channel_class(message.str()));
+}
 //TODO EMPTY
 void	quit_command( Server& server, int reply_socket, std::istringstream &message ) {
 	try
@@ -315,13 +338,41 @@ void	quit_command( Server& server, int reply_socket, std::istringstream &message
 		std::vector<Channel*> channel_list = user.get_list_channel();
 		for (size_t j = 0; j < channel_list.size(); j++)
 			channel_list[j]->user_quit(user, message.str() + "\n");
-		std::vector<User*>::iterator it = find(server.get_connected_user().begin(), server.get_connected_user().end(), &user);
-		server.get_connected_user().erase(it);
-
-		//delete(&user);
+		const size_t len = server.get_connected_user().size();
+			for (size_t i = 0; i < len; i++) {
+				if (server.get_connected_user()[i] == &user) {
+					server.get_connected_user().erase(server.get_connected_user().begin() + i);
+					break ;
+				}
+		}
+		delete(&user);
 	}
 	catch(const std::exception& e)
 	{
 		std::cerr << e.what() << "\n";
 	}
+}
+
+void pass_command(Server &server, int reply_socket, std::istringstream &message)
+{
+	if (message.str() != server.get_pass())
+		ft_send(reply_socket, "Wrong password\n");
+	try
+	{
+		User user = server.get_user_class(reply_socket);
+		server.user_quit(&user);
+		const size_t len = server.get_connected_user().size();
+			for (size_t i = 0; i < len; i++) {
+				if (server.get_connected_user()[i] == &user) {
+					server.get_connected_user().erase(server.get_connected_user().begin() + i);
+					break ;
+				}
+		}
+		delete(&user);
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
+	server.remove_poll_fd(reply_socket);
 }

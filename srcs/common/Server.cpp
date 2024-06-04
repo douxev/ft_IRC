@@ -57,6 +57,19 @@ void Server::_remove_unactive_channel( const Channel *channel ) {
 	}
 }
 
+void Server::remove_poll_fd( int fd )
+{
+	for (int i = 0; i < _nb_sockets; i++)
+	{
+		if (_sockets_fds[i].fd == fd) {
+			close(fd);
+			_sockets_fds[i] = _sockets_fds[_nb_sockets - 1];
+			_nb_sockets--;
+			break ;
+		}
+	}
+}
+
 std::string Server::get_motd( void ) {
 	return (this->_motd);
 }
@@ -108,6 +121,8 @@ std::vector<User *> Server::get_connected_user()
 
 int Server::init_server(int ac, char **av) {
 	_server_socket = create_server_socket(get_port(ac, av));
+	if (av[2])
+		_password = av[2];
 	if (_server_socket == -1)
 		return (1);
 	
@@ -150,8 +165,6 @@ void Server::manage_loop()
 				_read_data(i);
 
 			}
-
-			
 		}
 	}
 
@@ -188,6 +201,11 @@ void Server::_accept_connection()
 
 std::string Server::get_ip( void ) {
 	return (this->_ip_str);
+}
+
+std::string Server::get_pass(void)
+{
+    return _password;
 }
 
 void Server::_read_data(int i)

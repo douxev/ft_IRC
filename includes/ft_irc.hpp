@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_irc.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rastie <rastie@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 14:56:20 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/06/04 13:57:20 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/06/04 17:38:52 by rastie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	join_command( Server& server, int reply_socket, std::istringstream &message
 void	privmsg_command( Server& server, int reply_socket, std::istringstream &message );
 void	mode_command( Server& server, int reply_socket, std::istringstream &message );
 void	who_command( Server& server, int reply_socket, std::istringstream &message );
-
+void	pass_command( Server& server, int reply_socket, std::istringstream &message );
 void	part_command( Server& server, int reply_socket, std::istringstream &message );
 void	topic_command( Server& server, int reply_socket, std::istringstream &message );
 void	names_command( Server& server, int reply_socket, std::istringstream &message );

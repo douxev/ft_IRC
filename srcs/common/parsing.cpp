@@ -28,6 +28,8 @@ void	init_client( Server& server, int reply_socket, std::string message) {
 
 	std::string address;
 	std::getline(msg, address, ' ');
+	server.get_user_class(reply_socket).set_ip(address);
+
 	msg_to_send.str("");
 	msg_to_send << RPL_WELCOME << server.get_user_class(reply_socket).get_name() << " :Welcome to the GuiRaMa Internet Relay Chat Network\n";
 	if (ft_send(reply_socket, msg_to_send.str()) == -1)
@@ -60,24 +62,10 @@ void	init_client( Server& server, int reply_socket, std::string message) {
 //ADD TRY CATCH EXCEPTIONS FOR SENDING GOOD REPLIES
 void	parse_commands( Server& server, int reply_socket, std::istringstream& message ) {
 
-	std::string cmd;
-	std::string line_str;
 
-	std::vector<std::string> rev_lines;
-	std::string rline;
-
-	// std::cout << "User is: " << server.get_user_class(reply_socket).get_name() << std::endl;
-
-	while (std::getline(message, rline))
-	{
-		// Store the lines in reverse order.
-		rev_lines.insert(rev_lines.begin(), rline);
-	}
-	
-	// while (std::getline(message, line_str)) {
-	for (size_t i = 0; i < rev_lines.size(); i++) {
-		line_str = rev_lines[i];
+	for (std::string line_str; std::getline(message, line_str);) {
 		std::istringstream line(line_str);
+		std::string cmd;
 		std::getline(line, cmd, ' ');
 		line.str(&line.str()[cmd.size() + 1]);
 
@@ -127,7 +115,9 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 				kick_command(server, reply_socket, line);
 			else if (cmd == "QUIT")
 				quit_command(server, reply_socket, line);
-			else
+			else if (cmd == "PASS")
+				pass_command(server, reply_socket, line);
+			else 
 				std::cout << "[WARN!] Unknown Command: " << cmd << std::endl;
 		}
 		catch (std::exception& e) {
