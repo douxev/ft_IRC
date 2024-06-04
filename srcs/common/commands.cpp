@@ -104,10 +104,17 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 //TODO EMPTY
 void	mode_command( Server& server, int reply_socket, std::istringstream &message ) {
 
-	void Channel::set_mode( t_enum_modes mode, const User& user, const std::string target, bool value ) 
-	void Channel::set_mode( t_enum_modes mode, bool value, std::string password ) 
-	void Channel::set_mode( t_enum_modes mode, size_t value ) 
-
+/*    Command: MODE
+		Parameters: <target> [<modestring> [<mode arguments>...]]*/
+//?Target is channel or user?
+	//?if channel param is password?
+		//yes
+// 	server.get_channel_class(message.str()).set_mode(KEY, value, password);
+// //if not password
+// 	server.get_channel_class(message.str()).set_mode( mode, value ) ;
+// //if user
+// 	server.get_channel_class(message.str()).set_mode( OP,  user, target, value ) ;
+	ft_send (reply_socket, message.str());
 	(void) server;
 	(void) reply_socket;
 	(void) message;
