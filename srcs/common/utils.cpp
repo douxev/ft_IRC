@@ -1,6 +1,8 @@
+#include "ft_irc.hpp"
 #include <cstddef>
 #include <sys/socket.h>
 #include <exceptions.hpp>
+#include "numeric_replies.hpp"
 
 int	ft_send(int socketfd, std::string msg) {
 
@@ -19,4 +21,8 @@ int	ft_send(int socketfd, std::string msg) {
 			sent += send_value;
 	}
 	return (0);
+}
+
+void	no_topic_set(int reply_socket, std::string channel) {
+	ft_send(reply_socket, RPL_NOTOPIC + channel + " :No topic is set for " + channel + "\n");
 }
