@@ -6,7 +6,7 @@
 /*   By: rastie <rastie@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 14:56:20 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/06/04 18:26:18 by rastie           ###   ########.fr       */
+/*   Updated: 2024/06/04 18:27:12 by rastie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,14 +52,14 @@ void	join_command( Server& server, int reply_socket, std::istringstream &message
 void	privmsg_command( Server& server, int reply_socket, std::istringstream &message );
 void	mode_command( Server& server, int reply_socket, std::istringstream &message );
 void	who_command( Server& server, int reply_socket, std::istringstream &message );
-void	pass_command( Server& server, int reply_socket, std::istringstream &message );
-void	part_command( Server& server, int reply_socket, std::istringstream &message );
 void	topic_command( Server& server, int reply_socket, std::istringstream &message );
 void	names_command( Server& server, int reply_socket, std::istringstream &message );
 void	list_command( Server& server, int reply_socket, std::istringstream &message );
 void	invite_command( Server& server, int reply_socket, std::istringstream &message );
 void	kick_command( Server& server, int reply_socket, std::istringstream &message );
+void	part_command( Server& server, int reply_socket, std::istringstream &message );
 void	quit_command( Server& server, int reply_socket, std::istringstream &message );
+void	pass_command( Server& server, int reply_socket, std::istringstream &message );
 void	whois_command( Server& server, int reply_socket, std::istringstream &message );
 
 
