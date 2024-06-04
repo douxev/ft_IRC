@@ -102,6 +102,11 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 
 //TODO EMPTY
 void	mode_command( Server& server, int reply_socket, std::istringstream &message ) {
+
+	void Channel::set_mode( t_enum_modes mode, const User& user, const std::string target, bool value ) 
+	void Channel::set_mode( t_enum_modes mode, bool value, std::string password ) 
+	void Channel::set_mode( t_enum_modes mode, size_t value ) 
+
 	(void) server;
 	(void) reply_socket;
 	(void) message;
