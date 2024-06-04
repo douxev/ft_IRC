@@ -277,7 +277,19 @@ void	kick_command( Server& server, int reply_socket, std::istringstream &message
 
 //TODO EMPTY
 void	quit_command( Server& server, int reply_socket, std::istringstream &message ) {
-	(void) server;
-	(void) reply_socket;
-	(void) message;
+	try
+	{
+		User user = server.get_user_class(reply_socket);
+		std::vector<Channel*> channel_list = user.get_list_channel();
+		for (int j = 0; j < channel_list.size(); j++)
+			channel_list[j]->user_quit(user, " left the server\n");
+		std::vector<User*>::iterator it = find(server.get_connected_user().begin(), server.get_connected_user().end(), &user);
+		server.get_connected_user().erase(it);
+
+		delete(&user);
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << "\n";
+	}
 }

@@ -197,21 +197,6 @@ void Server::_read_data(int i)
 	const int sender_fd = _sockets_fds[i].fd;
 	const int byte_read = recv(sender_fd, buffer, BUFSIZ, 0);
 	if (byte_read <= 0) {
-		try
-		{
-			User user = get_user_class(sender_fd);
-			std::vector<Channel*> channel_list = user.get_list_channel();
-			for (int j = 0; j < channel_list.size(); j++)
-				channel_list[j]->user_quit(user, " left the server\n");
-			std::vector<User*>::iterator it = find(_connected_users.begin(), _connected_users.end(), &user);
-						_connected_users.erase(it);
-
-			delete(&user);
-		}
-		catch(const std::exception& e)
-		{
-			std::cerr << e.what() << "\n";
-		}
 		if (!byte_read) {
 			std::cout << "[Server] Connection closed with client " << sender_fd << std::endl;
 		}
