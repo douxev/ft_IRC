@@ -93,7 +93,7 @@ void Channel::user_join( User& user ) {
 
 void Channel::user_quit( const User& user, const std::string quit_message ) {
 	this->_remove_connected_user(user);
-	this->send_channel(user.get_socketfd(), ":" + user.get_name() + " QUIT :Quit: " + part_message);
+	this->send_channel(user.get_socketfd(), ":" + user.get_name() + " QUIT :Quit: " + quit_message);
 	
 }
 
