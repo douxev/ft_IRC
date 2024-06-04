@@ -156,7 +156,7 @@ try {
 		}
 		else {
 			if (!server.is_op(channel, user)) {
-				msg_to_send << ERR_CHANOPRIVSNEEDED << " :You're not channel operator\n"; //?NO_OP?
+				msg_to_send << ERR_CHANOPRIVSNEEDED << user << " " << channel << " :You're not channel operator\n";
 				if (ft_send(reply_socket, msg_to_send.str()) == -1)
 					std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
 			}
