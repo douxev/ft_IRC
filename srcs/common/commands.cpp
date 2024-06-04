@@ -1,5 +1,6 @@
 #include "ft_irc.hpp"
 #include "numeric_replies.hpp"
+#include <cstddef>
 #include <sstream>
 #include <string>
 #include "Server.hpp"
@@ -93,6 +94,24 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 	}
 	
 }
+
+//TODO EMPTY
+void	mode_command( Server& server, int reply_socket, std::istringstream &message ) {
+	(void) server;
+	(void) reply_socket;
+	(void) message;
+}
+
+void	who_command( Server& server, int reply_socket, std::istringstream &message ) {
+	
+	server.get_channel_class(message.str()).send_who(server, reply_socket);
+
+
+
+
+
+}
+
 
 void	part_command( Server& server, int reply_socket, std::istringstream &message ) {
 	std::string	channel;
@@ -206,13 +225,14 @@ void	names_command( Server& server, int reply_socket, std::istringstream &messag
 	// ft_send(reply_socket, "366 ");
 }
 
-//Liste tous les canaux 
+//TODO EMPTY Liste tous les canaux 
 void	list_command( Server& server, int reply_socket, std::istringstream &message ) {
 	(void) server;
 	(void) reply_socket;
 	(void) message;
 }
 
+//TODO EMPTY
 void	invite_command( Server& server, int reply_socket, std::istringstream &message ) {
 	(void) server;
 	(void) reply_socket;
@@ -249,6 +269,7 @@ void	kick_command( Server& server, int reply_socket, std::istringstream &message
 	}
 }
 
+//TODO EMPTY
 void	quit_command( Server& server, int reply_socket, std::istringstream &message ) {
 	(void) server;
 	(void) reply_socket;

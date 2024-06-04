@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gbonnard <gbonnard@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 12:59:03 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/06/03 18:25:15 by gbonnard         ###   ########.fr       */
+/*   Updated: 2024/06/04 12:59:49 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,10 @@
 
 # include <vector>
 # include <string>
-# include "User.hpp"
+// # include "User.hpp"
 
 class User;
+class Server;
 
 typedef enum e_modes {
 	INVITE,
@@ -41,7 +42,7 @@ public:
 	void send_channel( const std::string msg );
 	void send_channel( int sender_fd, const std::string msg );
 	void send_userlist( const User& user );
-
+	void send_who( Server& server, int reply_socket );
 
 	void force_op( const User& user);
 	void change_role( const User& user, const User& target, bool is_op );

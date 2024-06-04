@@ -15,10 +15,6 @@ Channel::Channel( void ) {
 
 Channel::Channel( const std::string name, const User& user ) {
 	
-	std::cout << "HERE CHANNEL CONSTRUCT " << name << name.size() << std::endl;
-	
-	this->user_join(user);
-	this->_op_users.push_back(user.get_name());
 	this->_name = name;
 	this->_modes.invite_only = 0;
 	this->_modes.op_topic = 0;
@@ -26,7 +22,8 @@ Channel::Channel( const std::string name, const User& user ) {
 	this->_modes.limit = 0;
 	this->_topic = "";
 	this->_topic_whotime = "";
-	this->send_userlist(user);
+	this->user_join(user);
+	this->_op_users.push_back(user.get_name());
 }
 
 Channel::Channel( const Channel& Other ):
@@ -58,8 +55,6 @@ void	Channel::send_userlist( const User& user ) {
 
 	msg_to_send << "353 " + user.get_name() << " " << this->get_name() << " :";
 
-	std::cout << "CHANNEL USERLIST " << this->get_name() << std::endl;
-
 	for (size_t i = 0; i < len; i++) {
 		if (this->is_op(this->_connected_users[i]))
 			msg_to_send << "@";
@@ -69,10 +64,31 @@ void	Channel::send_userlist( const User& user ) {
 	ft_send(user.get_socketfd(), "366 " + user.get_name() + " " + this->get_name() + " :End of /NAMES list\n");
 }
 
+void Channel::send_who( Server& server, int reply_socket ) {
+	const size_t len = this->_connected_users.size();
+
+	User& user = server.get_user_class(reply_socket);
+	for (size_t i = 0; i < len; i++) {
+		// if (this->_connected_users[i].get_socketfd() != reply_socket)
+			ft_send(reply_socket, 
+				"352 " + user.get_name() + 
+				" " + 
+				this->_name + " " + 
+				this->_connected_users[i].get_name() + " " + 
+				this->_connected_users[i].get_ip() + " " + 
+				server.get_ip() + " " + 
+				this->_connected_users[i].get_name() + " H : 0 " + 
+				this->_connected_users[i].get_realname() + "\n");
+	}
+	ft_send(reply_socket, "315 " + user.get_name() + " :End of WHO list");
+}
+
+
 void Channel::user_join( const User& user ) {
 	this->_add_connected_user(user);
 
 	ft_send(user.get_socketfd(), "TOPIC #" + this->get_name() + " :" + this->_topic + "\n");
+	this->send_userlist(user);
 }
 
 void Channel::user_quit( const User& user, const std::string quit_message ) {

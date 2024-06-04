@@ -36,6 +36,8 @@ public:
 	User&		get_user_class( std::string name );
 	Channel&	get_channel_class( std::string name );
 	std::string get_topic( std::string channel );
+	std::string get_ip( void );
+
 	void		set_topic( std::string channel, std::string topic, std::string topic_whotime );
 	void		send_channel( std::string channelname, int sender_fd, std::string msg );
 

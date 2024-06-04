@@ -102,6 +102,10 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 				join_command(server, reply_socket, line);
 			else if (cmd == "PRIVMSG")
 				privmsg_command(server, reply_socket, line);
+			else if (cmd == "MODE")
+				mode_command(server, reply_socket, line);
+			else if (cmd == "WHO")
+				who_command(server, reply_socket, line);
 			else if (cmd == "PART")
 				part_command(server, reply_socket, line);
 			else if (cmd == "TOPIC")
@@ -117,7 +121,7 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 			else if (cmd == "QUIT")
 				quit_command(server, reply_socket, line);
 			else
-				return ;
+				std::cout << "[WARN!] Unknown Command: " << cmd << std::endl;
 		}
 		catch (std::exception& e) {
 			std::cout << e.what() << std::endl;

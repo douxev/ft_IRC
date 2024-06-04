@@ -186,6 +186,10 @@ void Server::_accept_connection()
 	
 }
 
+std::string Server::get_ip( void ) {
+	return (this->_ip_str);
+}
+
 void Server::_read_data(int i)
 {
 	char buffer[BUFSIZ] = {0};

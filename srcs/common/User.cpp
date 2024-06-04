@@ -1,6 +1,5 @@
 #include "User.hpp"
 #include <algorithm>
-#include <iostream>
 
 User::User( void ) {
 	this->_name = "";
@@ -45,9 +44,23 @@ void User::set_fd(int fd)
 	_socketfd = fd;
 }
 
+void User::set_ip( std::string ip ) {
+	this->_ip_address = ip;
+}
+
+std::string User::get_ip( void ) {
+	return (this->_ip_address);
+}
+
+
 const std::string User::get_name( void ) const {
 	return (this->_name);
 }
+
+const std::string User::get_realname( void ) const {
+	return (this->_realname);
+}
+
 
 int			User::get_socketfd( void ) const {
 	return (this->_socketfd);
