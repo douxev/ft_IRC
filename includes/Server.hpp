@@ -24,7 +24,7 @@ public:
 	
 	bool	is_on_channel( std::string channel, std::string user );
 	bool	is_op( std::string channel, std::string user );
-	bool	channel_exist( std::string channel );
+	bool	channel_exists( std::string channel );
 
 
 	void	send_all( std::string msg );

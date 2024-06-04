@@ -234,12 +234,28 @@ void	list_command( Server& server, int reply_socket, std::istringstream &message
 	(void) message;
 }
 
-//TODO EMPTY
+//TODO How to answer an invite???
 void	invite_command( Server& server, int reply_socket, std::istringstream &message ) {
 	(void) server;
 	(void) reply_socket;
 	(void) message;
 
+	std::string user;
+	std::string channel;
+
+	if (message.str().empty()) {
+		ft_send(reply_socket, ERR_NEEDMOREPARAMS + server.get_user_class(reply_socket).get_name() + " INVITE :Not enough parameters\n");
+		return ;
+	}
+	std::getline(message, user);
+	std::getline(message, channel);
+	if (!server.is_on_channel(channel, server.get_user_class(reply_socket).get_name()))
+		ft_send(reply_socket, ERR_NOTONCHANNEL + server.get_user_class(reply_socket).get_name() + " " + channel + " :You aren't on that channel\n");
+	else if (server.is_on_channel(channel, user))
+		ft_send(reply_socket, ERR_USERONCHANNEL + server.get_user_class(reply_socket).get_name() + " " + user + " " + channel + " :is already on channel\n");
+	else {
+		ft_send(reply_socket, RPL_INVITING + server.get_user_class(reply_socket).get_name() + " " + channel + "\n");
+	}
 }
 
 void	kick_command( Server& server, int reply_socket, std::istringstream &message ) {
@@ -273,7 +289,19 @@ void	kick_command( Server& server, int reply_socket, std::istringstream &message
 
 //TODO EMPTY
 void	quit_command( Server& server, int reply_socket, std::istringstream &message ) {
-	(void) server;
-	(void) reply_socket;
-	(void) message;
+	try
+	{
+		User user = server.get_user_class(reply_socket);
+		std::vector<Channel*> channel_list = user.get_list_channel();
+		for (int j = 0; j < channel_list.size(); j++)
+			channel_list[j]->user_quit(user, " left the server\n");
+		std::vector<User*>::iterator it = find(server.get_connected_user().begin(), server.get_connected_user().end(), &user);
+		server.get_connected_user().erase(it);
+
+		delete(&user);
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << "\n";
+	}
 }

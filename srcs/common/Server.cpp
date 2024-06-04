@@ -197,18 +197,6 @@ void Server::_read_data(int i)
 	const int sender_fd = _sockets_fds[i].fd;
 	const int byte_read = recv(sender_fd, buffer, BUFSIZ, 0);
 	if (byte_read <= 0) {
-		try
-		{
-			User user = get_user_class(i);
-			std::vector<Channel*> channel_list = user.get_list_channel();
-			for (int j = 0; j < channel_list.size(); j++)
-				channel_list[i]->user_quit(user, " left the server\n");
-			delete(&user);
-		}
-		catch(const std::exception& e)
-		{
-			std::cerr << e.what() << "\n";
-		}
 		if (!byte_read) {
 			std::cout << "[Server] Connection closed with client " << sender_fd << std::endl;
 		}
@@ -217,16 +205,6 @@ void Server::_read_data(int i)
 		close(sender_fd);
 		_sockets_fds[i] = _sockets_fds[_nb_sockets - 1];
 		_nb_sockets--;
-		try {
-			//user_quit(client);
-			std::vector<User*>::iterator it = find(_connected_users.begin(), _connected_users.end(), 
-													&get_user_class(sender_fd));
-			_connected_users.erase(it);
-		}
-		catch(const std::exception& e)
-		{
-			std::cerr << e.what() << "\n";
-		}
 	} else {
 		std::cout << "[RECV" << sender_fd << "] " << buffer;
 		// //Parsing
@@ -284,7 +262,7 @@ bool	Server::is_op( std::string channel, std::string user ) {
 		.is_op(this->get_user_class(user).get_name());
 } 
 
-bool	Server::channel_exist( std::string channel ) {
+bool	Server::channel_exists( std::string channel ) {
 	try {
 		this->get_channel_class(channel);
 	}
