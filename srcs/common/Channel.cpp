@@ -1,6 +1,7 @@
 #include "ft_irc.hpp"
 #include "utils.tpp"
 #include <cstddef>
+#include <sstream>
 #include <sys/socket.h>
 #include "Channel.hpp"
 
@@ -107,6 +108,13 @@ void Channel::user_kicked( const User& user, const User& target, std::string kic
 	this->send_channel(user.get_socketfd(), ":" + user.get_name() + " KICK #" + this->get_name() + 
 						" " + target.get_name() + " :" + kick_message);
 }
+
+std::string Channel::user_count( void ) {
+	std::stringstream input;
+	input << this->_connected_users.size();
+	return (input.str());
+}
+
 
 void Channel::_remove_connected_user( const User& user ) {
 	const size_t len = this->_connected_users.size();
