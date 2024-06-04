@@ -270,8 +270,13 @@ bool	Server::is_op( std::string channel, std::string user ) {
 } 
 
 bool	Server::channel_exist( std::string channel ) {
-	(void) channel;
-	return true;
+	try {
+		this->get_channel_class(channel);
+	}
+	catch (...) {
+		return (false);
+	}
+	return (true);
 }
 
 std::string Server::get_topic( std::string channel ) {
