@@ -203,17 +203,11 @@ void Server::_read_data(int i)
 			std::vector<Channel*> channel_list = user.get_list_channel();
 			for (int j = 0; j < channel_list.size(); j++)
 				channel_list[i]->user_quit(user, " left the server\n");
-			
+			delete(&user);
 		}
 		catch(const std::exception& e)
 		{
 			std::cerr << e.what() << "\n";
-		}
-			}
-		}
-		catch(const std::exception& e)
-		{
-			std::cerr << e.what() << '\n';
 		}
 		if (!byte_read) {
 			std::cout << "[Server] Connection closed with client " << sender_fd << std::endl;
