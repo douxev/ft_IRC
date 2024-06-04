@@ -157,8 +157,9 @@ void Channel::set_mode( t_enum_modes mode, size_t value ) {
 
 bool Channel::topic_mode_is_off () {
 
-	if (this->_modes.op_topic = false)
+	if (this->_modes.op_topic == false)
 		return (true);
+	return (false);
 }
 
 bool Channel::is_op( const User& user ) {
