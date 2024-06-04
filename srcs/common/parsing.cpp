@@ -75,12 +75,18 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 	
 	// while (std::getline(message, line_str)) {
 	for (size_t i = 0; i < rev_lines.size(); i++) {
-
-
 		line_str = rev_lines[i];
 		std::istringstream line(line_str);
 		std::getline(line, cmd, ' ');
 		line.str(&line.str()[cmd.size() + 1]);
+
+	// try {
+	// std::cout << "DEBUG MESSAGE Channel user: " << server.get_channel_class("#42")._connected_users[0]->get_name() << "Server user: " << server.get_connected_user()[i]->get_name() << std::endl;
+	// }
+	// catch (...) {
+	// 	std::cout << "EXCEPTION THROWN" << std::endl;
+	// }
+
 		try {
 
 			if (!std::isprint(line.str().at(line.str().size() - 1)))
