@@ -87,7 +87,6 @@ void Channel::send_who( Server& server, int reply_socket ) {
 void Channel::user_join( const User& user ) {
 	this->_add_connected_user(user);
 
-	ft_send(user.get_socketfd(), "TOPIC #" + this->get_name() + " :" + this->_topic + "\n");
 	this->send_userlist(user);
 }
 

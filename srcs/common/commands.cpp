@@ -49,6 +49,7 @@ void	cap_command( Server& server, int reply_socket, std::istringstream &message 
 void	join_command( Server& server, int reply_socket, std::istringstream &message ) {
 	server.join_channel(server.get_user_class(reply_socket).get_name(), 
 						message.str());
+	topic_command(server, reply_socket, message);
 }
 
 void	privmsg_command( Server& server, int reply_socket, std::istringstream &message ) {
@@ -132,20 +133,20 @@ void	topic_command( Server& server, int reply_socket, std::istringstream &messag
 		if (server.is_op(channel, user) || server.get_channel_class(channel).topic_mode_is_off() == true) {
 			if (message.str().empty()) {
 				if (server.get_topic(channel).empty()) {
-					msg_to_send << RPL_NOTOPIC <<  "No topic set for"  << channel << "/n";
+					msg_to_send << RPL_NOTOPIC <<  "No topic set for"  << channel << "\n";
 						if (ft_send(reply_socket, msg_to_send.str()) == -1)
 							std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
 					if (topic_whotime != "") {
 						msg_to_send.str("");
-						msg_to_send << RPL_TOPICWHOTIME << "Topic set by " << topic_whotime << "/n";
+						msg_to_send << RPL_TOPICWHOTIME << "Topic set by " << topic_whotime << "\n";
 					}
 				}
 				else {
-					msg_to_send << RPL_TOPIC << server.get_topic(channel) << "/n";
+					msg_to_send << RPL_TOPIC << server.get_user_class(reply_socket).get_name() << channel << "\n";
 					if (ft_send(reply_socket, msg_to_send.str()) == -1)
 						std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
 					msg_to_send.str("");
-					msg_to_send << RPL_TOPICWHOTIME << "Topic set by " << topic_whotime << "/n";
+					msg_to_send << RPL_TOPICWHOTIME << "Topic set by " << topic_whotime << "\n";
 					if (ft_send(reply_socket, msg_to_send.str()) == -1)
 						std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
 				}
@@ -153,7 +154,10 @@ void	topic_command( Server& server, int reply_socket, std::istringstream &messag
 			else {
 				topic_whotime = user + std::asctime(std::localtime(&result));
 				server.set_topic(channel, message.str(), topic_whotime);
-				msg_to_send << server.get_user_class(reply_socket).get_name() << "changed the topic of " << channel << "to: " << message.str() << "/n";
+				std::string topic_message;
+				std::getline(message, topic_message, ':');
+				std::getline(message, topic_message);
+				msg_to_send << RPL_TOPIC << server.get_user_class(reply_socket).get_name() << " " << channel << " :" << topic_message << "\n";
 				server.send_channel(channel, reply_socket, msg_to_send.str());
 				if (ft_send(reply_socket, msg_to_send.str()) == -1)
 					std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
@@ -162,26 +166,26 @@ void	topic_command( Server& server, int reply_socket, std::istringstream &messag
 		else {
 			if (message.str().empty()) {
 				if (server.get_topic(channel).empty()) {
-					msg_to_send << RPL_NOTOPIC <<  "No topic set for"  << channel << "/n";
+					msg_to_send << RPL_NOTOPIC <<  "No topic set for"  << channel << "\n";
 						if (ft_send(reply_socket, msg_to_send.str()) == -1)
 							std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
 					if (topic_whotime != "") {
 						msg_to_send.str("");
-						msg_to_send << RPL_TOPICWHOTIME << "Topic set by " << topic_whotime << "/n";
+						msg_to_send << RPL_TOPICWHOTIME << "Topic set by " << topic_whotime << "\n";
 					}
 				}
 				else {
-					msg_to_send << RPL_TOPIC << server.get_topic(channel) << "/n";
+					msg_to_send << RPL_TOPIC << server.get_topic(channel) << "\n";
 					if (ft_send(reply_socket, msg_to_send.str()) == -1)
 						std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
 					msg_to_send.str("");
-					msg_to_send << RPL_TOPICWHOTIME << "Topic set by " << topic_whotime << "/n";
+					msg_to_send << RPL_TOPICWHOTIME << "Topic set by " << topic_whotime << "\n";
 					if (ft_send(reply_socket, msg_to_send.str()) == -1)
 						std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
 				}
 			}
 			else {
-				msg_to_send << ERR_CHANOPRIVSNEEDED << " :You're not channel operator/n";
+				msg_to_send << ERR_CHANOPRIVSNEEDED << " :You're not channel operator\n";
 				if (ft_send(reply_socket, msg_to_send.str()) == -1)
 					std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
 			}
@@ -192,20 +196,20 @@ void	topic_command( Server& server, int reply_socket, std::istringstream &messag
 			if (server.is_op(channel, user) || server.get_channel_class(channel).topic_mode_is_off() == true) {
 				if (message.str().empty()) {
 					if (server.get_topic(channel).empty()) {
-						msg_to_send << RPL_NOTOPIC <<  "No topic set for"  << channel << "/n";
+						msg_to_send << RPL_NOTOPIC <<  "No topic set for"  << channel << "\n";
 							if (ft_send(reply_socket, msg_to_send.str()) == -1)
 								std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
 						if (topic_whotime != "") {
 							msg_to_send.str("");
-							msg_to_send << RPL_TOPICWHOTIME << "Topic set by " << topic_whotime << "/n";
+							msg_to_send << RPL_TOPICWHOTIME << "Topic set by " << topic_whotime << "\n";
 						}
 					}
 					else {
-						msg_to_send << RPL_TOPIC << server.get_topic(channel) << "/n";
+						msg_to_send << RPL_TOPIC << server.get_topic(channel) << "\n";
 						if (ft_send(reply_socket, msg_to_send.str()) == -1)
 							std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
 						msg_to_send.str("");
-						msg_to_send << RPL_TOPICWHOTIME << "Topic set by " << topic_whotime << "/n";
+						msg_to_send << RPL_TOPICWHOTIME << "Topic set by " << topic_whotime << "\n";
 						if (ft_send(reply_socket, msg_to_send.str()) == -1)
 							std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
 					}
@@ -213,7 +217,7 @@ void	topic_command( Server& server, int reply_socket, std::istringstream &messag
 				else {
 					topic_whotime = user + std::asctime(std::localtime(&result));
 					server.set_topic(channel, message.str(), topic_whotime);
-					msg_to_send << server.get_user_class(reply_socket).get_name() << "changed the topic of " << channel << "to: " << message.str() << "/n";
+					msg_to_send << server.get_user_class(reply_socket).get_name() << "changed the topic of " << channel << "to: " << message.str() << "\n";
 					server.send_channel(channel, reply_socket, msg_to_send.str());
 					if (ft_send(reply_socket, msg_to_send.str()) == -1)
 						std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
@@ -222,26 +226,26 @@ void	topic_command( Server& server, int reply_socket, std::istringstream &messag
 			else {
 				if (message.str().empty()) {
 					if (server.get_topic(channel).empty()) {
-						msg_to_send << RPL_NOTOPIC <<  "No topic set for"  << channel << "/n";
+						msg_to_send << RPL_NOTOPIC <<  "No topic set for"  << channel << "\n";
 							if (ft_send(reply_socket, msg_to_send.str()) == -1)
 								std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
 						if (topic_whotime != "") {
 							msg_to_send.str("");
-							msg_to_send << RPL_TOPICWHOTIME << "Topic set by " << topic_whotime << "/n";
+							msg_to_send << RPL_TOPICWHOTIME << "Topic set by " << topic_whotime << "\n";
 						}
 					}
 					else {
-						msg_to_send << RPL_TOPIC << server.get_topic(channel) << "/n";
+						msg_to_send << RPL_TOPIC << server.get_topic(channel) << "\n";
 						if (ft_send(reply_socket, msg_to_send.str()) == -1)
 							std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
 						msg_to_send.str("");
-						msg_to_send << RPL_TOPICWHOTIME << "Topic set by " << topic_whotime << "/n";
+						msg_to_send << RPL_TOPICWHOTIME << "Topic set by " << topic_whotime << "\n";
 						if (ft_send(reply_socket, msg_to_send.str()) == -1)
 							std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
 					}
 				}
 				else {
-					msg_to_send << ERR_CHANOPRIVSNEEDED << " :You're not channel operator/n";
+					msg_to_send << ERR_CHANOPRIVSNEEDED << " :You're not channel operator\n";
 					if (ft_send(reply_socket, msg_to_send.str()) == -1)
 						std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
 				}
