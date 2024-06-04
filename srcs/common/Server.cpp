@@ -201,8 +201,14 @@ void Server::_read_data(int i)
 		{
 			User user = get_user_class(i);
 			std::vector<Channel*> channel_list = user.get_list_channel();
-			for (int j = 0; j < channel_list.size(); j++) {
-				send_channel(channel_list[j]->get_name(), i, user.get_name() + " left the server\n");
+			for (int j = 0; j < channel_list.size(); j++)
+				channel_list[i]->user_quit(user, " left the server\n");
+			
+		}
+		catch(const std::exception& e)
+		{
+			std::cerr << e.what() << "\n";
+		}
 			}
 		}
 		catch(const std::exception& e)
