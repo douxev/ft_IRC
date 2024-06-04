@@ -222,12 +222,28 @@ void	list_command( Server& server, int reply_socket, std::istringstream &message
 	(void) message;
 }
 
-//TODO EMPTY
+//TODO How to answer an invite???
 void	invite_command( Server& server, int reply_socket, std::istringstream &message ) {
 	(void) server;
 	(void) reply_socket;
 	(void) message;
 
+	std::string user;
+	std::string channel;
+
+	if (message.str().empty()) {
+		ft_send(reply_socket, ERR_NEEDMOREPARAMS + server.get_user_class(reply_socket).get_name() + " INVITE :Not enough parameters\n");
+		return ;
+	}
+	std::getline(message, user);
+	std::getline(message, channel);
+	if (!server.is_on_channel(channel, server.get_user_class(reply_socket).get_name()))
+		ft_send(reply_socket, ERR_NOTONCHANNEL + server.get_user_class(reply_socket).get_name() + " " + channel + " :You aren't on that channel\n");
+	else if (server.is_on_channel(channel, user))
+		ft_send(reply_socket, ERR_USERONCHANNEL + server.get_user_class(reply_socket).get_name() + " " + user + " " + channel + " :is already on channel\n");
+	else {
+		ft_send(reply_socket, RPL_INVITING + server.get_user_class(reply_socket).get_name() + " " + channel + "\n");
+	}
 }
 
 void	kick_command( Server& server, int reply_socket, std::istringstream &message ) {

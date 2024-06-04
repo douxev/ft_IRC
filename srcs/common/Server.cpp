@@ -277,7 +277,7 @@ bool	Server::is_op( std::string channel, std::string user ) {
 		.is_op(this->get_user_class(user).get_name());
 } 
 
-bool	Server::channel_exist( std::string channel ) {
+bool	Server::channel_exists( std::string channel ) {
 	try {
 		this->get_channel_class(channel);
 	}
