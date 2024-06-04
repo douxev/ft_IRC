@@ -6,7 +6,7 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 12:59:03 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/06/04 12:59:49 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/06/04 14:46:02 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ public:
 
 	void force_op( const User& user);
 	void change_role( const User& user, const User& target, bool is_op );
-	void user_join( const User& user );
+	void user_join( User& user );
 	void user_quit( const User& user, const std::string quit_message );
 	void user_kicked( const User& user, const User& target, std::string kick_message );
 
@@ -62,7 +62,7 @@ public:
 	void set_topic( std::string topic, std::string topic_whotime );
 	
 
-	Channel( const std::string name, const User& user );
+	Channel( const std::string name, User& user );
 	Channel& operator=( const Channel& Other );
 	bool operator==( const Channel& Other );
 	Channel( const Channel& copied );
@@ -74,14 +74,16 @@ private:
 
 	Channel( void );
 	void _remove_connected_user( const User& user );
-	void _add_connected_user( const User& user );
+	void _add_connected_user( User& user );
 	
 	t_modes						_modes;
 	std::string					_topic;
 	std::string					_topic_whotime;
 	std::string					_name;
 	std::vector<std::string> 	_op_users;
-	std::vector<User> 			_connected_users;
+
+public:
+	std::vector<User *> 		_connected_users;
 
 };
 

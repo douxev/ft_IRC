@@ -13,7 +13,7 @@ Channel::Channel( void ) {
 	this->_topic_whotime = "";
 }
 
-Channel::Channel( const std::string name, const User& user ) {
+Channel::Channel( const std::string name, User& user ) {
 	
 	this->_name = name;
 	this->_modes.invite_only = 0;
@@ -56,9 +56,9 @@ void	Channel::send_userlist( const User& user ) {
 	msg_to_send << "353 " + user.get_name() << " " << this->get_name() << " :";
 
 	for (size_t i = 0; i < len; i++) {
-		if (this->is_op(this->_connected_users[i]))
+		if (this->is_op(*this->_connected_users[i]))
 			msg_to_send << "@";
-		msg_to_send << this->_connected_users[i].get_name() << " ";
+		msg_to_send << this->_connected_users[i]->get_name() << " ";
 	}
 	ft_send(user.get_socketfd(), msg_to_send.str() + "\n");
 	ft_send(user.get_socketfd(), "366 " + user.get_name() + " " + this->get_name() + " :End of /NAMES list\n");
@@ -74,17 +74,17 @@ void Channel::send_who( Server& server, int reply_socket ) {
 			"352 " + user.get_name() + 
 			" " + 
 			this->_name + " " + 
-			this->_connected_users[i].get_name() + " " + 
-			this->_connected_users[i].get_ip() + " " + 
+			this->_connected_users[i]->get_name() + " " + 
+			this->_connected_users[i]->get_ip() + " " + 
 			server.get_ip() + " " + 
-			this->_connected_users[i].get_name() + " H : 0 " + 
-			this->_connected_users[i].get_realname() + "\n");
+			this->_connected_users[i]->get_name() + " H : 0 " + 
+			this->_connected_users[i]->get_realname() + "\n");
 	}
 	ft_send(reply_socket, "315 " + user.get_name() + " :End of WHO list");
 }
 
 
-void Channel::user_join( const User& user ) {
+void Channel::user_join( User& user ) {
 	this->_add_connected_user(user);
 
 	this->send_userlist(user);
@@ -105,15 +105,15 @@ void Channel::user_kicked( const User& user, const User& target, std::string kic
 void Channel::_remove_connected_user( const User& user ) {
 	const size_t len = this->_connected_users.size();
 	for (size_t i = 0; i < len; i++) {
-		if (this->_connected_users[i] == user) {
+		if (this->_connected_users[i] == &user) {
 			this->_connected_users.erase(this->_connected_users.begin() + i);
 			break ;
 		}
 	}
 }
 
-void Channel::_add_connected_user( const User& user ) {
-	this->_connected_users.push_back(user);
+void Channel::_add_connected_user( User& user ) {
+	this->_connected_users.push_back(&user);
 }
 
 void Channel::change_role( const User& user, const User& target, bool is_op ) {
@@ -210,15 +210,15 @@ std::string Channel::get_topic( void ) {
 void Channel::send_channel( const std::string msg ) {
 	const size_t len = this->_connected_users.size();
 	for (size_t i = 0; i < len; i++) {
-		ft_send(this->_connected_users[i].get_socketfd(), msg);
+		ft_send(this->_connected_users[i]->get_socketfd(), msg);
 	}
 }
 
 void Channel::send_channel( int sender_fd, const std::string msg ) {
 	const size_t len = this->_connected_users.size();
 	for (size_t i = 0; i < len; i++) {
-		if (this->_connected_users[i].get_socketfd() != sender_fd)
-			ft_send(this->_connected_users[i].get_socketfd(), msg);
+		if (this->_connected_users[i]->get_socketfd() != sender_fd)
+			ft_send(this->_connected_users[i]->get_socketfd(), msg);
 	}
 }
 
@@ -226,7 +226,7 @@ bool Channel::is_on_channel( const std::string username ) {
 	const size_t len = this->_connected_users.size();
 
 	for (size_t i = 0; i < len; i++) {
-		if (this->_connected_users[i].get_name() == username)
+		if (this->_connected_users[i]->get_name() == username)
 			return (true);
 	}
 	return (false);
