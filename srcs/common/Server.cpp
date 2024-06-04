@@ -199,10 +199,13 @@ void Server::_read_data(int i)
 	if (byte_read <= 0) {
 		try
 		{
-			User user = get_user_class(i);
+			User user = get_user_class(sender_fd);
 			std::vector<Channel*> channel_list = user.get_list_channel();
 			for (int j = 0; j < channel_list.size(); j++)
-				channel_list[i]->user_quit(user, " left the server\n");
+				channel_list[j]->user_quit(user, " left the server\n");
+			std::vector<User*>::iterator it = find(_connected_users.begin(), _connected_users.end(), &user);
+						_connected_users.erase(it);
+
 			delete(&user);
 		}
 		catch(const std::exception& e)
@@ -217,16 +220,6 @@ void Server::_read_data(int i)
 		close(sender_fd);
 		_sockets_fds[i] = _sockets_fds[_nb_sockets - 1];
 		_nb_sockets--;
-		try {
-			//user_quit(client);
-			std::vector<User*>::iterator it = find(_connected_users.begin(), _connected_users.end(), 
-													&get_user_class(sender_fd));
-			_connected_users.erase(it);
-		}
-		catch(const std::exception& e)
-		{
-			std::cerr << e.what() << "\n";
-		}
 	} else {
 		std::cout << "[RECV" << sender_fd << "] " << buffer;
 		// //Parsing
