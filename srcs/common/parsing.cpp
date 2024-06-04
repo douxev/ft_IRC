@@ -83,10 +83,6 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 		line.str(&line.str()[cmd.size() + 1]);
 		try {
 
-
-			std::cout << "[RECV] "<< line.str() << std::endl;
-
-
 			if (!std::isprint(line.str().at(line.str().size() - 1)))
 				line.str(line.str().substr(0, line.str().size() - 1)); //remove weird char
 

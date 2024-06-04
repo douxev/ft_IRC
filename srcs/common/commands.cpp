@@ -35,6 +35,8 @@ void	nick_command( Server& server, int reply_socket, std::string message ) {
 
 void	cap_command( Server& server, int reply_socket, std::istringstream &message ) {
 	(void) server;
+
+	return ;
 	std::string	param;
 	std::getline(message, param, ' ');
 	if (param == "LS")
@@ -69,7 +71,6 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 	for(std::string recipient; std::getline(stream, recipient, ',');) {
 		if (recipient[recipient.size() - 1] == ' ')
 			recipient.erase(recipient.end() - 1); //-1 pour enlever l'espace
-		std::cout << "recipient name: \"" << recipient << "\"\n";
 		try
 		{
 			User user = server.get_user_class(recipient);
