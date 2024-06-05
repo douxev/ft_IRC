@@ -104,40 +104,41 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 
 //TODO EMPTY
 void	mode_command( Server& server, int reply_socket, std::istringstream &message ) {
-	std::string target;
-	std::string value;
-	bool		bvalue;
+// 	std::string target;
+// 	std::string value;
+// 	bool		boolean;
 
-	std::getline(message, target, ' ');
-	std::getline(message, value, ' ');
-	if (value == "+")
-		bvalue = true;
-/*    Command: MODE
-		Parameters: <target> [<modestring> [<mode arguments>...]]*/
-//?Target is channel or user?
-	//?if channel param is password?
-		//yes
-	std::string password;
-	std::getline(message, password, ' ');
+// 	std::getline(message, target, ' ');
+// 	std::getline(message, value, ' ');
+// 	if (value == "+")
+// 		boolean = true;
+// 	int size = std::atoi(value.c_str());
+// /*    Command: MODE
+// 		Parameters: <target> [<modestring> [<mode arguments>...]]*/
+// //?Target is channel or user?
+// 	//?if channel param is password?
+// 		//yes
+// 	std::string password;
+// 	std::getline(message, password, ' ');
 
-	server.get_channel_class(message.str()).set_mode(KEY, bvalue, password);
-//if not password
-	switch (mode)
-	{
-	case INVITE:
-		server.get_channel_class(message.str()).set_mode( INVITE, bvalue ) ;;
-		break ;
-	case TOPIC:
-		server.get_channel_class(message.str()).set_mode( TOPIC, bvalue ) ;
-		break ;
-	case LIMIT:
-			server.get_channel_class(message.str()).set_mode( LIMIT, true ) ;
-		break ;
-	default:
-		break;
-	}
-//if user
-	server.get_channel_class(message.str()).set_mode( OP,  server.get_user_class(reply_socket), target, true ) ;
+// 	server.get_channel_class(message.str()).set_mode(KEY, boolean, password);
+// //if not password
+// 	switch (mode)
+// 	{
+// 	case INVITE:
+// 		server.get_channel_class(message.str()).set_mode( INVITE, size ) ;;
+// 		break ;
+// 	case TOPIC:
+// 		server.get_channel_class(message.str()).set_mode( TOPIC, size ) ;
+// 		break ;
+// 	case LIMIT:
+// 		server.get_channel_class(message.str()).set_mode( LIMIT, size ) ;
+// 		break ;
+// 	default:
+// 		break;
+// 	}
+// //if user
+// 	server.get_channel_class(message.str()).set_mode( OP,  server.get_user_class(reply_socket), target, boolean ) ;
 
 	(void) server;
 	(void) reply_socket;
