@@ -8,7 +8,7 @@
 
 void	check_args(int ac, char **av) {
 	(void) av;
-	if (ac != 2)
+	if (ac != 3)
 		exit(1);
 }
 
