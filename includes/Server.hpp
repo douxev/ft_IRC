@@ -15,8 +15,6 @@ public:
 	~Server( void );
 
 	std::string get_motd( void );
-	void	new_user( std::string name, int socketfd, int ip_adress );
-	void	user_quit( const User* name );
 	int		init_server( int ac, char **av );
 	void	manage_loop( void );
 	bool	nick_already_taken( std::string name ) const;

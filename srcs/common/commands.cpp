@@ -61,7 +61,7 @@ void	join_command( Server& server, int reply_socket, std::istringstream &message
 void	privmsg_command( Server& server, int reply_socket, std::istringstream &message ) {
 
 	if (find(message.str().begin(), message.str().end(), ':') == message.str().end()) {	//detection de l'absence de cible
-		ft_send(reply_socket, "411 " + server.get_user_class(reply_socket).get_name() + ": No recipient given (PRIVMSG " + message.str() + " )\n");
+		ft_send(reply_socket, "411 " + server.get_user_class(reply_socket).get_name() + " :No recipient given (PRIVMSG " + message.str() + " )\n");
 		return ;
 	}
 
@@ -70,7 +70,7 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 	std::string msg;
 	std::getline(message, msg);
 	if (!msg.size()) {
-		ft_send(reply_socket, "412 " + server.get_user_class(reply_socket).get_name() + " : No text to send\n");
+		ft_send(reply_socket, "412 " + server.get_user_class(reply_socket).get_name() + " :No text to send\n");
 		return ;
 	}
 
@@ -95,7 +95,7 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 			}
 			catch(const std::exception& e) //ce n'est pas un channel non plus
 			{
-				ft_send(reply_socket, "401 : " + recipient + " :No such nick/channel");
+				ft_send(reply_socket, "401 " + server.get_user_class(reply_socket).get_name() + " " + recipient + " :No such nick/channel");
 			}
 		}
 	}
@@ -129,31 +129,6 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 void	who_command( Server& server, int reply_socket, std::istringstream &message ) {
 	server.get_channel_class(message.str()).send_who(server, reply_socket);
 }
-
-void pass_command(Server &server, int reply_socket, std::istringstream &message)
-{
-	if (message.str() != server.get_pass())
-		ft_send(reply_socket, "Wrong password\n");
-	try
-	{
-		User user = server.get_user_class(reply_socket);
-		server.user_quit(&user);
-		const size_t len = server.get_connected_user().size();
-			for (size_t i = 0; i < len; i++) {
-				if (server.get_connected_user()[i] == &user) {
-					server.get_connected_user().erase(server.get_connected_user().begin() + i);
-					break ;
-				}
-		}
-		delete(&user);
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
-	server.remove_poll_fd(reply_socket);
-}
-
 
 void	topic_command( Server& server, int reply_socket, std::istringstream &message ) {
 	std::string	channel;
@@ -211,41 +186,36 @@ void	names_command( Server& server, int reply_socket, std::istringstream &messag
 	(void) reply_socket;
 	(void) message;
 
-	server.get_channel_class(message.str()).send_userlist(server.get_user_class(reply_socket));
 
-	// int i = 0;	// le nombre de channel passés en parametre
-	// User user(server.get_user_class(reply_socket));
+	int i = 0;	// le nombre de channel passés en parametre
+	User user = server.get_user_class(reply_socket);
 
-	// // ft_send(reply_socket, "353 ");
-	// for (std::string channel_name; std::getline(message, channel_name, ',');i++) {
-	// 	try
-	// 	{
-	// 		server.get_channel_class(channel_name).send_userlist(user);
-			
-	// 	}
-	// 	catch(const std::exception& e)
-	// 	{
-	// 		//do_nothing
-	// 	}
-	// 	ft_send(reply_socket, channel_name);
-	// }
-	// if (!i ) //aucuns parametres
-	// {
-	// 	std::vector<Channel*> channel_list = server.get_channels_list();
-	// 	for (int j = 0; channel_list[j] != channel_list.back(); j++)
-	// 	{
-	// 		ft_send(reply_socket, channel_list[j]->get_name());
-	// 		channel_list[j]->send_userlist(user);
-	// 	}
-	// 	ft_send(reply_socket, "*:\n");
-	// 	std::vector<User*> user_list = server.get_connected_user();
-	// 	for (int j = 0; user_list[j] < user_list.back(); j++)
-	// 	{
-	// 		if (!user_list[j]->get_list_channel().size())
-	// 			ft_send(reply_socket, user_list[j]->get_name());
-	// 	}
-	// }
-	// ft_send(reply_socket, "366 ");
+	for (std::string channel_name; std::getline(message, channel_name, ',');i++) {
+		try
+		{
+			server.get_channel_class(channel_name).send_userlist(user);
+		}
+		catch(const std::exception& e)
+		{
+			ft_send(reply_socket, "366 " + user.get_name() + " " + channel_name + " :End of /NAMES list/n");
+		}
+	}
+	if (!i ) //aucuns parametres
+	{
+		std::vector<Channel*> channel_list = server.get_channels_list();
+		for (int j = 0; channel_list[j] != channel_list.back(); j++)
+		{
+			channel_list[j]->send_userlist(user);
+		}
+		ft_send(reply_socket, "353 " + user.get_name() + " * :");
+		std::vector<User*> user_list = server.get_connected_user();
+		for (int j = 0; user_list[j] < user_list.back(); j++)
+		{
+			if (!user_list[j]->get_list_channel().size())
+				ft_send(reply_socket, user_list[j]->get_name());
+		}
+		ft_send(reply_socket, "366 " + user.get_name() + " * :End of /NAMES list/n");
+	}
 }
 
 void	list_command( Server& server, int reply_socket, std::istringstream &message ) {
@@ -362,7 +332,7 @@ void	quit_command( Server& server, int reply_socket, std::istringstream &message
 					break ;
 				}
 		}
-		delete(&user);
+		//delete(&user);
 	}
 	catch(const std::exception& e)
 	{
@@ -372,24 +342,24 @@ void	quit_command( Server& server, int reply_socket, std::istringstream &message
 
 void pass_command(Server &server, int reply_socket, std::istringstream &message)
 {
-	if (message.str() != server.get_pass())
+	if (message.str() != server.get_pass()){
 		ft_send(reply_socket, "Wrong password\n");
-	try
-	{
-		User user = server.get_user_class(reply_socket);
-		server.user_quit(&user);
-		const size_t len = server.get_connected_user().size();
-			for (size_t i = 0; i < len; i++) {
-				if (server.get_connected_user()[i] == &user) {
-					server.get_connected_user().erase(server.get_connected_user().begin() + i);
-					break ;
-				}
+		try 	//remove user object
+		{
+			User user = server.get_user_class(reply_socket);
+			const size_t len = server.get_connected_user().size();
+				for (size_t i = 0; i < len; i++) {
+					if (server.get_connected_user()[i] == &user) {
+						server.get_connected_user().erase(server.get_connected_user().begin() + i);
+						break ;
+					}
+			}
+			//delete(&user);
 		}
-		delete(&user);
+		catch(const std::exception& e)
+		{
+			std::cerr << e.what() << '\n';
+		}
+		server.remove_poll_fd(reply_socket);
 	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
-	server.remove_poll_fd(reply_socket);
 }
