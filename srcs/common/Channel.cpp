@@ -25,7 +25,7 @@ Channel::Channel( const std::string name, User& user ) {
 	this->_topic = "";
 	this->_topic_whotime = "";
 	this->user_join(user);
-	this->_op_users.push_back(user.get_name());
+	this->force_op(user);
 }
 
 Channel::Channel( const Channel& Other ):
