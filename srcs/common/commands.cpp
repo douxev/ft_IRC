@@ -369,8 +369,10 @@ void	quit_command( Server& server, int reply_socket, std::istringstream &message
 	{
 		User user = server.get_user_class(reply_socket);
 		std::vector<Channel*> channel_list = user.get_list_channel();
-		for (size_t j = 0; j < channel_list.size(); j++)
+		for (size_t j = 0; j < channel_list.size(); j++) {
 			channel_list[j]->user_quit(user, message.str() + "\n");
+			user.remove_channel_list(channel_list[j]);
+		}
 		const size_t len = server.get_connected_user().size();
 			for (size_t i = 0; i < len; i++) {
 				if (server.get_connected_user()[i] == &user) {
