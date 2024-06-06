@@ -4,6 +4,7 @@
 #include <sstream>
 #include <sys/socket.h>
 #include "Channel.hpp"
+#include "numeric_replies.hpp"
 
 Channel::Channel( void ) {
 	this->_modes.invite_only = 0;
@@ -24,7 +25,7 @@ Channel::Channel( const std::string name, User& user ) {
 	this->_modes.limit = 0;
 	this->_topic = "";
 	this->_topic_whotime = "";
-	this->user_join(user);
+	this->user_join(user, "");
 	this->force_op(user);
 }
 
@@ -39,8 +40,6 @@ Channel& Channel::operator=( const Channel& Other ) {
 	this->_name = Other._name;
 	return (*this);
 }
-
-
 
 bool Channel::operator==( const Channel& Other ){
 	if (this->_name == Other._name)
@@ -87,10 +86,33 @@ void Channel::send_who( Server& server, int reply_socket ) {
 	ft_send(reply_socket, "315 " + user.get_name() + " :End of WHO list");
 }
 
-void Channel::user_join( User& user ) {
-	this->_add_connected_user(user);
+void Channel::user_join( User& user, std::string pass ) {
 
-	this->send_userlist(user);
+	if (this->_modes.invite_only) {
+		ft_send(user.get_socketfd(), ERR_INVITEONLYCHAN + user.get_name() + " " + 
+			this->get_name() + " :Invite Only (+i)\n");
+		return ; //!NO INVITE
+	}
+	if (this->_modes.limit && this->_connected_users.size() == this->_modes.limit) {
+		ft_send(user.get_socketfd(), ERR_CHANNELISFULL + user.get_name() + " " + 
+			this->get_name() + " :Channel is Full (+l)\n");
+		return ; //!USER LIMIT REACHED
+	}
+	if (!this->_modes.password.empty() && pass.empty()) {
+		ft_send(user.get_socketfd(), ERR_NEEDMOREPARAMS + user.get_name() + 
+			"JOIN :Missing Channel Key (+k)\n");
+		return ; //! PASSWORD MISSING
+	}
+	if (this->_modes.password.empty() || pass == this->_modes.password) {
+		this->_add_connected_user(user);
+		this->send_userlist(user);
+		return ; //!EVERYTHING GOOD
+	}
+	else {
+		ft_send(user.get_socketfd(), ERR_BADCHANNELKEY + user.get_name() + " " + 
+			this->get_name() + " :Bad Channel Key (+k)\n");
+		return ; //!Password Mismatch
+	}
 }
 
 void Channel::user_quit( const User& user, const std::string quit_message ) {
@@ -108,7 +130,6 @@ void Channel::change_op_nick( const std::string user, const std::string new_name
 		}
 	}
 }
-
 
 void Channel::user_part( const User& user, const std::string part_message ) {
 	this->_remove_connected_user(user);

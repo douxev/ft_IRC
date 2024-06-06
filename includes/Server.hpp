@@ -27,7 +27,7 @@ public:
 
 	void	send_all( std::string msg );
 	void	send_all( int reply_socket, std::string msg );
-	void	join_channel( std::string name, std::string channel );
+	void	join_channel( std::string name, std::string channel, std::string password );
 	void	part_channel( std::string name, std::string channel, std::string part_message );
 
 	User&		get_user_class( int socketfd );

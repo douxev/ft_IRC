@@ -6,13 +6,14 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 12:59:03 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/06/06 15:46:24 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/06/06 16:30:53 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CHANNEL_HPP
 # define CHANNEL_HPP
 
+#include <cstddef>
 # include <vector>
 # include <string>
 // # include "User.hpp"
@@ -32,7 +33,7 @@ typedef struct s_modes {
 	bool 		invite_only;
 	bool 		op_topic;
 	std::string	password;
-	int			limit;
+	size_t		limit;
 }	t_modes;
 
 class Channel {
@@ -50,7 +51,7 @@ public:
 
 
 
-	void	user_join( User& user );
+	void	user_join( User& user, std::string pass );
     void	user_quit(const User &user, const std::string quit_message);
     void	user_part(const User &user, const std::string part_message);
     void	user_kicked( const User& user, const User& target, std::string kick_message );

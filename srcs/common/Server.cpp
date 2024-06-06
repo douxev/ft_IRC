@@ -248,12 +248,12 @@ User&	Server::get_user_class( int socketfd ) {
 	throw UserNotFoundException();
 }
 
-void	Server::join_channel( std::string username, std::string channelname ) {
+void	Server::join_channel( std::string username, std::string channelname, std::string password ) {
 	User&		user = this->get_user_class(username);
 
 	try {
 		Channel&	channel = this->get_channel_class(channelname);
-		channel.user_join(user);
+		channel.user_join(user, password);
 	}
 	catch (NoSuchChannelException& e) {
 		Channel *new_channel = new Channel(channelname, user);

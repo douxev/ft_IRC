@@ -47,13 +47,21 @@ void	cap_command( Server& server, int reply_socket, std::istringstream &message 
 }
 
 void	join_command( Server& server, int reply_socket, std::istringstream &message ) {
+	std::string password;
+	std::string channel;
+
+	std::getline(message, channel, ' ');
+	std::getline(message, password, ' ');
+	
 	server.join_channel(server.get_user_class(reply_socket).get_name(), 
-						message.str());
-	server.get_user_class(reply_socket).add_channel_list(&server.get_channel_class(message.str()));
-	if (server.get_channel_class(message.str()).get_topic().empty())
-		no_topic_set(reply_socket, message.str());
-	else
-		topic_command(server, reply_socket, message);
+						channel, password);
+	server.get_user_class(reply_socket).add_channel_list(&server.get_channel_class(channel));
+	if (server.get_channel_class(channel).get_topic().empty())
+		no_topic_set(reply_socket, channel);
+	else {
+		std::istringstream channel_iss(channel);
+		topic_command(server, reply_socket, channel_iss);
+	}
 }
 
 void	privmsg_command( Server& server, int reply_socket, std::istringstream &message ) {
@@ -256,6 +264,7 @@ void	list_command( Server& server, int reply_socket, std::istringstream &message
 	const std::vector<Channel *> chans = server.get_channels_list();
 	const size_t len = chans.size();
 	for (size_t i = 0; i < len; i++) {
+		std::cout << chans[i]->user_count();
 		ft_send(reply_socket, RPL_LIST + user.get_name() + " " + chans[i]->get_name() + " " +
 		chans[i]->user_count() + " :" + chans[i]->get_topic() + "\n");
 	}
