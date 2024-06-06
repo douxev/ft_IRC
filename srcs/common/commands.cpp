@@ -97,7 +97,11 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 			{
 				Channel channel = server.get_channel_class(recipient);
 				std::cout << recipient << " is a channel\n";
+				if (channel.is_on_channel(server.get_user_class(reply_socket).get_name()))
 					channel.send_channel(reply_socket, ":" + server.get_user_class(reply_socket).get_name() + " PRIVMSG " + recipient + " :" + msg + "\n");
+				else
+					ft_send(reply_socket, "404 " + server.get_user_class(reply_socket).get_name() + " " + channel.get_name() + " :Cannot send to channel\n");
+
 			}
 			catch(const std::exception& e) //ce n'est pas un channel non plus
 			{
