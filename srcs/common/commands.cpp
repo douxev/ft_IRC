@@ -268,7 +268,17 @@ void	whois_command( Server& server, int reply_socket, std::istringstream &messag
 	std::getline(message, target);
 	try {
 		ft_send(reply_socket, RPL_WHOISUSER + user.get_name() + " " + target + " " + target + " " +
-			server.get_user_class(target).get_ip() + " * :" + server.get_user_class(target).get_realname() + "\n");
+			server.get_user_class(target).get_ip() + " * :" + server.get_user_class(target).get_realname() + "\n"); // whoisUSER
+		const size_t len = server.get_user_class(target).get_list_channel().size();
+		User& target_u = server.get_user_class(target);
+		const std::vector<Channel *> chans = target_u.get_list_channel();
+		std::string whois_channel_string = RPL_WHOISCHANNELS + user.get_name() + " " + target + " :" ;
+		for (size_t i = 0; i < len; i++) {
+			if (chans[i]->is_op(target_u))
+				whois_channel_string += "&";
+			whois_channel_string += chans[i]->get_name() + " ";
+		}
+		ft_send(reply_socket, whois_channel_string + "\n");
 		ft_send(reply_socket, RPL_ENDOFWHOIS + user.get_name() + " " + target + " :End of /WHOIS list\n");
 	}
 	catch(const NoSuchNickException& e) {
