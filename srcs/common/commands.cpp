@@ -389,13 +389,13 @@ void	quit_command( Server& server, int reply_socket, std::istringstream &message
 			channel_list[j]->user_quit(user, message.str() + "\n");
 			// user.remove_channel_list(channel_list[j]);
 		}
-		const size_t len = server.get_connected_user().size();
-			for (size_t i = 0; i < len; i++) {
-				if (server.get_connected_user()[i]->get_socketfd() == user.get_socketfd()) {
-					server.get_connected_user().erase(server.get_connected_user().begin() + i);
-					break ;
-				}
-		}
+		// const size_t len = server.get_connected_user().size();
+		// 	for (size_t i = 0; i < len; i++) {
+		// 		if (server.get_connected_user()[i]->get_socketfd() == user.get_socketfd()) {
+		// 			server.get_connected_user().erase(server.get_connected_user().begin() + i);
+		// 			break ;
+		// 		}
+		// }
 		std::cout << "QUITTING L394" << std::endl;
 		delete &user;
 	}

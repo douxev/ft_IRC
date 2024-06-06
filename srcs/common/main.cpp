@@ -6,19 +6,31 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:22:05 by aauthier          #+#    #+#             */
-/*   Updated: 2024/05/31 16:17:41 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/06/06 18:07:39 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "Server.hpp"
 #include "ft_irc.hpp"
 # include <poll.h>
 # include <signal.h>
 # include <bits/sigaction.h>
 
+static Server* get_server( Server* server ) {
+	static Server* saved_server = NULL;
+
+	if (saved_server && !server)
+		return (saved_server);
+	else
+		saved_server = server;
+	return NULL;
+}
+
 static void	sig_handler( int sig ) {
 	(void) sig;
 	std::cout << "\nSIG RECEIVED" << std::endl;
-	exit(0);
+	get_server(NULL)->~Server();
+	std::exit(0);
 }
 
 static void set_signals( void ) {
@@ -35,6 +47,7 @@ int	main(int ac, char **av) {
 	set_signals();
 	std::cout << "[Server] Starting server" << std::endl;
 	Server server;
+	get_server(&server);
 	server.init_server(ac, av);
 	server.manage_loop();
 	return (0);

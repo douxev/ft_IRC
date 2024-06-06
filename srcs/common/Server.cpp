@@ -23,6 +23,10 @@ Server::~Server() {
 	for (size_t i = 0; i < chans_len; i++) {
 		delete this->_active_channels[i];
 	}
+
+	// this->_connected_users.clear();
+	// this->_active_channels.clear();
+	// this->_sockets_fds.clear();
 }
 
 Server& Server::operator=( const Server& Other ) {
@@ -196,8 +200,6 @@ void Server::_accept_connection()
 	client->set_name(name.str());
 	client->set_fd(client_fd);
 	_connected_users.push_back(client);
-	
-	
 }
 
 std::string Server::get_ip( void ) {
