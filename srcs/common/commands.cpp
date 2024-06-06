@@ -106,14 +106,15 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 
 	std::string target;
 	std::string value;
-	bool		boolean;
+	bool		op_sign;
 	t_enum_modes mode;
 
 	std::getline(message, target, ' ');
 	std::getline(message, value, ' ');
 	if (value == "+")
-		boolean = true;
-	int size = std::atoi(value.c_str());
+		op_sign = true;
+	
+	int size = std::strtol(value.c_str(),NULL, NULL);
 /*    Command: MODE
 		Parameters: <target> [<modestring> [<mode arguments>...]]*/
 //?Target is channel or user?
@@ -122,7 +123,7 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 	std::string password;
 	std::getline(message, password, ' ');
 
-	server.get_channel_class(message.str()).set_mode(KEY, boolean, password);
+	server.get_channel_class(message.str()).set_mode(KEY, op_sign, password);
 //if not password
 	switch (mode)
 	{
