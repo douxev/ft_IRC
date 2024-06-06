@@ -6,8 +6,12 @@
 # define RPL_CREATED "003 "
 # define RPL_MYNFO "004 "
 # define RPL_ISUPPORT "005 "
+
 # define RPL_WHOISUSER "311 "
-# define RPL_ENDOFWHOIS "319 "
+# define RPL_WHOISCHANNELS "319 "
+# define RPL_ENDOFWHOIS "318 "
+
+
 # define RPL_NOTOPIC "331 "
 # define RPL_TOPIC "332 "
 # define RPL_TOPICWHOTIME "333 "
