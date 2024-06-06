@@ -1,3 +1,4 @@
+#include "Channel.hpp"
 #include "error_numeric.hpp"
 #include "ft_irc.hpp"
 #include "numeric_replies.hpp"
@@ -109,6 +110,7 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 	std::string target;
 	std::string value;
 	bool		boolean;
+	t_enum_modes mode;
 
 	std::getline(message, target, ' ');
 	std::getline(message, value, ' ');
