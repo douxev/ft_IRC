@@ -123,7 +123,6 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 	std::string password;
 	std::getline(message, password, ' ');
 
-	server.get_channel_class(message.str()).set_mode(KEY, op_sign, password);
 //if not password
 	switch (mode)
 	{
@@ -136,11 +135,14 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 	case LIMIT:
 		server.get_channel_class(message.str()).set_mode( LIMIT, size ) ;
 		break ;
+	case KEY:
+	server.get_channel_class(message.str()).set_mode(KEY, op_sign, password);
+	case OP:
+		server.get_channel_class(message.str()).set_mode( OP,  server.get_user_class(reply_socket), target, op_sign ) ;
 	default:
 		break;
 	}
 //if user
-	server.get_channel_class(message.str()).set_mode( OP,  server.get_user_class(reply_socket), target, boolean ) ;
 
 
 }
