@@ -1,5 +1,6 @@
 #include "User.hpp"
 #include <algorithm>
+#include <cstddef>
 
 User::User( void ) {
 	this->_name = "";
@@ -26,13 +27,23 @@ bool User::operator==( const User& Other ) const {
 	return (false);
 }
 
+void	User::_change_op_nick( const std::string new_name ) {
+	std::vector<Channel *> chans = this->get_list_channel();
+	const size_t len = chans.size();
+
+	for (size_t i = 0; i < len; i++) {
+		chans[i]->change_op_nick(this->get_name(), new_name);
+	}
+}
 
 User::~User() {
 
 }
 
 void User::set_name( std::string name ) {
+	this->_change_op_nick(name);
 	this->_name = name;
+
 }
 
 void User::set_realname( std::string name ) {

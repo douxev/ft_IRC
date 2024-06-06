@@ -85,7 +85,6 @@ void Channel::send_who( Server& server, int reply_socket ) {
 	ft_send(reply_socket, "315 " + user.get_name() + " :End of WHO list");
 }
 
-
 void Channel::user_join( User& user ) {
 	this->_add_connected_user(user);
 
@@ -96,6 +95,18 @@ void Channel::user_quit( const User& user, const std::string quit_message ) {
 	this->_remove_connected_user(user);
 	this->send_channel(user.get_socketfd(), ":" + user.get_name() + " QUIT :Quit: " + quit_message);
 }
+
+void Channel::change_op_nick( const std::string user, const std::string new_name ) {
+	const size_t len = this->_op_users.size();
+
+	for (size_t i = 0; i < len; i++) {
+		if (this->_op_users[i] == user) {
+			this->_op_users[i] = new_name;
+			return ;
+		}
+	}
+}
+
 
 void Channel::user_part( const User& user, const std::string part_message ) {
 	this->_remove_connected_user(user);
@@ -114,7 +125,6 @@ std::string Channel::user_count( void ) {
 	input << this->_connected_users.size();
 	return (input.str());
 }
-
 
 void Channel::_remove_connected_user( const User& user ) {
 	const size_t len = this->_connected_users.size();
@@ -201,7 +211,8 @@ bool Channel::is_op( const User& user ) {
 }
 
 void	Channel::force_op( const User& user) {
-	this->_op_users.push_back(user.get_name());
+	if (!this->is_op(user))
+		this->_op_users.push_back(user.get_name());
 }
 
 bool Channel::is_op( const std::string user ) {

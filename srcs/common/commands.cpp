@@ -31,10 +31,7 @@ void	nick_command( Server& server, int reply_socket, std::string message ) {
 	std::string oldnick = server.get_user_class(reply_socket).get_name();
 
 	server.change_nick(server.get_user_class(reply_socket), message);
-
 	server.send_all(":" + oldnick + " NICK " + server.get_user_class(reply_socket).get_name() + "\n");
-	// ft_send(reply_socket, "NICK :" + server.get_user_class(reply_socket).get_name());
-	// std::cout << ":" + oldnick + " NICK " + server.get_user_class(reply_socket).get_name() << std::endl;
 }
 
 void	cap_command( Server& server, int reply_socket, std::istringstream &message ) {

@@ -33,6 +33,8 @@ public:
 
 private:
 
+	void					_change_op_nick( const std::string new_name );
+
 	std::string				_ip_address;
 	int						_socketfd;
 	std::string				_name;

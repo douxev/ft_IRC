@@ -86,6 +86,7 @@ bool	Server::nick_already_taken( std::string name ) const {
 void	Server::change_nick( User& user, std::string name ) {
 	if (nick_already_taken(name))
 		throw NickAlreadyTakenException();
+
 	user.set_name(name);
 }
 

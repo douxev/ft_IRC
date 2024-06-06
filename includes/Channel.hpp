@@ -6,7 +6,7 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 12:59:03 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/06/04 16:22:00 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/06/06 14:34:55 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,15 +45,17 @@ public:
 	void	send_who( Server& server, int reply_socket );
 	void	force_op( const User& user);
 	void	change_role( const User& user, const User& target, bool is_op );
-	
+	void	change_op_nick( const std::string user, const std::string new_name );
+
 	void	user_join( User& user );
     void	user_quit(const User &user, const std::string quit_message);
     void	user_part(const User &user, const std::string part_message);
     void	user_kicked( const User& user, const User& target, std::string kick_message );
 
+
 	std::string	user_count( void );
 	bool	is_on_channel( const std::string username );
-	
+
 	void	set_mode( t_enum_modes mode, size_t value );
 	void	set_mode( t_enum_modes mode, const User& user, const std::string target, bool value );
 	void	set_mode( t_enum_modes mode, bool value, std::string password );
@@ -62,7 +64,7 @@ public:
 	std::string get_name( void );
 	std::string get_topic( void );
 	void set_topic( std::string topic, std::string topic_whotime );
-	
+
 
 	Channel( const std::string name, User& user );
 	Channel& operator=( const Channel& Other );
