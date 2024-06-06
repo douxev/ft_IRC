@@ -258,7 +258,6 @@ void	Server::join_channel( std::string username, std::string channelname ) {
 	catch (NoSuchChannelException& e) {
 		Channel *new_channel = new Channel(channelname, user);
 		this->_active_channels.push_back(new_channel);
-		new_channel->force_op(user);
 		std::cout << "Created channel " << this->get_channel_class(channelname).get_name() << std::endl;
 		return ;
 	}

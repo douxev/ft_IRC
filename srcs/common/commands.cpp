@@ -100,52 +100,57 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 	
 }
 
-//TODO EMPTY
+/*    Command: MODE
+		Parameters: <target> [<modestring> [<mode arguments>...]]*/
 void	mode_command( Server& server, int reply_socket, std::istringstream &message ) {
-	return;
-
-	std::string target;
-	std::string value;
-	bool		op_sign;
-	t_enum_modes mode;
+	std::string		target;
+	std::string		value;
+	bool			op_sign = false;
+	char			mode;
 
 	std::getline(message, target, ' ');
 	std::getline(message, value, ' ');
-	if (value == "+")
-		op_sign = true;
 	
-	int size = std::strtol(value.c_str(),NULL, NULL);
-/*    Command: MODE
-		Parameters: <target> [<modestring> [<mode arguments>...]]*/
-//?Target is channel or user?
-	//?if channel param is password?
-		//yes
+
+	if (value.size() < 2)
+		return ; //ERROR
+
+	if (value.at(0) == '+')
+		op_sign = true;
+
+	mode = value.at(1);
+	int size = std::strtol(value.c_str(), NULL, 0);
 	std::string password;
 	std::getline(message, password, ' ');
 
-	
-//if not password
 	switch (mode)
 	{
-	case INVITE:
-		server.get_channel_class(message.str()).set_mode( INVITE, size ) ;;
+	case 'i':
+		server.get_channel_class(target).set_mode( INVITE, op_sign );
 		break ;
-	case TOPIC:
-		server.get_channel_class(message.str()).set_mode( TOPIC, size ) ;
+	case 't':
+		server.get_channel_class(target).set_mode( TOPIC, op_sign );
 		break ;
-	case LIMIT:
-		server.get_channel_class(message.str()).set_mode( LIMIT, size ) ;
+	case 'l':
+		if (op_sign)
+			server.get_channel_class(target).set_mode( LIMIT, size );
+		else
+			server.get_channel_class(target).set_mode(LIMIT, op_sign);
+		break ;
+	case 'k':
+		server.get_channel_class(target).set_mode(KEY, op_sign, password);
+		break ;
+	case 'o':
+		server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
 		break ;
 	case KEY:
 		server.get_channel_class(message.str()).set_mode(KEY, op_sign, password);
 	case OP:
 		server.get_channel_class(message.str()).set_mode( OP,  server.get_user_class(reply_socket), target, op_sign ) ;
 	default:
+		std::cout << "Mode not recognized, is: [" << mode << "]" << std::endl;
 		break;
 	}
-//if user
-
-
 }
 
 void	who_command( Server& server, int reply_socket, std::istringstream &message ) {
@@ -276,7 +281,7 @@ void	whois_command( Server& server, int reply_socket, std::istringstream &messag
 		std::string whois_channel_string = RPL_WHOISCHANNELS + user.get_name() + " " + target + " :" ;
 		for (size_t i = 0; i < len; i++) {
 			if (chans[i]->is_op(target_u))
-				whois_channel_string += "&";
+				whois_channel_string += "@";
 			whois_channel_string += chans[i]->get_name() + " ";
 		}
 		ft_send(reply_socket, whois_channel_string + "\n");

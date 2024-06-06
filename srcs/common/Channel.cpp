@@ -25,7 +25,7 @@ Channel::Channel( const std::string name, User& user ) {
 	this->_topic = "";
 	this->_topic_whotime = "";
 	this->user_join(user);
-	this->_op_users.push_back(user.get_name());
+	this->force_op(user);
 }
 
 Channel::Channel( const Channel& Other ):
@@ -39,6 +39,8 @@ Channel& Channel::operator=( const Channel& Other ) {
 	this->_name = Other._name;
 	return (*this);
 }
+
+
 
 bool Channel::operator==( const Channel& Other ){
 	if (this->_name == Other._name)
@@ -150,6 +152,7 @@ void Channel::set_mode( t_enum_modes mode, const User& user, const std::string t
 		return ;
 	if (this->is_op(user)) {
 		if (value == false && this->is_op(target)) {
+			std::cout << "IS DEOPING SOMEONE" << std::endl;
 			const size_t len = this->_op_users.size();
 			for (size_t i = 0; i < len; i++) {
 				if (this->_op_users[i] == target) {
@@ -159,6 +162,7 @@ void Channel::set_mode( t_enum_modes mode, const User& user, const std::string t
 			}
 		}
 		else if (value == true) {
+			std::cout << "IS OPING SOMEONE" << std::endl;
 			this->_op_users.push_back(target);
 		}
 	}
@@ -169,9 +173,11 @@ void Channel::set_mode( t_enum_modes mode, bool value, std::string password ) {
 	if (mode != KEY)
 		return ;
 	if (!value) {
+		std::cout << "REMOVING PASSWORD CHANNEL" << std::endl;
 		this->_modes.password.clear();
 	}
 	else {
+		std::cout << "ADDING PASSWORD CHANNEL" << std::endl;
 		this->_modes.password = password;
 	}
 }
@@ -181,17 +187,30 @@ void Channel::set_mode( t_enum_modes mode, size_t value ) {
 	switch (mode)
 	{
 	case INVITE:
+		std::cout << "CHANGING INVITE ONLY" << std::endl;
 		this->_modes.invite_only = value;
 		break ;
 	case TOPIC:
+		std::cout << "CHANGING OPTOPIC" << std::endl;
 		this->_modes.op_topic = value;
 		break ;
 	case LIMIT:
+		std::cout << "CHANGING LIMIT ONLY" << std::endl;
 		this->_modes.limit = value;
 		break ;
 	default:
 		break;
 	}
+}
+
+void	Channel::print_ops( void ) {
+	const size_t len = this->_op_users.size();
+	
+	std::cout << "OP USERS: ";
+	for (size_t i = 0; i < len; i++) {
+	std::cout << this->_op_users[i] << " ";
+	}
+	std::cout << std::endl;
 }
 
 bool Channel::topic_mode_is_off () {
