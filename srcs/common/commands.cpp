@@ -359,6 +359,7 @@ void	quit_command( Server& server, int reply_socket, std::istringstream &message
 	{
 		std::cerr << e.what() << "\n";
 	}
+	server.remove_poll_fd(reply_socket);
 }
 
 void pass_command(Server &server, int reply_socket, std::istringstream &message)
