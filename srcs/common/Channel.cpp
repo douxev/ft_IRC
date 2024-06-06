@@ -98,13 +98,9 @@ void Channel::user_join( User& user, std::string pass ) {
 			this->get_name() + " :Channel is Full (+l)\n");
 		return ; //!USER LIMIT REACHED
 	}
-	if (!this->_modes.password.empty() && pass.empty()) {
-		ft_send(user.get_socketfd(), ERR_NEEDMOREPARAMS + user.get_name() + 
-			"JOIN :Missing Channel Key (+k)\n");
-		return ; //! PASSWORD MISSING
-	}
 	if (this->_modes.password.empty() || pass == this->_modes.password) {
 		this->_add_connected_user(user);
+		user.add_channel_list(this);
 		this->send_userlist(user);
 		return ; //!EVERYTHING GOOD
 	}
