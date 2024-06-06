@@ -149,6 +149,10 @@ std::string Channel::user_count( void ) {
 
 void Channel::_remove_connected_user( const User& user ) {
 	const size_t len = this->_connected_users.size();
+	if (is_op(user.get_name())) {
+		std::vector<std::string>::iterator it = find(_op_users.begin(), _op_users.end(), user.get_name());
+		_op_users.erase(it);
+	}
 	for (size_t i = 0; i < len; i++) {
 		if (this->_connected_users[i] == &user) {
 			this->_connected_users.erase(this->_connected_users.begin() + i);
