@@ -67,7 +67,8 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 		std::istringstream line(line_str);
 		std::string cmd;
 		std::getline(line, cmd, ' ');
-		line.str(&line.str()[cmd.size() + 1]);
+		if (line.str().size() >= cmd.size() + 1)
+			line.str(&line.str()[cmd.size() + 1]);
 
 	// try {
 	// std::cout << "DEBUG MESSAGE Channel user: " << server.get_channel_class("#42")._connected_users[0]->get_name() << "Server user: " << server.get_connected_user()[i]->get_name() << std::endl;
@@ -119,6 +120,8 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 				quit_command(server, reply_socket, line);
 			else if (cmd == "PASS")
 				pass_command(server, reply_socket, line);
+			else if (cmd == "SQUIT")
+				shutdown_command(server);
 			else 
 				std::cout << "[WARN!] Unknown Command: " << cmd << std::endl;
 		}

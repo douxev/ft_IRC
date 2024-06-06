@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_irc.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rastie <rastie@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 14:56:20 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/06/04 18:27:12 by rastie           ###   ########.fr       */
+/*   Updated: 2024/06/06 18:28:52 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,5 +64,8 @@ void	whois_command( Server& server, int reply_socket, std::istringstream &messag
 
 
 void	no_topic_set( int reply_socket, std::string channel );
+
+void	shutdown_command(Server& server);
+
 
 #endif

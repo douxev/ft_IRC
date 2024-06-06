@@ -378,7 +378,7 @@ void	part_command( Server& server, int reply_socket, std::istringstream &message
 }
 //TODO EMPTY
 void	quit_command( Server& server, int reply_socket, std::istringstream &message ) {
-	std::cout << "User quits" << std::endl;
+	std::cout << "User quits: " << server.get_connected_user().size() << std::endl;
 	
 	try
 	{
@@ -387,17 +387,23 @@ void	quit_command( Server& server, int reply_socket, std::istringstream &message
 
 		for (size_t j = 0; j < channel_list.size(); j++) {
 			channel_list[j]->user_quit(user, message.str() + "\n");
-			// user.remove_channel_list(channel_list[j]);
+			user.remove_channel_list(channel_list[j]);
 		}
+
+		std::vector<User *>::iterator it = find(server.get_connected_user().begin(), server.get_connected_user().end(), user.get_name());
+		server.get_connected_user().erase(it);
+
 		// const size_t len = server.get_connected_user().size();
 		// 	for (size_t i = 0; i < len; i++) {
+		// 		std::cout << server.get_connected_user()[i]->get_name() << std::endl;
+				
 		// 		if (server.get_connected_user()[i]->get_socketfd() == user.get_socketfd()) {
 		// 			server.get_connected_user().erase(server.get_connected_user().begin() + i);
 		// 			break ;
 		// 		}
 		// }
 		std::cout << "QUITTING L394" << std::endl;
-		delete &user;
+		// delete &user;
 	}
 	catch(const std::exception& e)
 	{
@@ -428,4 +434,9 @@ void pass_command(Server &server, int reply_socket, std::istringstream &message)
 		}
 		server.remove_poll_fd(reply_socket);
 	}
+}
+
+void	shutdown_command(Server& server) {
+	server.~Server();
+	exit(0);
 }
