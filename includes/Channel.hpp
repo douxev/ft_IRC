@@ -6,7 +6,7 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 12:59:03 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/06/06 16:31:52 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/06/06 17:23:09 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,10 @@ public:
     void	user_part(const User &user, const std::string part_message);
     void	user_kicked( const User& user, const User& target, std::string kick_message );
 
+	void	remove_invited( const std::string user );
+	void	add_invited( const std::string user );
+	bool	is_invited( const User& user );
+	bool	is_invited( const std::string user );
 
 	std::string	user_count( void );
 	bool	is_on_channel( const std::string username );
@@ -88,7 +92,7 @@ private:
 	std::string					_topic_whotime;
 	std::string					_name;
 	std::vector<std::string> 	_op_users;
-
+	std::vector<std::string>	_invited;
 public:
 	std::vector<User *> 		_connected_users;
 

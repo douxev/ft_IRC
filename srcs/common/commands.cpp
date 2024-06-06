@@ -321,14 +321,21 @@ void	invite_command( Server& server, int reply_socket, std::istringstream &messa
 		ft_send(reply_socket, ERR_NEEDMOREPARAMS + server.get_user_class(reply_socket).get_name() + " INVITE :Not enough parameters\n");
 		return ;
 	}
-	std::getline(message, user);
+	std::getline(message, user, ' ');
 	std::getline(message, channel);
+	std::cout << "channel: " << channel << " user: " << user << std::endl;
 	if (!server.is_on_channel(channel, server.get_user_class(reply_socket).get_name()))
 		ft_send(reply_socket, ERR_NOTONCHANNEL + server.get_user_class(reply_socket).get_name() + " " + channel + " :You aren't on that channel\n");
 	else if (server.is_on_channel(channel, user))
 		ft_send(reply_socket, ERR_USERONCHANNEL + server.get_user_class(reply_socket).get_name() + " " + user + " " + channel + " :is already on channel\n");
 	else {
-		ft_send(reply_socket, RPL_INVITING + server.get_user_class(reply_socket).get_name() + " " + channel + "\n");
+		ft_send(server.get_user_class(user).get_socketfd(), ":" + 
+			server.get_user_class(reply_socket).get_name() + " INVITE " + user + " " + channel + "\n");
+
+		server.get_channel_class(channel).add_invited(user);
+
+		ft_send(reply_socket, RPL_INVITING + 
+			server.get_user_class(reply_socket).get_name() + " " + user + " " + channel + "\n");
 	}
 }
 

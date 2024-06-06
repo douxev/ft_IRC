@@ -30,7 +30,7 @@ Channel::Channel( const std::string name, User& user ) {
 }
 
 Channel::Channel( const Channel& Other ):
-_modes(Other._modes), _topic(Other._topic), _name(Other._name), _op_users(Other._op_users), _connected_users(Other._connected_users) {}
+_modes(Other._modes), _topic(Other._topic), _name(Other._name), _op_users(Other._op_users), _invited(Other._invited), _connected_users(Other._connected_users) {}
 
 Channel& Channel::operator=( const Channel& Other ) {
 	this->_modes = Other._modes;
@@ -88,7 +88,7 @@ void Channel::send_who( Server& server, int reply_socket ) {
 
 void Channel::user_join( User& user, std::string pass ) {
 
-	if (this->_modes.invite_only) {
+	if (this->_modes.invite_only && !this->is_invited(user)) {
 		ft_send(user.get_socketfd(), ERR_INVITEONLYCHAN + user.get_name() + " " + 
 			this->get_name() + " :Invite Only (+i)\n");
 		return ; //!NO INVITE
@@ -102,6 +102,8 @@ void Channel::user_join( User& user, std::string pass ) {
 		this->_add_connected_user(user);
 		user.add_channel_list(this);
 		this->send_userlist(user);
+		if (this->is_invited(user.get_name()))
+			this->remove_invited(user.get_name());
 		return ; //!EVERYTHING GOOD
 	}
 	else {
@@ -296,4 +298,40 @@ bool Channel::is_on_channel( const std::string username ) {
 void Channel::set_topic( std::string topic, std::string topic_whotime ) {
 	this->_topic = topic;
 	this->_topic_whotime = topic_whotime;
+}
+
+void	Channel::add_invited( const std::string user ) {
+	if (!this->is_invited(user))
+		this->_invited.push_back(user);
+}
+
+void	Channel::remove_invited( const std::string user ) {
+	const size_t len = this->_invited.size();
+	for (size_t i = 0; i < len; i++) {
+		if (this->_invited[i] == user) {
+			this->_invited.erase(this->_invited.begin() + i);
+			return ;
+		}
+	}
+}
+
+
+bool	Channel::is_invited( const User& user ) {
+	const size_t len = this->_invited.size();
+
+	for (size_t i = 0; i < len; i++) {
+		if (this->_invited[i] == user.get_name())
+			return (true);
+	}
+	return (false);
+}
+
+bool	Channel::is_invited( const std::string user ) {
+	const size_t len = this->_invited.size();
+
+	for (size_t i = 0; i < len; i++) {
+		if (this->_invited[i] == user)
+			return (true);
+	}
+	return (false);
 }
