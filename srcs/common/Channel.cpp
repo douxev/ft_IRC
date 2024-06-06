@@ -114,8 +114,8 @@ void Channel::user_join( User& user, std::string pass ) {
 }
 
 void Channel::user_quit( const User& user, const std::string quit_message ) {
-	this->_remove_connected_user(user);
 	this->send_channel(user.get_socketfd(), ":" + user.get_name() + " QUIT :Quit: " + quit_message);
+	this->_remove_connected_user(user);
 }
 
 void Channel::change_op_nick( const std::string user, const std::string new_name ) {
@@ -150,7 +150,7 @@ std::string Channel::user_count( void ) {
 void Channel::_remove_connected_user( const User& user ) {
 	const size_t len = this->_connected_users.size();
 	for (size_t i = 0; i < len; i++) {
-		if (this->_connected_users[i] == &user) {
+		if (this->_connected_users[i]->get_socketfd() == user.get_socketfd()) {
 			this->_connected_users.erase(this->_connected_users.begin() + i);
 			break ;
 		}
