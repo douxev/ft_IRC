@@ -8,6 +8,7 @@
 #include "Server.hpp"
 #include <ctime>
 #include <vector>
+#include <algorithm>
 
 void	pong(int reply_socket, std::string message) {
 	ft_send(reply_socket, "PONG " + message + "\n");
