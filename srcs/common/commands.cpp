@@ -29,10 +29,12 @@ void	version_command( int reply_socket ) {
 
 void	nick_command( Server& server, int reply_socket, std::string message ) {
 	//checks needed here change if not already taken by SOMEONE ELSE
-	std::string oldnick = server.get_user_class(reply_socket).get_name();
+	User& user = server.get_user_class(reply_socket);
+	std::string oldnick = user.get_name();
+	
 
-	server.change_nick(server.get_user_class(reply_socket), message);
-	server.send_all(":" + oldnick + " NICK " + server.get_user_class(reply_socket).get_name() + "\n");
+	server.change_nick(user, message);
+	server.send_all(":" + oldnick + " NICK " + user.get_name() + "\n");
 }
 
 void	cap_command( Server& server, int reply_socket, std::istringstream &message ) {
@@ -386,12 +388,11 @@ void	quit_command( Server& server, int reply_socket, std::istringstream &message
 		User& user = server.get_user_class(reply_socket);
 		std::vector<Channel*> channel_list = user.get_list_channel();
 
-		for (size_t j = 0; j < channel_list.size(); j++) {
+		for (size_t j = 0; j < channel_list.size(); j++)
 			channel_list[j]->user_quit(user, message.str() + "\n");
-		}
 		
 		server.get_connected_user().erase(std::remove(server.get_connected_user().begin(), server.get_connected_user().end(), 
-			&server.get_user_class(reply_socket)), server.get_connected_user().end());
+			&user), server.get_connected_user().end());
 		
 		delete &user;
 	}
@@ -404,25 +405,32 @@ void	quit_command( Server& server, int reply_socket, std::istringstream &message
 
 void pass_command(Server &server, int reply_socket, std::istringstream &message)
 {
-	if (message.str() != server.get_pass()){
-		ft_send(reply_socket, "Wrong password\n");
+	if (message.str() != server.get_pass() && server.get_pass() != ""){
 		try 	//remove user object
 		{
-			User user = server.get_user_class(reply_socket);
-			const size_t len = server.get_connected_user().size();
-				for (size_t i = 0; i < len; i++) {
-					if (server.get_connected_user()[i]->get_socketfd() == user.get_socketfd()) {
-						server.get_connected_user().erase(server.get_connected_user().begin() + i);
-						break ;
-					}
-			}
-			//delete(&user);/
+			User& user = server.get_user_class(reply_socket);
+			ft_send(reply_socket, "464 " + user.get_name() + " :Password incorrect\n");
+
+			server.get_connected_user().erase(std::remove(server.get_connected_user().begin(), server.get_connected_user().end(), 
+			&user), server.get_connected_user().end());
+
+			delete(&user);
 		}
 		catch(const std::exception& e)
 		{
 			std::cerr << e.what() << '\n';
 		}
 		server.remove_poll_fd(reply_socket);
+	} else {
+		try
+		{
+			server.get_user_class(reply_socket).pass_password();
+		}
+		catch(const std::exception& e)
+		{
+			std::cerr << e.what() << '\n';
+		}
+		
 	}
 }
 

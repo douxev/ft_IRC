@@ -149,19 +149,10 @@ std::string Channel::user_count( void ) {
 
 void Channel::_remove_connected_user( User& user ) {
 	const size_t len = this->_connected_users.size();
-	if (is_op(user.get_name())) {
+	if (is_op(user.get_name()))
 		this->_op_users.erase(std::remove(this->_op_users.begin(), this->_op_users.end(), user.get_name()));
-		// std::vector<std::string>::iterator it = find(_op_users.begin(), _op_users.end(), user.get_name());
-		// _op_users.erase(it);
-	}
+
 	this->_connected_users.erase(std::remove(this->_connected_users.begin(), this->_connected_users.end(), &user), this->_connected_users.end());
-	return ;
-	for (size_t i = 0; i < len; i++) {
-		if (this->_connected_users[i]->get_socketfd() == user.get_socketfd()) {
-			this->_connected_users.erase(this->_connected_users.begin() + i);
-			break ;
-		}
-	}
 }
 
 void Channel::_add_connected_user( User& user ) {

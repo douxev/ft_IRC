@@ -82,48 +82,64 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 			if (!std::isprint(line.str().at(line.str().size() - 1)))
 				line.str(line.str().substr(0, line.str().size() - 1)); //remove weird char
 
-			if (cmd == "USER")
-				init_client(server, reply_socket, line.str());
-			else if (cmd == "PING")
-				pong(reply_socket, line.str());
-			else if (cmd == "MOTD")
-				motd_command(server, reply_socket);
-			else if (cmd == "VERSION")
-				version_command(reply_socket);
-			else if (cmd == "NICK")
-				nick_command(server, reply_socket, line.str());
+			if (cmd == "PASS")
+				pass_command(server, reply_socket, line);
 			else if (cmd == "CAP")
 				cap_command(server, reply_socket, line);
-			else if (cmd == "JOIN")
-				join_command(server, reply_socket, line);
-			else if (cmd == "PRIVMSG")
-				privmsg_command(server, reply_socket, line);
-			else if (cmd == "MODE")
-				mode_command(server, reply_socket, line);
-			else if (cmd == "WHO")
-				who_command(server, reply_socket, line);
-			else if (cmd == "PART")
-				part_command(server, reply_socket, line);
-			else if (cmd == "WHOIS")
-				whois_command(server, reply_socket, line);
-			else if (cmd == "TOPIC")
-				topic_command(server, reply_socket, line);
-			else if (cmd == "NAMES")
-				names_command(server, reply_socket, line);
-			else if (cmd == "LIST")
-				list_command(server, reply_socket, line);
-			else if (cmd == "INVITE")
-				invite_command(server, reply_socket, line);
-			else if (cmd == "KICK")
-				kick_command(server, reply_socket, line);
-			else if (cmd == "QUIT")
-				quit_command(server, reply_socket, line);
-			else if (cmd == "PASS")
-				pass_command(server, reply_socket, line);
 			else if (cmd == "SQUIT")
 				shutdown_command(server);
-			else 
-				std::cout << "[WARN!] Unknown Command: " << cmd << std::endl;
+			else if (cmd == "PING")
+				pong(reply_socket, line.str());
+			else {
+				try
+				{
+					if (!server.get_user_class(reply_socket).password_passed() && server.get_pass() != "") {
+						ft_send(reply_socket, "Not Connected, password problem\n");
+						continue;
+					}
+				}
+				catch(const std::exception& e)
+				{
+					std::cerr << e.what() << '\n';
+					ft_send(reply_socket, "Not Connected, connection is not made by a user\n");
+					continue;
+				}
+				
+				if (cmd == "USER")
+					init_client(server, reply_socket, line.str());
+				else if (cmd == "MOTD")
+					motd_command(server, reply_socket);
+				else if (cmd == "VERSION")
+					version_command(reply_socket);
+				else if (cmd == "NICK")
+					nick_command(server, reply_socket, line.str());
+				else if (cmd == "JOIN")
+					join_command(server, reply_socket, line);
+				else if (cmd == "PRIVMSG")
+					privmsg_command(server, reply_socket, line);
+				else if (cmd == "MODE")
+					mode_command(server, reply_socket, line);
+				else if (cmd == "WHO")
+					who_command(server, reply_socket, line);
+				else if (cmd == "PART")
+					part_command(server, reply_socket, line);
+				else if (cmd == "WHOIS")
+					whois_command(server, reply_socket, line);
+				else if (cmd == "TOPIC")
+					topic_command(server, reply_socket, line);
+				else if (cmd == "NAMES")
+					names_command(server, reply_socket, line);
+				else if (cmd == "LIST")
+					list_command(server, reply_socket, line);
+				else if (cmd == "INVITE")
+					invite_command(server, reply_socket, line);
+				else if (cmd == "KICK")
+					kick_command(server, reply_socket, line);
+				else if (cmd == "QUIT")
+					quit_command(server, reply_socket, line);
+				else 
+					std::cout << "[WARN!] Unknown Command: " << cmd << std::endl;
+			}
 		}
 		catch (std::exception& e) {
 			std::cout << e.what() << std::endl;
