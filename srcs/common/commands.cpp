@@ -124,17 +124,6 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 	char			mode;
 
 	std::getline(message, target, ' ');
-
-	try{
-		if (!server.is_op(target, server.get_user_class(reply_socket).get_name())) {
-			ft_send(reply_socket, ERR_CHANOPRIVSNEEDED + server.get_user_class(reply_socket).get_name() + " " + target + " :You're not channel operator\n");
-			return ;
-		}
-	}
-	catch(const std::exception& e) {
-		
-	}
-
 	std::getline(message, value, ' ');
 
 
@@ -154,32 +143,51 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 	std::getline(message, password, ' ');
 	int size = std::strtol(password.c_str(), NULL, 0);
 
+	try{
+		if (!server.is_op(target, server.get_user_class(reply_socket).get_name())) {
+			ft_send(reply_socket, ERR_CHANOPRIVSNEEDED + server.get_user_class(reply_socket).get_name() + " " + target + " :You're not channel operator\n");
+			return ;
+		}
+	}
+	catch(const NoSuchChannelException& e) {
 
-	switch (mode)
-	{
-	case 'i':
+		switch (mode)
+		{
+		case 'i':
+			server.get_channel_class(target).set_mode( INVITE, op_sign );
+			break ;
+		case 'o':
+		server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
+		break ;
+		}
+	}
+	catch(const NoSuchNickException& e) {
+
+		switch(mode)
+		{
+		case 'i':
 		server.get_channel_class(target).set_mode( INVITE, op_sign );
 		break ;
-	case 't':
+		case 't':
 		server.get_channel_class(target).set_mode( TOPIC, op_sign );
 		break ;
-	case 'l':
+		case 'l':
 		if (op_sign)
 			server.get_channel_class(target).set_mode( LIMIT, size );
 		else
 			server.get_channel_class(target).set_mode(LIMIT, op_sign);
 		break ;
-	case 'k':
+		case 'k':
 		server.get_channel_class(target).set_mode(KEY, op_sign, password);
 		break ;
-	case 'o':
+		case 'o':
 		server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
 		break ;
-	case KEY:
+		case KEY:
 		server.get_channel_class(target).set_mode(KEY, op_sign, password);
-	case OP:
+		case OP:
 		server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), target, op_sign ) ;
-	default:
+		default:
 		std::cout << "Mode not recognized, is: [" << mode << "]" << std::endl;
 		break;
 	}
