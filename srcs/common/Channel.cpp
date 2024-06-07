@@ -113,7 +113,7 @@ void Channel::user_join( User& user, std::string pass ) {
 	}
 }
 
-void Channel::user_quit( const User& user, const std::string quit_message ) {
+void Channel::user_quit( User& user, const std::string quit_message ) {
 	this->send_channel(user.get_socketfd(), ":" + user.get_name() + " QUIT :Quit: " + quit_message);
 	this->_remove_connected_user(user);
 }
@@ -129,13 +129,13 @@ void Channel::change_op_nick( const std::string user, const std::string new_name
 	}
 }
 
-void Channel::user_part( const User& user, const std::string part_message ) {
+void Channel::user_part( User& user, const std::string part_message ) {
 	this->_remove_connected_user(user);
 	this->send_channel(user.get_socketfd(), ":" + user.get_name() + " PART " + this->get_name() + 
 						" :" + part_message);
 }
 
-void Channel::user_kicked( const User& user, const User& target, std::string kick_message ) {
+void Channel::user_kicked( User& user, const User& target, std::string kick_message ) {
 	this->_remove_connected_user(user);
 	this->send_channel(user.get_socketfd(), ":" + user.get_name() + " KICK #" + this->get_name() + 
 						" " + target.get_name() + " :" + kick_message);
@@ -147,12 +147,15 @@ std::string Channel::user_count( void ) {
 	return (input.str());
 }
 
-void Channel::_remove_connected_user( const User& user ) {
+void Channel::_remove_connected_user( User& user ) {
 	const size_t len = this->_connected_users.size();
 	if (is_op(user.get_name())) {
-		std::vector<std::string>::iterator it = find(_op_users.begin(), _op_users.end(), user.get_name());
-		_op_users.erase(it);
+		this->_op_users.erase(std::remove(this->_op_users.begin(), this->_op_users.end(), user.get_name()));
+		// std::vector<std::string>::iterator it = find(_op_users.begin(), _op_users.end(), user.get_name());
+		// _op_users.erase(it);
 	}
+	this->_connected_users.erase(std::remove(this->_connected_users.begin(), this->_connected_users.end(), &user), this->_connected_users.end());
+	return ;
 	for (size_t i = 0; i < len; i++) {
 		if (this->_connected_users[i]->get_socketfd() == user.get_socketfd()) {
 			this->_connected_users.erase(this->_connected_users.begin() + i);

@@ -6,7 +6,7 @@
 /*   By: gbonnard <gbonnard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 12:59:03 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/06/07 12:39:42 by gbonnard         ###   ########.fr       */
+/*   Updated: 2024/06/07 14:37:17 by gbonnard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +51,9 @@ public:
 
 
 	void	user_join( User& user, std::string pass );
-    void	user_quit(const User &user, const std::string quit_message);
-    void	user_part(const User &user, const std::string part_message);
-    void	user_kicked( const User& user, const User& target, std::string kick_message );
+    void	user_quit( User &user, const std::string quit_message );
+    void	user_part( User &user, const std::string part_message );
+    void	user_kicked( User& user, const User& target, std::string kick_message );
 
 	void	remove_invited( const std::string user );
 	void	add_invited( const std::string user );
@@ -85,7 +85,7 @@ public:
 private:
 
 	Channel( void );
-	void _remove_connected_user( const User& user );
+	void _remove_connected_user( User& user );
 	void _add_connected_user( User& user );
 	
 	t_modes						_modes;
