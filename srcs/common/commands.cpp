@@ -390,8 +390,8 @@ void	quit_command( Server& server, int reply_socket, std::istringstream &message
 			user.remove_channel_list(channel_list[j]);
 		}
 
-		std::vector<User *>::iterator it = find(server.get_connected_user().begin(), server.get_connected_user().end(), user.get_name());
-		server.get_connected_user().erase(it);
+		// std::vector<User *>::iterator it = find(server.get_connected_user().begin(), server.get_connected_user().end(), user.get_name());
+		// server.get_connected_user().erase(it);
 
 		// const size_t len = server.get_connected_user().size();
 		// 	for (size_t i = 0; i < len; i++) {
