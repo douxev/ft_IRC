@@ -32,7 +32,6 @@ void	nick_command( Server& server, int reply_socket, std::string message ) {
 	User& user = server.get_user_class(reply_socket);
 	std::string oldnick = user.get_name();
 	
-
 	server.change_nick(user, message);
 	server.send_all(":" + oldnick + " NICK " + user.get_name() + "\n");
 }
