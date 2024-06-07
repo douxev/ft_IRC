@@ -125,22 +125,36 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 	char			mode;
 
 	std::getline(message, target, ' ');
+
+	try{
+		if (!server.is_op(target, server.get_user_class(reply_socket).get_name())) {
+			ft_send(reply_socket, ERR_CHANOPRIVSNEEDED + server.get_user_class(reply_socket).get_name() + " " + target + " :You're not channel operator\n");
+			return ;
+		}
+	}
+	catch(const std::exception& e) {
+		
+	}
+
 	std::getline(message, value, ' ');
-	
 
-	if (value.size() < 2)
-		return ; //ERROR
 
+	if (value.size() < 2){
+		ft_send(reply_socket,RPL_CHANNELMODEIS + server.get_user_class(reply_socket).get_name() + " " + target + " " + server.get_channel_class(target).get_modes());
+		return ; //ERROR	
+	}	
+		
+
+	if (value.at(0) == '+')
+		op_sign = true;
 	if (value.at(0) == '+')
 		op_sign = true;
 
 	mode = value.at(1);
-	int size = std::strtol(value.c_str(), NULL, 0);
-	//?Target is channel or user?
-	//?if channel param is password?
-		//yes
 	std::string password;
 	std::getline(message, password, ' ');
+	int size = std::strtol(password.c_str(), NULL, 0);
+
 
 	switch (mode)
 	{
@@ -160,9 +174,12 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 		server.get_channel_class(target).set_mode(KEY, op_sign, password);
 		break ;
 	case 'o':
-		std::cout << op_sign << "SIGN" << std::endl;
 		server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
 		break ;
+	case KEY:
+		server.get_channel_class(target).set_mode(KEY, op_sign, password);
+	case OP:
+		server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), target, op_sign ) ;
 	default:
 		std::cout << "Mode not recognized, is: [" << mode << "]" << std::endl;
 		break;
@@ -385,6 +402,11 @@ void	part_command( Server& server, int reply_socket, std::istringstream &message
 	std::cout << "Channel: " << channel << " reason: " << part_msg << std::endl;
 	server.part_channel(server.get_user_class(reply_socket).get_name(), channel , part_msg);
 	server.get_user_class(reply_socket).remove_channel_list(&server.get_channel_class(channel));
+	if (!server.get_channel_class(channel).get_size()) {
+		Channel& chan = server.get_channel_class(channel);
+		server.get_channels_list().erase(std::remove(server.get_channels_list().begin(), server.get_channels_list().end(), &chan), server.get_channels_list().end());
+		delete &chan;
+	}
 }
 
 void	quit_command( Server& server, int reply_socket, std::istringstream &message ) {

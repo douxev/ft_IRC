@@ -26,8 +26,8 @@ Channel::Channel( const std::string name, User& user ) {
 	this->_modes.limit = 0;
 	this->_topic = "";
 	this->_topic_whotime = "";
-	this->user_join(user, "");
 	this->force_op(user);
+	this->user_join(user, "");
 }
 
 Channel::Channel( const Channel& Other ):
@@ -57,10 +57,10 @@ void	Channel::send_userlist( const User& user ) {
 	const size_t len = this->_connected_users.size();
 	std::stringstream msg_to_send;
 
-	msg_to_send << "353 " + user.get_name() << " " << this->get_name() << " :";
+	msg_to_send << "353 " + user.get_name() << " = " << this->get_name() << " :";
 
 	for (size_t i = 0; i < len; i++) {
-		if (this->is_op(*this->_connected_users[i]))
+		if (this->is_op(this->_connected_users[i]->get_name()))
 			msg_to_send << "@";
 		msg_to_send << this->_connected_users[i]->get_name() << " ";
 	}
@@ -131,7 +131,8 @@ void Channel::change_op_nick( const std::string user, const std::string new_name
 }
 
 void Channel::user_part( User& user, const std::string part_message ) {
-	this->send_channel(":" + user.get_name() + " PART " + this->get_name() + " :" + part_message + "\n");
+	this->send_channel(":" + user.get_name() + "!" + user.get_name() + "@" + user.get_ip() + " PART " + this->get_name() + " :" + part_message + "\n");
+	ft_send(user.get_socketfd(), "404 " + user.get_name() + " " + this->get_name() + " :Parted from Channel\n");
 	this->_remove_connected_user(user);
 }
 
@@ -350,4 +351,8 @@ bool	Channel::is_invited( const std::string user ) {
 			return (true);
 	}
 	return (false);
+}
+
+size_t	Channel::get_size( void ) {
+	return (this->_connected_users.size());
 }
