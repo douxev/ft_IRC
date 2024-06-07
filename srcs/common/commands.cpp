@@ -8,7 +8,6 @@
 #include "Server.hpp"
 #include <ctime>
 #include <vector>
-#include <algorithm>
 
 void	pong(int reply_socket, std::string message) {
 	ft_send(reply_socket, "PONG " + message + "\n");
@@ -130,56 +129,56 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 			ft_send(reply_socket, ERR_CHANOPRIVSNEEDED + server.get_user_class(reply_socket).get_name() + " " + target + " :You're not channel operator\n");
 			return ;
 		}
-
-		std::getline(message, value, ' ');
-
-
-		if (value.size() < 2){
-			ft_send(reply_socket,RPL_CHANNELMODEIS + server.get_user_class(reply_socket).get_name() + " " + target + " " + server.get_channel_class(target).get_modes());
-			return ; //ERROR	
-		}	
-				
-
-		if (value.at(0) == '+')
-			op_sign = true;
-
-		mode = value.at(1);
-		std::string password;
-		std::getline(message, password, ' ');
-		int size = std::strtol(password.c_str(), NULL, 0);
-
-
-		switch (mode)
-		{
-		case 'i':
-			server.get_channel_class(target).set_mode( INVITE, op_sign );
-			break ;
-		case 't':
-			server.get_channel_class(target).set_mode( TOPIC, op_sign );
-			break ;
-		case 'l':
-			if (op_sign)
-				server.get_channel_class(target).set_mode( LIMIT, size );
-			else
-				server.get_channel_class(target).set_mode(LIMIT, op_sign);
-			break ;
-		case 'k':
-			server.get_channel_class(target).set_mode(KEY, op_sign, password);
-			break ;
-		case 'o':
-			server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
-			break ;
-		case KEY:
-			server.get_channel_class(target).set_mode(KEY, op_sign, password);
-		case OP:
-			server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), target, op_sign ) ;
-		default:
-			std::cout << "Mode not recognized, is: [" << mode << "]" << std::endl;
-			break;
-		}
 	}
-	catch(const NoSuchChannelException& e) {
-		ft_send(reply_socket, ERR_NOSUCHCHANNEL + server.get_user_class(reply_socket).get_name() + " " + target + " :No such channel " + target + "\n");
+	catch(const std::exception& e) {
+		
+	}
+
+	std::getline(message, value, ' ');
+
+
+	if (value.size() < 2){
+		ft_send(reply_socket,RPL_CHANNELMODEIS + server.get_user_class(reply_socket).get_name() + " " + target + " " + server.get_channel_class(target).get_modes());
+		return ; //ERROR	
+	}	
+		
+
+	if (value.at(0) == '+')
+		op_sign = true;
+
+	mode = value.at(1);
+	std::string password;
+	std::getline(message, password, ' ');
+	int size = std::strtol(password.c_str(), NULL, 0);
+
+
+	switch (mode)
+	{
+	case 'i':
+		server.get_channel_class(target).set_mode( INVITE, op_sign );
+		break ;
+	case 't':
+		server.get_channel_class(target).set_mode( TOPIC, op_sign );
+		break ;
+	case 'l':
+		if (op_sign)
+			server.get_channel_class(target).set_mode( LIMIT, size );
+		else
+			server.get_channel_class(target).set_mode(LIMIT, op_sign);
+		break ;
+	case 'k':
+		server.get_channel_class(target).set_mode(KEY, op_sign, password);
+		break ;
+	case 'o':
+		server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
+		break ;
+	case KEY:
+		server.get_channel_class(target).set_mode(KEY, op_sign, password);
+	case OP:
+		server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), target, op_sign ) ;
+	default:
+		std::cout << "Mode not recognized, is: [" << mode << "]" << std::endl;
+		break;
 	}
 }
 
@@ -394,7 +393,7 @@ void	part_command( Server& server, int reply_socket, std::istringstream &message
 }
 //TODO EMPTY
 void	quit_command( Server& server, int reply_socket, std::istringstream &message ) {
-	std::cout << "[SERVER] " << server.get_connected_user().size() << "disconnected" << std::endl;
+	std::cout << "User quits: " << server.get_connected_user().size() << std::endl;
 	
 	try
 	{
@@ -403,12 +402,23 @@ void	quit_command( Server& server, int reply_socket, std::istringstream &message
 
 		for (size_t j = 0; j < channel_list.size(); j++) {
 			channel_list[j]->user_quit(user, message.str() + "\n");
+			user.remove_channel_list(channel_list[j]);
 		}
-		
-		server.get_connected_user().erase(std::remove(server.get_connected_user().begin(), server.get_connected_user().end(), 
-			&server.get_user_class(reply_socket)), server.get_connected_user().end());
-		
-		delete &user;
+
+		// std::vector<User *>::iterator it = find(server.get_connected_user().begin(), server.get_connected_user().end(), user.get_name());
+		// server.get_connected_user().erase(it);
+
+		// const size_t len = server.get_connected_user().size();
+		// 	for (size_t i = 0; i < len; i++) {
+		// 		std::cout << server.get_connected_user()[i]->get_name() << std::endl;
+				
+		// 		if (server.get_connected_user()[i]->get_socketfd() == user.get_socketfd()) {
+		// 			server.get_connected_user().erase(server.get_connected_user().begin() + i);
+		// 			break ;
+		// 		}
+		// }
+		std::cout << "QUITTING L394" << std::endl;
+		// delete &user;
 	}
 	catch(const std::exception& e)
 	{
@@ -431,7 +441,7 @@ void pass_command(Server &server, int reply_socket, std::istringstream &message)
 						break ;
 					}
 			}
-			//delete(&user);/
+			//delete(&user);
 		}
 		catch(const std::exception& e)
 		{
