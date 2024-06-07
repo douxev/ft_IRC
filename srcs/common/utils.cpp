@@ -10,7 +10,7 @@ int	ft_send(int socketfd, std::string msg) {
 	size_t send_value = 0;
 	const size_t len = msg.size();
 
-	if (msg.at(msg.size() - 1) != '\n')
+	if (len > 2 && msg.at(msg.size() - 1) != '\n')
 		msg.append("\n");
 	std::cout << "[SENT" << socketfd << "] " << msg;
 	while (sent < len) {

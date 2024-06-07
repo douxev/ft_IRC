@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gbonnard <gbonnard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 12:59:03 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/06/07 13:08:31 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/06/07 14:37:17 by gbonnard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ public:
 
 	std::string get_name( void );
 	std::string get_topic( void );
+	std::string	get_modes( void );
 	void set_topic( std::string topic, std::string topic_whotime );
 
 

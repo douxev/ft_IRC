@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 #include "Channel.hpp"
 #include "numeric_replies.hpp"
+#include <algorithm>
 
 Channel::Channel( void ) {
 	this->_modes.invite_only = 0;
@@ -100,7 +101,7 @@ void Channel::user_join( User& user, std::string pass ) {
 	}
 	if (this->_modes.password.empty() || pass == this->_modes.password) {
 		this->_add_connected_user(user);
-		user.add_channel_list(this);
+		user.add_channel_list(*this);
 		this->send_userlist(user);
 		if (this->is_invited(user.get_name()))
 			this->remove_invited(user.get_name());
@@ -130,15 +131,14 @@ void Channel::change_op_nick( const std::string user, const std::string new_name
 }
 
 void Channel::user_part( User& user, const std::string part_message ) {
+	this->send_channel(":" + user.get_name() + " PART " + this->get_name() + " :" + part_message + "\n");
 	this->_remove_connected_user(user);
-	this->send_channel(user.get_socketfd(), ":" + user.get_name() + " PART " + this->get_name() + 
-						" :" + part_message);
 }
 
 void Channel::user_kicked( User& user, const User& target, std::string kick_message ) {
 	this->_remove_connected_user(user);
 	this->send_channel(user.get_socketfd(), ":" + user.get_name() + " KICK #" + this->get_name() + 
-						" " + target.get_name() + " :" + kick_message);
+						" " + target.get_name() + " :" + kick_message + "\n");
 }
 
 std::string Channel::user_count( void ) {
@@ -148,11 +148,11 @@ std::string Channel::user_count( void ) {
 }
 
 void Channel::_remove_connected_user( User& user ) {
-	const size_t len = this->_connected_users.size();
-	if (is_op(user.get_name()))
+	if (is_op(user.get_name())) {
 		this->_op_users.erase(std::remove(this->_op_users.begin(), this->_op_users.end(), user.get_name()));
-
+	}
 	this->_connected_users.erase(std::remove(this->_connected_users.begin(), this->_connected_users.end(), &user), this->_connected_users.end());
+
 }
 
 void Channel::_add_connected_user( User& user ) {
@@ -218,6 +218,24 @@ void Channel::set_mode( t_enum_modes mode, size_t value ) {
 	default:
 		break;
 	}
+}
+
+std::string	Channel::get_modes( void ) {
+
+	std::stringstream modes;
+	modes << "+";
+	if (this->_modes.invite_only == 1)
+		modes << "i";
+	if (this->_modes.op_topic == 1)
+		modes <<"t";
+	if (this->_modes.limit != 0)
+		modes <<"l";
+	if (this->_modes.password != "")
+		modes <<"k";
+	if (this->_modes.limit != 0){
+		modes <<" " << this->_modes.limit;
+	}
+	return ( modes.str() );
 }
 
 void	Channel::print_ops( void ) {
