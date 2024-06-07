@@ -384,6 +384,11 @@ void	part_command( Server& server, int reply_socket, std::istringstream &message
 	std::cout << "Channel: " << channel << " reason: " << part_msg << std::endl;
 	server.part_channel(server.get_user_class(reply_socket).get_name(), channel , part_msg);
 	server.get_user_class(reply_socket).remove_channel_list(&server.get_channel_class(channel));
+	if (!server.get_channel_class(channel).get_size()) {
+		Channel& chan = server.get_channel_class(channel);
+		server.get_channels_list().erase(std::remove(server.get_channels_list().begin(), server.get_channels_list().end(), &chan), server.get_channels_list().end());
+		delete &chan;
+	}
 }
 
 void	quit_command( Server& server, int reply_socket, std::istringstream &message ) {
