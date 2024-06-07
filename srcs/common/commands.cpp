@@ -28,10 +28,11 @@ void	version_command( int reply_socket ) {
 
 void	nick_command( Server& server, int reply_socket, std::string message ) {
 	//checks needed here change if not already taken by SOMEONE ELSE
-	std::string oldnick = server.get_user_class(reply_socket).get_name();
-
-	server.change_nick(server.get_user_class(reply_socket), message);
-	server.send_all(":" + oldnick + " NICK " + server.get_user_class(reply_socket).get_name() + "\n");
+	User& user = server.get_user_class(reply_socket);
+	std::string oldnick = user.get_name();
+	
+	server.change_nick(user, message);
+	server.send_all(":" + oldnick + " NICK " + user.get_name() + "\n");
 }
 
 void	cap_command( Server& server, int reply_socket, std::istringstream &message ) {
@@ -145,6 +146,8 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 
 	if (value.at(0) == '+')
 		op_sign = true;
+	if (value.at(0) == '+')
+		op_sign = true;
 
 	mode = value.at(1);
 	std::string password;
@@ -195,43 +198,43 @@ void	topic_command( Server& server, int reply_socket, std::istringstream &messag
 	std::getline(message, topic_message);
 	const std::string user = server.get_user_class(reply_socket).get_name();
 
-	if (channel.empty())
-		ft_send(reply_socket, ERR_NEEDMOREPARAMS + user + "TOPIC :Not enough parameters");
+if (channel.empty())
+	ft_send(reply_socket, ERR_NEEDMOREPARAMS + user + "TOPIC :Not enough parameters");
 
-	try {
-		if (server.is_on_channel(channel, user)) {
-			if (server.is_op(channel, user) || server.get_channel_class(channel).topic_mode_is_off() == true || topic_message.empty()) {
-				if (topic_message.empty()) {
-					if (server.get_topic(channel).empty())
-						no_topic_set(reply_socket, message.str());
-					else {
-						msg_to_send << RPL_TOPIC << server.get_user_class(reply_socket).get_name() << channel << "\n";
-						if (ft_send(reply_socket, msg_to_send.str()) == -1)
-							std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
-					}
-				}
+try {
+	if (server.is_on_channel(channel, user)) {
+		if (server.is_op(channel, user) || server.get_channel_class(channel).topic_mode_is_off() == true || topic_message.empty()) {
+			if (topic_message.empty()) {
+				if (server.get_topic(channel).empty())
+					no_topic_set(reply_socket, message.str());
 				else {
-
-					msg_to_send << RPL_TOPIC << server.get_user_class(reply_socket).get_name() << " " << channel << " :" << topic_message << "\n";
-					server.send_channel(channel, reply_socket, msg_to_send.str());
+					msg_to_send << RPL_TOPIC << server.get_user_class(reply_socket).get_name() << channel << "\n";
 					if (ft_send(reply_socket, msg_to_send.str()) == -1)
 						std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
 				}
 			}
 			else {
-				if (!server.is_op(channel, user)) {
-					msg_to_send << ERR_CHANOPRIVSNEEDED << user << " " << channel << " :You're not channel operator\n";
-					if (ft_send(reply_socket, msg_to_send.str()) == -1)
-						std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
-				}
+
+				msg_to_send << RPL_TOPIC << server.get_user_class(reply_socket).get_name() << " " << channel << " :" << topic_message << "\n";
+				server.send_channel(channel, reply_socket, msg_to_send.str());
+				if (ft_send(reply_socket, msg_to_send.str()) == -1)
+					std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
 			}
 		}
-		else
-			ft_send(reply_socket, "442 " + user + " " + channel + "You are not on channel " + channel + "\n");
+		else {
+			if (!server.is_op(channel, user)) {
+				msg_to_send << ERR_CHANOPRIVSNEEDED << user << " " << channel << " :You're not channel operator\n";
+				if (ft_send(reply_socket, msg_to_send.str()) == -1)
+					std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
+			}
 		}
-	catch(const NoSuchChannelException& e) {
-		ft_send(reply_socket, ERR_NOSUCHCHANNEL + user + " " + channel + " :No such channel " + channel + "\n");
 	}
+	else
+		ft_send(reply_socket, "442 " + user + " " + channel + "You are not on channel " + channel + "\n");
+	}
+catch(const NoSuchChannelException& e) {
+	ft_send(reply_socket, ERR_NOSUCHCHANNEL + user + " " + channel + " :No such channel " + channel + "\n");
+}
 }
 
 //NAMES => list all channel and their occupant, then all users outside any channel, under the "channel *"
@@ -385,40 +388,41 @@ void	kick_command( Server& server, int reply_socket, std::istringstream &message
 
 void	part_command( Server& server, int reply_socket, std::istringstream &message ) {
 	std::string	channel;
-
+	std::string part_msg;
+	
 	std::getline(message, channel, ' ');
+	std::getline(message, part_msg, ':');
+	std::getline(message, part_msg);
 
-	server.part_channel(server.get_user_class(reply_socket).get_name(), channel , message.str());
-	server.get_user_class(reply_socket).remove_channel_list(&server.get_channel_class(message.str()));
+	if (!server.is_on_channel(channel, server.get_user_class(reply_socket).get_name()))
+		return ; //! NOT ON CHANNEL
+	if (channel.empty())
+		return ; //!NEEDMOREPARAMS
+	std::cout << "Channel: " << channel << " reason: " << part_msg << std::endl;
+	server.part_channel(server.get_user_class(reply_socket).get_name(), channel , part_msg);
+	server.get_user_class(reply_socket).remove_channel_list(&server.get_channel_class(channel));
+	if (!server.get_channel_class(channel).get_size()) {
+		Channel& chan = server.get_channel_class(channel);
+		server.get_channels_list().erase(std::remove(server.get_channels_list().begin(), server.get_channels_list().end(), &chan), server.get_channels_list().end());
+		delete &chan;
+	}
 }
-//TODO EMPTY
+
 void	quit_command( Server& server, int reply_socket, std::istringstream &message ) {
-	std::cout << "User quits: " << server.get_connected_user().size() << std::endl;
+	std::cout << "[SERVER] " << server.get_connected_user().size() << " disconnected" << std::endl;
 	
 	try
 	{
 		User& user = server.get_user_class(reply_socket);
 		std::vector<Channel*> channel_list = user.get_list_channel();
 
-		for (size_t j = 0; j < channel_list.size(); j++) {
+		for (size_t j = 0; j < channel_list.size(); j++)
 			channel_list[j]->user_quit(user, message.str() + "\n");
-			user.remove_channel_list(channel_list[j]);
-		}
-
-		// std::vector<User *>::iterator it = find(server.get_connected_user().begin(), server.get_connected_user().end(), user.get_name());
-		// server.get_connected_user().erase(it);
-
-		// const size_t len = server.get_connected_user().size();
-		// 	for (size_t i = 0; i < len; i++) {
-		// 		std::cout << server.get_connected_user()[i]->get_name() << std::endl;
-				
-		// 		if (server.get_connected_user()[i]->get_socketfd() == user.get_socketfd()) {
-		// 			server.get_connected_user().erase(server.get_connected_user().begin() + i);
-		// 			break ;
-		// 		}
-		// }
-		std::cout << "QUITTING L394" << std::endl;
-		// delete &user;
+		
+		server.get_connected_user().erase(std::remove(server.get_connected_user().begin(), server.get_connected_user().end(), 
+			&user), server.get_connected_user().end());
+		
+		delete &user;
 	}
 	catch(const std::exception& e)
 	{
@@ -429,25 +433,32 @@ void	quit_command( Server& server, int reply_socket, std::istringstream &message
 
 void pass_command(Server &server, int reply_socket, std::istringstream &message)
 {
-	if (message.str() != server.get_pass()){
-		ft_send(reply_socket, "Wrong password\n");
+	if (message.str() != server.get_pass() && server.get_pass() != ""){
 		try 	//remove user object
 		{
-			User user = server.get_user_class(reply_socket);
-			const size_t len = server.get_connected_user().size();
-				for (size_t i = 0; i < len; i++) {
-					if (server.get_connected_user()[i]->get_socketfd() == user.get_socketfd()) {
-						server.get_connected_user().erase(server.get_connected_user().begin() + i);
-						break ;
-					}
-			}
-			//delete(&user);
+			User& user = server.get_user_class(reply_socket);
+			ft_send(reply_socket, "464 " + user.get_name() + " :Password incorrect\n");
+
+			server.get_connected_user().erase(std::remove(server.get_connected_user().begin(), server.get_connected_user().end(), 
+			&user), server.get_connected_user().end());
+
+			delete(&user);
 		}
 		catch(const std::exception& e)
 		{
 			std::cerr << e.what() << '\n';
 		}
 		server.remove_poll_fd(reply_socket);
+	} else {
+		try
+		{
+			server.get_user_class(reply_socket).pass_password();
+		}
+		catch(const std::exception& e)
+		{
+			std::cerr << e.what() << '\n';
+		}
+		
 	}
 }
 

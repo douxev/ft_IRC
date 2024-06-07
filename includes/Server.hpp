@@ -3,7 +3,6 @@
 
 #include "User.hpp"
 #include "Channel.hpp"
-#include <algorithm>
 
 class Server {
 

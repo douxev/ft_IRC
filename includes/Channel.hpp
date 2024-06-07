@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gbonnard <gbonnard@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 12:59:03 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/06/07 14:37:17 by gbonnard         ###   ########.fr       */
+/*   Updated: 2024/06/07 16:11:53 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ public:
 	void	change_role( const User& user, const User& target, bool is_op );
 	void	print_ops( void );
 	void	change_op_nick( const std::string user, const std::string new_name );
-
+	size_t	get_size( void );
 
 	void	user_join( User& user, std::string pass );
     void	user_quit( User &user, const std::string quit_message );

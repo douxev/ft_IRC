@@ -261,6 +261,8 @@ void	Server::part_channel( std::string username, std::string channelname, std::s
 	Channel&	channel = this->get_channel_class(channelname);
 	User&		user = this->get_user_class(username);
 
+	if (part_message.empty())
+		part_message = username + " left the channel";
 	channel.user_part(user, part_message);
 }
 
