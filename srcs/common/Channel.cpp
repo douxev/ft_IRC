@@ -220,6 +220,24 @@ void Channel::set_mode( t_enum_modes mode, size_t value ) {
 	}
 }
 
+std::string	Channel::get_modes( void ) {
+
+	std::stringstream modes;
+	modes << "+";
+	if (this->_modes.invite_only == 1)
+		modes << "i";
+	if (this->_modes.op_topic == 1)
+		modes <<"t";
+	if (this->_modes.limit != 0)
+		modes <<"l";
+	if (this->_modes.password != "")
+		modes <<"k";
+	if (this->_modes.limit != 0){
+		modes <<" " << this->_modes.limit;
+	}
+	return ( modes.str() );
+}
+
 void	Channel::print_ops( void ) {
 	const size_t len = this->_op_users.size();
 	
