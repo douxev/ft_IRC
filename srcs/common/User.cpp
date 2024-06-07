@@ -6,18 +6,23 @@ User::User( void ) {
 	this->_name = "";
 	this->_socketfd = 0;
 	this->_ip_address = "127.0.0.1";
+	_password_passed = false;
 }
 
 User::User( const User& Other ) {
 	this->_name = Other._name;
 	this->_socketfd = Other._socketfd;
 	this->_ip_address = Other._ip_address;
+	_password_passed = Other._password_passed;
+
 }
 
 User& User::operator=( const User& Other ) {
 	this->_name = Other._name;
 	this->_socketfd = Other._socketfd;
 	this->_ip_address = Other._ip_address;
+	_password_passed = Other._password_passed;
+
 	return (*this);
 }
 
@@ -100,4 +105,14 @@ void User::remove_channel_list(Channel *channel)
 	return ;
 	std::vector<Channel*>::iterator it = find(this->_joined_channel.begin(), _joined_channel.end(), channel);
 	_joined_channel.erase(it);
+}
+
+bool User::password_passed()
+{
+    return _password_passed;
+}
+
+void User::pass_password()
+{
+	_password_passed = true;
 }

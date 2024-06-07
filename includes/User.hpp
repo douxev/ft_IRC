@@ -24,7 +24,8 @@ public:
 	std::vector<Channel*>	get_list_channel();
 	void					add_channel_list(Channel& channel);
 	void					remove_channel_list(Channel* channel);
-
+	bool					password_passed();
+	void					pass_password();
 	User( void );
 	User& operator=( const User& Other );
 	bool operator==( const User& Other ) const;
@@ -40,6 +41,7 @@ private:
 	std::string				_name;
 	std::string				_realname;
 	std::vector<Channel*>	_joined_channel;
+	bool					_password_passed;
 
 };
 
