@@ -203,6 +203,12 @@ void Channel::set_mode( t_enum_modes mode, size_t value ) {
 	}
 }
 
+std::string	Channel::get_modes( void ) {
+	return "a";
+	std::string modes; /*i t l k*/
+
+}
+
 void	Channel::print_ops( void ) {
 	const size_t len = this->_op_users.size();
 	
