@@ -371,15 +371,23 @@ void	kick_command( Server& server, int reply_socket, std::istringstream &message
 
 void	part_command( Server& server, int reply_socket, std::istringstream &message ) {
 	std::string	channel;
-
+	std::string part_msg;
+	
 	std::getline(message, channel, ' ');
+	std::getline(message, part_msg, ':');
+	std::getline(message, part_msg);
 
-	server.part_channel(server.get_user_class(reply_socket).get_name(), channel , message.str());
-	server.get_user_class(reply_socket).remove_channel_list(&server.get_channel_class(message.str()));
+	if (!server.is_on_channel(channel, server.get_user_class(reply_socket).get_name()))
+		return ; //! NOT ON CHANNEL
+	if (channel.empty())
+		return ; //!NEEDMOREPARAMS
+	std::cout << "Channel: " << channel << " reason: " << part_msg << std::endl;
+	server.part_channel(server.get_user_class(reply_socket).get_name(), channel , part_msg);
+	server.get_user_class(reply_socket).remove_channel_list(&server.get_channel_class(channel));
 }
-//TODO EMPTY
+
 void	quit_command( Server& server, int reply_socket, std::istringstream &message ) {
-	std::cout << "[SERVER] " << server.get_connected_user().size() << "disconnected" << std::endl;
+	std::cout << "[SERVER] " << server.get_connected_user().size() << " disconnected" << std::endl;
 	
 	try
 	{

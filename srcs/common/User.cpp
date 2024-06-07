@@ -82,9 +82,9 @@ std::vector<Channel *> User::get_list_channel()
     return _joined_channel;
 }
 
-void User::add_channel_list(Channel *channel)
+void User::add_channel_list(Channel& channel)
 {
-	_joined_channel.push_back(channel);
+	_joined_channel.push_back(&channel);
 }
 
 void User::remove_channel_list(Channel *channel)
