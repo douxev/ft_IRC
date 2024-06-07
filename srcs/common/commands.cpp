@@ -8,6 +8,7 @@
 #include "Server.hpp"
 #include <ctime>
 #include <vector>
+#include <algorithm>
 
 void	pong(int reply_socket, std::string message) {
 	ft_send(reply_socket, "PONG " + message + "\n");
@@ -441,6 +442,18 @@ void	quit_command( Server& server, int reply_socket, std::istringstream &message
 
 void pass_command(Server &server, int reply_socket, std::istringstream &message)
 {
+	try
+	{
+		if (server.get_user_class(reply_socket).password_passed()) {
+			ft_send(reply_socket, "464 " + server.get_user_class(reply_socket).get_name() + " :You may not reregister");
+			return ;
+		}
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
+	
 	if (message.str() != server.get_pass() && server.get_pass() != ""){
 		try 	//remove user object
 		{
