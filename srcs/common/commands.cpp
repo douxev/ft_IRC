@@ -8,6 +8,7 @@
 #include "Server.hpp"
 #include <ctime>
 #include <vector>
+#include <algorithm>
 
 void	pong(int reply_socket, std::string message) {
 	ft_send(reply_socket, "PONG " + message + "\n");
@@ -387,10 +388,12 @@ void	quit_command( Server& server, int reply_socket, std::istringstream &message
 
 		for (size_t j = 0; j < channel_list.size(); j++) {
 			channel_list[j]->user_quit(user, message.str() + "\n");
-			user.remove_channel_list(channel_list[j]);
+			// user.remove_channel_list(channel_list[j]);
 		}
 
-		// std::vector<User *>::iterator it = find(server.get_connected_user().begin(), server.get_connected_user().end(), user.get_name());
+		server.get_connected_user().erase(std::remove(server.get_connected_user().begin(), server.get_connected_user().end(), &server.get_user_class(reply_socket)), server.get_connected_user().end());
+
+		// std::vector<User *>::iterator it = find(server.get_connected_user().begin(), server.get_connected_user().end(), &user);
 		// server.get_connected_user().erase(it);
 
 		// const size_t len = server.get_connected_user().size();
@@ -403,7 +406,7 @@ void	quit_command( Server& server, int reply_socket, std::istringstream &message
 		// 		}
 		// }
 		std::cout << "QUITTING L394" << std::endl;
-		// delete &user;
+		delete &user;
 	}
 	catch(const std::exception& e)
 	{

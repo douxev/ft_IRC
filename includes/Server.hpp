@@ -41,8 +41,8 @@ public:
 	void		send_channel( std::string channelname, int sender_fd, std::string msg );
 	void		remove_poll_fd( int fd );
 
-	std::vector<Channel*> get_channels_list();
-	std::vector<User*> get_connected_user();
+	std::vector<Channel*>& get_channels_list();
+	std::vector<User*>& get_connected_user();
 private:
 
 	void 		_add_active_channel( Channel *channel );

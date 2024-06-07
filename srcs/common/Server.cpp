@@ -114,12 +114,12 @@ Channel&	Server::get_channel_class( std::string name ) {
 	throw NoSuchChannelException();
 }
 
-std::vector<Channel *> Server::get_channels_list()
+std::vector<Channel *>& Server::get_channels_list()
 {
     return this->_active_channels;
 }
 
-std::vector<User *> Server::get_connected_user()
+std::vector<User *>& Server::get_connected_user()
 {
     return _connected_users;
 }
