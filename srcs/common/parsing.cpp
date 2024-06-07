@@ -8,9 +8,17 @@
 #include <string>
 
 void	init_client( Server& server, int reply_socket, std::string message) {
-
-	(void) server;
-	(void) message;
+	try
+	{
+		if (server.get_user_class(reply_socket).password_passed()) {
+			ft_send(reply_socket, "464 " + server.get_user_class(reply_socket).get_name() + " :You may not reregister");
+			return ;
+		}
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
 	std::stringstream msg_to_send;
 	std::time_t result = std::time(NULL);
 	
@@ -93,8 +101,8 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 			else {
 				try
 				{
-					if (!server.get_user_class(reply_socket).password_passed() && server.get_pass() != "") {
-						ft_send(reply_socket, "Not Connected, password problem\n");
+					if (!server.get_user_class(reply_socket).password_passed() && !server.get_pass().empty()) {
+					ft_send(reply_socket, "464 " + server.get_user_class(reply_socket).get_name() + " :Password incorrect\n");
 						continue;
 					}
 				}
