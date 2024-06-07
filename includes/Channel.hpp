@@ -6,13 +6,14 @@
 /*   By: gbonnard <gbonnard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 12:59:03 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/06/07 12:15:51 by gbonnard         ###   ########.fr       */
+/*   Updated: 2024/06/07 12:39:42 by gbonnard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CHANNEL_HPP
 # define CHANNEL_HPP
 
+#include <cstddef>
 # include <vector>
 # include <string>
 // # include "User.hpp"
@@ -32,7 +33,7 @@ typedef struct s_modes {
 	bool 		invite_only;
 	bool 		op_topic;
 	std::string	password;
-	int			limit;
+	size_t		limit;
 }	t_modes;
 
 class Channel {
@@ -49,12 +50,15 @@ public:
 	void	change_op_nick( const std::string user, const std::string new_name );
 
 
-
-	void	user_join( User& user );
+	void	user_join( User& user, std::string pass );
     void	user_quit(const User &user, const std::string quit_message);
     void	user_part(const User &user, const std::string part_message);
     void	user_kicked( const User& user, const User& target, std::string kick_message );
 
+	void	remove_invited( const std::string user );
+	void	add_invited( const std::string user );
+	bool	is_invited( const User& user );
+	bool	is_invited( const std::string user );
 
 	std::string	user_count( void );
 	bool	is_on_channel( const std::string username );
@@ -89,7 +93,7 @@ private:
 	std::string					_topic_whotime;
 	std::string					_name;
 	std::vector<std::string> 	_op_users;
-
+	std::vector<std::string>	_invited;
 public:
 	std::vector<User *> 		_connected_users;
 

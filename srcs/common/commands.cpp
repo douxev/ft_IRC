@@ -47,13 +47,23 @@ void	cap_command( Server& server, int reply_socket, std::istringstream &message 
 }
 
 void	join_command( Server& server, int reply_socket, std::istringstream &message ) {
+	std::string password;
+	std::string channel;
+
+	std::getline(message, channel, ' ');
+	std::getline(message, password, ' ');
+	
 	server.join_channel(server.get_user_class(reply_socket).get_name(), 
-						message.str());
-	server.get_user_class(reply_socket).add_channel_list(&server.get_channel_class(message.str()));
-	if (server.get_channel_class(message.str()).get_topic().empty())
-		no_topic_set(reply_socket, message.str());
-	else
-		topic_command(server, reply_socket, message);
+						channel, password);
+
+	if (!server.get_channel_class(channel).is_on_channel(server.get_user_class(reply_socket).get_name()))
+		return ;
+	if (server.get_channel_class(channel).get_topic().empty())
+		no_topic_set(reply_socket, channel);
+	else {
+		std::istringstream channel_iss(channel);
+		topic_command(server, reply_socket, channel_iss);
+	}
 }
 
 void	privmsg_command( Server& server, int reply_socket, std::istringstream &message ) {
@@ -89,7 +99,11 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 			{
 				Channel channel = server.get_channel_class(recipient);
 				std::cout << recipient << " is a channel\n";
+				if (channel.is_on_channel(server.get_user_class(reply_socket).get_name()))
 					channel.send_channel(reply_socket, ":" + server.get_user_class(reply_socket).get_name() + " PRIVMSG " + recipient + " :" + msg + "\n");
+				else
+					ft_send(reply_socket, "404 " + server.get_user_class(reply_socket).get_name() + " " + channel.get_name() + " :Cannot send to channel\n");
+
 			}
 			catch(const std::exception& e) //ce n'est pas un channel non plus
 			{
@@ -271,6 +285,7 @@ void	list_command( Server& server, int reply_socket, std::istringstream &message
 	const std::vector<Channel *> chans = server.get_channels_list();
 	const size_t len = chans.size();
 	for (size_t i = 0; i < len; i++) {
+		std::cout << chans[i]->user_count();
 		ft_send(reply_socket, RPL_LIST + user.get_name() + " " + chans[i]->get_name() + " " +
 		chans[i]->user_count() + " :" + chans[i]->get_topic() + "\n");
 	}
@@ -321,14 +336,21 @@ void	invite_command( Server& server, int reply_socket, std::istringstream &messa
 		ft_send(reply_socket, ERR_NEEDMOREPARAMS + server.get_user_class(reply_socket).get_name() + " INVITE :Not enough parameters\n");
 		return ;
 	}
-	std::getline(message, user);
+	std::getline(message, user, ' ');
 	std::getline(message, channel);
+	std::cout << "channel: " << channel << " user: " << user << std::endl;
 	if (!server.is_on_channel(channel, server.get_user_class(reply_socket).get_name()))
 		ft_send(reply_socket, ERR_NOTONCHANNEL + server.get_user_class(reply_socket).get_name() + " " + channel + " :You aren't on that channel\n");
 	else if (server.is_on_channel(channel, user))
 		ft_send(reply_socket, ERR_USERONCHANNEL + server.get_user_class(reply_socket).get_name() + " " + user + " " + channel + " :is already on channel\n");
 	else {
-		ft_send(reply_socket, RPL_INVITING + server.get_user_class(reply_socket).get_name() + " " + channel + "\n");
+		ft_send(server.get_user_class(user).get_socketfd(), ":" + 
+			server.get_user_class(reply_socket).get_name() + " INVITE " + user + " " + channel + "\n");
+
+		server.get_channel_class(channel).add_invited(user);
+
+		ft_send(reply_socket, RPL_INVITING + 
+			server.get_user_class(reply_socket).get_name() + " " + user + " " + channel + "\n");
 	}
 }
 
@@ -371,22 +393,32 @@ void	part_command( Server& server, int reply_socket, std::istringstream &message
 }
 //TODO EMPTY
 void	quit_command( Server& server, int reply_socket, std::istringstream &message ) {
+	std::cout << "User quits: " << server.get_connected_user().size() << std::endl;
+	
 	try
 	{
-		User user = server.get_user_class(reply_socket);
+		User& user = server.get_user_class(reply_socket);
 		std::vector<Channel*> channel_list = user.get_list_channel();
+
 		for (size_t j = 0; j < channel_list.size(); j++) {
 			channel_list[j]->user_quit(user, message.str() + "\n");
 			user.remove_channel_list(channel_list[j]);
 		}
-		const size_t len = server.get_connected_user().size();
-			for (size_t i = 0; i < len; i++) {
-				if (server.get_connected_user()[i] == &user) {
-					server.get_connected_user().erase(server.get_connected_user().begin() + i);
-					break ;
-				}
-		}
-		//delete(&user);
+
+		std::vector<User *>::iterator it = find(server.get_connected_user().begin(), server.get_connected_user().end(), user.get_name());
+		server.get_connected_user().erase(it);
+
+		// const size_t len = server.get_connected_user().size();
+		// 	for (size_t i = 0; i < len; i++) {
+		// 		std::cout << server.get_connected_user()[i]->get_name() << std::endl;
+				
+		// 		if (server.get_connected_user()[i]->get_socketfd() == user.get_socketfd()) {
+		// 			server.get_connected_user().erase(server.get_connected_user().begin() + i);
+		// 			break ;
+		// 		}
+		// }
+		std::cout << "QUITTING L394" << std::endl;
+		// delete &user;
 	}
 	catch(const std::exception& e)
 	{
@@ -404,7 +436,7 @@ void pass_command(Server &server, int reply_socket, std::istringstream &message)
 			User user = server.get_user_class(reply_socket);
 			const size_t len = server.get_connected_user().size();
 				for (size_t i = 0; i < len; i++) {
-					if (server.get_connected_user()[i] == &user) {
+					if (server.get_connected_user()[i]->get_socketfd() == user.get_socketfd()) {
 						server.get_connected_user().erase(server.get_connected_user().begin() + i);
 						break ;
 					}
@@ -417,4 +449,9 @@ void pass_command(Server &server, int reply_socket, std::istringstream &message)
 		}
 		server.remove_poll_fd(reply_socket);
 	}
+}
+
+void	shutdown_command(Server& server) {
+	server.~Server();
+	exit(0);
 }

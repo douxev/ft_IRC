@@ -4,6 +4,7 @@
 #include <sstream>
 #include <sys/socket.h>
 #include "Channel.hpp"
+#include "numeric_replies.hpp"
 
 Channel::Channel( void ) {
 	this->_modes.invite_only = 0;
@@ -24,12 +25,12 @@ Channel::Channel( const std::string name, User& user ) {
 	this->_modes.limit = 0;
 	this->_topic = "";
 	this->_topic_whotime = "";
-	this->user_join(user);
+	this->user_join(user, "");
 	this->force_op(user);
 }
 
 Channel::Channel( const Channel& Other ):
-_modes(Other._modes), _topic(Other._topic), _name(Other._name), _op_users(Other._op_users), _connected_users(Other._connected_users) {}
+_modes(Other._modes), _topic(Other._topic), _name(Other._name), _op_users(Other._op_users), _invited(Other._invited), _connected_users(Other._connected_users) {}
 
 Channel& Channel::operator=( const Channel& Other ) {
 	this->_modes = Other._modes;
@@ -39,8 +40,6 @@ Channel& Channel::operator=( const Channel& Other ) {
 	this->_name = Other._name;
 	return (*this);
 }
-
-
 
 bool Channel::operator==( const Channel& Other ){
 	if (this->_name == Other._name)
@@ -87,15 +86,36 @@ void Channel::send_who( Server& server, int reply_socket ) {
 	ft_send(reply_socket, "315 " + user.get_name() + " :End of WHO list");
 }
 
-void Channel::user_join( User& user ) {
-	this->_add_connected_user(user);
+void Channel::user_join( User& user, std::string pass ) {
 
-	this->send_userlist(user);
+	if (this->_modes.invite_only && !this->is_invited(user)) {
+		ft_send(user.get_socketfd(), ERR_INVITEONLYCHAN + user.get_name() + " " + 
+			this->get_name() + " :Invite Only (+i)\n");
+		return ; //!NO INVITE
+	}
+	if (this->_modes.limit && this->_connected_users.size() == this->_modes.limit) {
+		ft_send(user.get_socketfd(), ERR_CHANNELISFULL + user.get_name() + " " + 
+			this->get_name() + " :Channel is Full (+l)\n");
+		return ; //!USER LIMIT REACHED
+	}
+	if (this->_modes.password.empty() || pass == this->_modes.password) {
+		this->_add_connected_user(user);
+		user.add_channel_list(this);
+		this->send_userlist(user);
+		if (this->is_invited(user.get_name()))
+			this->remove_invited(user.get_name());
+		return ; //!EVERYTHING GOOD
+	}
+	else {
+		ft_send(user.get_socketfd(), ERR_BADCHANNELKEY + user.get_name() + " " + 
+			this->get_name() + " :Bad Channel Key (+k)\n");
+		return ; //!Password Mismatch
+	}
 }
 
 void Channel::user_quit( const User& user, const std::string quit_message ) {
-	this->_remove_connected_user(user);
 	this->send_channel(user.get_socketfd(), ":" + user.get_name() + " QUIT :Quit: " + quit_message);
+	this->_remove_connected_user(user);
 }
 
 void Channel::change_op_nick( const std::string user, const std::string new_name ) {
@@ -108,7 +128,6 @@ void Channel::change_op_nick( const std::string user, const std::string new_name
 		}
 	}
 }
-
 
 void Channel::user_part( const User& user, const std::string part_message ) {
 	this->_remove_connected_user(user);
@@ -130,8 +149,12 @@ std::string Channel::user_count( void ) {
 
 void Channel::_remove_connected_user( const User& user ) {
 	const size_t len = this->_connected_users.size();
+	if (is_op(user.get_name())) {
+		std::vector<std::string>::iterator it = find(_op_users.begin(), _op_users.end(), user.get_name());
+		_op_users.erase(it);
+	}
 	for (size_t i = 0; i < len; i++) {
-		if (this->_connected_users[i] == &user) {
+		if (this->_connected_users[i]->get_socketfd() == user.get_socketfd()) {
 			this->_connected_users.erase(this->_connected_users.begin() + i);
 			break ;
 		}
@@ -285,4 +308,40 @@ bool Channel::is_on_channel( const std::string username ) {
 void Channel::set_topic( std::string topic, std::string topic_whotime ) {
 	this->_topic = topic;
 	this->_topic_whotime = topic_whotime;
+}
+
+void	Channel::add_invited( const std::string user ) {
+	if (!this->is_invited(user))
+		this->_invited.push_back(user);
+}
+
+void	Channel::remove_invited( const std::string user ) {
+	const size_t len = this->_invited.size();
+	for (size_t i = 0; i < len; i++) {
+		if (this->_invited[i] == user) {
+			this->_invited.erase(this->_invited.begin() + i);
+			return ;
+		}
+	}
+}
+
+
+bool	Channel::is_invited( const User& user ) {
+	const size_t len = this->_invited.size();
+
+	for (size_t i = 0; i < len; i++) {
+		if (this->_invited[i] == user.get_name())
+			return (true);
+	}
+	return (false);
+}
+
+bool	Channel::is_invited( const std::string user ) {
+	const size_t len = this->_invited.size();
+
+	for (size_t i = 0; i < len; i++) {
+		if (this->_invited[i] == user)
+			return (true);
+	}
+	return (false);
 }

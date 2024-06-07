@@ -23,6 +23,10 @@ Server::~Server() {
 	for (size_t i = 0; i < chans_len; i++) {
 		delete this->_active_channels[i];
 	}
+
+	// this->_connected_users.clear();
+	// this->_active_channels.clear();
+	// this->_sockets_fds.clear();
 }
 
 Server& Server::operator=( const Server& Other ) {
@@ -196,8 +200,6 @@ void Server::_accept_connection()
 	client->set_name(name.str());
 	client->set_fd(client_fd);
 	_connected_users.push_back(client);
-	
-	
 }
 
 std::string Server::get_ip( void ) {
@@ -226,16 +228,8 @@ void Server::_read_data(int i)
 		_nb_sockets--;
 	} else {
 		std::cout << "[RECV" << sender_fd << "] " << buffer;
-		// //Parsing
 		std::istringstream stream(buffer);
 		parse_commands(*this, sender_fd, stream);
-		// msg_to_sent << "Client [" << sender_fd << "] said: " << buffer;
-		// for (int j = 0; j < _nb_sockets; j++) {
-		// 	// send(pollfd[j].fd, "PING TEstitesto", 16 , 0);
-		// 	if (_sockets_fds[j].fd != _server_socket)
-		// 		if (send(_sockets_fds[j].fd, (msg_to_sent.str()).c_str(), msg_to_sent.str().size(), 0) == -1)
-		// 				std::cerr << "[Server] Send error to client " << _sockets_fds[j].fd << ": " << strerror(errno) << std::endl;
-		// }
 	}
 }
 User&	Server::get_user_class( int socketfd ) {
@@ -248,12 +242,12 @@ User&	Server::get_user_class( int socketfd ) {
 	throw UserNotFoundException();
 }
 
-void	Server::join_channel( std::string username, std::string channelname ) {
+void	Server::join_channel( std::string username, std::string channelname, std::string password ) {
 	User&		user = this->get_user_class(username);
 
 	try {
 		Channel&	channel = this->get_channel_class(channelname);
-		channel.user_join(user);
+		channel.user_join(user, password);
 	}
 	catch (NoSuchChannelException& e) {
 		Channel *new_channel = new Channel(channelname, user);
