@@ -53,23 +53,36 @@ void Bot::add_word( std::string channel, std::string word ) {
 			this->_channels[channel].push_back(word);
 			notice("Added word '" + word + "' to " + channel + "'s forbidden words.");
 		}
-		notice("Word '" + word + "' already registered for " + channel + ".");
+		else
+			notice("Word '" + word + "' already registered for " + channel + ".");
 	}
 }
 
 //removes word from map
 void Bot::remove_word( std::string channel, std::string word ) {
-
+	if (this->_channels.find(channel) == this->_channels.end())
+		notice("Not on that channel.");
+	else {
+		if (std::find(this->_channels[channel].begin(), this->_channels[channel].end(), channel) == this->_channels[channel].end()) {
+			this->_channels[channel].erase(std::remove(this->_channels[channel].begin(), this->_channels[channel].end(), word));
+			notice("Word '" + word + "' has been removed for " + channel + ".");
+		}
+		else
+			notice("word '" + word + "' not found on " + channel + ".");
+	}
 }
 
 //Reads and parses PRIVMSG
 void Bot::process_msg( std::istringstream& message ) {
+	std::cout << RECV << message.str() << std::endl;
+
 
 }
 
 //kicks a user
-void Bot::kick_user( std::string user ) {
-
+void Bot::kick_user( std::string channel, std::string user, std::string fword ) {
+	this->send("KICK " + channel + " " + user + ":You used a forbidden word: " + fword + "\n");
+	notice("Kicked " + user + " from " + channel + " because of the forbidden word '" + fword + "'.");
 }
 
 //says it's not op on channel
@@ -78,8 +91,9 @@ void Bot::not_op( void ) {
 }
 
 //sends a PRIVMSG
-void Bot::send( std::string name ) {
-
+void Bot::send( std::string msg ) {
+	ft_send(this->_fd, msg);
+	std::cout << SENT << msg << std::endl;
 }
 
 void Bot::notice( std::string msg ) {

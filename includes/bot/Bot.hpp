@@ -21,18 +21,19 @@ public:
 	void add_word( std::string channel, std::string word );
 	void remove_word( std::string channel, std::string word );
 	void process_msg( std::istringstream& message );
-	void kick_user( std::string user );
+	void kick_user( std::string channel, std::string user, std::string word );
 	void not_op( void );
-	void send( std::string name );
+	void send( std::string msg );
 	void notice( std::string msg );
 
 private:
 
 	Bot( void );
 
-	const std::string _host;
-	const std::string _port;
-	const std::string _pass;
+	const std::string 	_host;
+	const std::string 	_port;
+	const std::string 	_pass;
+	int					_fd;
 
 	std::map<std::string, std::vector<std::string>> _channels;
 
