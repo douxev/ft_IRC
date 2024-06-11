@@ -214,7 +214,7 @@ void Channel::set_mode( t_enum_modes mode, size_t value ) {
 		this->_modes.invite_only = value;
 		break ;
 	case TOPIC:
-		std::cout << SERVER_INFO << "invite only " << (value ? "ON": "OFF") << " on " << this->_name << std::endl;
+		std::cout << SERVER_INFO << "topic can be change by mod only " << (value ? "ON": "OFF") << " on " << this->_name << std::endl;
 		this->_modes.op_topic = value;
 		break ;
 	case LIMIT:
