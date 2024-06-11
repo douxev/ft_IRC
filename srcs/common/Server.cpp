@@ -9,7 +9,7 @@
 #include <sys/poll.h>
 
 Server::Server( void ): 
-_ip_address(0), _port(0), _server_socket(0), _nb_sockets(0) {}
+_ip_str("127.0.0.1"), _ip_address(0), _port(0), _server_socket(0), _nb_sockets(0) {}
 
 Server::~Server() {
 	const size_t users_len = this->_connected_users.size();
@@ -132,10 +132,10 @@ int Server::init_server(int ac, char **av) {
 		return (1);
 	
 	if (listen(_server_socket, 10)) {
-		std::cerr << "[Server] Listen error: " <<  strerror(errno) << std::endl;
+		std::cerr << SERVER_INFO << "Listen error: " <<  strerror(errno) << std::endl;
         return (2);
 	}
-	std::cout << "[Server] Listening on port " << _server_socket << std::endl;
+	std::cout << SERVER_INFO << "Listening on port " << _server_socket << std::endl;
 
 	struct pollfd new_poll_fd = {};
 	this->_sockets_fds.push_back((new_poll_fd));
@@ -152,11 +152,11 @@ void Server::manage_loop()
 	{
 		int status = poll(_sockets_fds.data(), _nb_sockets, 2000);
 		if (status == -1){
-			std::cerr << "[Server] Poll error: " <<  strerror(errno) << std::endl;
+			std::cerr << SERVER_INFO << "Poll error: " <<  strerror(errno) << std::endl;
 			exit (4) ; //throw exception
 		}
 		if (!status)
-			// std::cout << "[Server] Waiting for connnection...\n";
+			// std::cout << SERVER_INFO << "Waiting for connnection...\n";
 			continue ;
 
 		for (int i = 0; i < _nb_sockets; i++)
@@ -182,10 +182,10 @@ void Server::_accept_connection()
 	std::stringstream name;
 	
 	if (client_fd == -1) {
-		std::cerr << "[Server] Accept error: " <<  strerror(errno) << std::endl;
+		std::cerr << SERVER_INFO << "Accept error: " <<  strerror(errno) << std::endl;
         return ;
 	}
-	std::cout << "[Server] Accepted connection from client " << client_fd << std::endl;
+	std::cout << SERVER_INFO << "Accepted connection from client " << client_fd << std::endl;
 	
 
 	struct pollfd new_poll_fd = {};
@@ -219,15 +219,15 @@ void Server::_read_data(int i)
 	const int byte_read = recv(sender_fd, buffer, BUFSIZ, 0);
 	if (byte_read <= 0) {
 		if (!byte_read) {
-			std::cout << "[Server] Connection closed with client " << sender_fd << std::endl;
+			std::cout << SERVER_INFO << "Connection closed with client " << sender_fd << std::endl;
 		}
 		else
-			std::cerr << "[Server] Recv error: " << strerror(errno) << std::endl;
+			std::cerr << SERVER_INFO << "Recv error: " << strerror(errno) << std::endl;
 		close(sender_fd);
 		_sockets_fds[i] = _sockets_fds[_nb_sockets - 1];
 		_nb_sockets--;
 	} else {
-		std::cout << "[RECV" << sender_fd << "] " << buffer;
+		std::cout << YELLOW << "[RECV" << sender_fd << "] " << RESET << buffer;
 		std::istringstream stream(buffer);
 		parse_commands(*this, sender_fd, stream);
 	}
@@ -252,7 +252,7 @@ void	Server::join_channel( std::string username, std::string channelname, std::s
 	catch (NoSuchChannelException& e) {
 		Channel *new_channel = new Channel(channelname, user);
 		this->_active_channels.push_back(new_channel);
-		std::cout << "Created channel " << this->get_channel_class(channelname).get_name() << std::endl;
+		std::cout << SERVER_INFO << "Created channel " << this->get_channel_class(channelname).get_name() << std::endl;
 		return ;
 	}
 }

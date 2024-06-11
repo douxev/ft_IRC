@@ -21,7 +21,7 @@ public:
 	void					set_ip( std::string ip );
 	std::string				get_ip( void );
 	int						get_socketfd( void ) const;
-	std::vector<Channel*>	get_list_channel();
+	std::vector<Channel*>&	get_list_channel();
 	void					add_channel_list(Channel& channel);
 	void					remove_channel_list(Channel* channel);
 	bool					password_passed();

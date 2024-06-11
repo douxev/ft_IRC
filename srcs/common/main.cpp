@@ -6,7 +6,7 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:22:05 by aauthier          #+#    #+#             */
-/*   Updated: 2024/06/06 18:07:39 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/06/10 15:37:58 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static Server* get_server( Server* server ) {
 
 static void	sig_handler( int sig ) {
 	(void) sig;
-	std::cout << "\nSIG RECEIVED" << std::endl;
+	std::cout << "\n" << SERVER_INFO << " SIG RECEIVED" << std::endl;
 	get_server(NULL)->~Server();
 	std::exit(0);
 }
@@ -45,7 +45,7 @@ int	main(int ac, char **av) {
 	check_args(ac, av);
 
 	set_signals();
-	std::cout << "[Server] Starting server" << std::endl;
+	std::cout << SERVER_INFO << " Starting server" << std::endl;
 	Server server;
 	get_server(&server);
 	server.init_server(ac, av);

@@ -6,7 +6,7 @@
 #    By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/07 16:11:15 by jdoukhan          #+#    #+#              #
-#    Updated: 2024/05/31 16:22:33 by jdoukhan         ###   ########.fr        #
+#    Updated: 2024/06/10 18:27:47 by jdoukhan         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,6 +16,7 @@
 ################################################################################
 
 NAME = irc_serv
+B_NAME = bot
 CFLAGS = -Wall -Wextra -Werror -std=c++98 -g3
 CC := c++
 URL = https://cdn.intra.42.fr/pdf/pdf/89250/en.subject.pdf
@@ -36,13 +37,18 @@ COMMON_SOURCES = \
 		
 
 M_SOURCES = 
-B_SOURCES = 
+
+B_SOURCES = main.cpp\
+			commands.cpp\
+			parsing.cpp\
+			Bot.cpp\
+			utils.cpp
 
 ################################################################################
 #                                  ExtLib Body                                 #
 ################################################################################
 
-INCLUDES = -I./includes
+INCLUDES = -I./includes -I./includes/bot
 
 ################################################################################
 #                                 Makefile Body                                #
@@ -50,11 +56,9 @@ INCLUDES = -I./includes
 
 PM_SOURCES = $(addprefix common/, $(COMMON_SOURCES)) \
 	$(addprefix mandatory/, $(M_SOURCES))
-PB_SOURCES = $(addprefix common/, $(COMMON_SOURCES)) \
-	$(addprefix bonus/, $(B_SOURCES))
+PB_SOURCES = $(addprefix bonus/, $(B_SOURCES))
 SRCS = $(addprefix srcs/, $(PM_SOURCES))
 OBJS = $(SRCS:srcs/%.cpp=objs/%.o)
-B_NAME = $(NAME)_bonus
 B_SRCS = $(addprefix srcs/, $(PB_SOURCES))
 B_OBJS = $(B_SRCS:srcs/%.cpp=objs/%.o)
 

@@ -32,23 +32,23 @@ int		create_server_socket( short port ) {
 
 	int socket_fd = socket(sa.sin_family, SOCK_STREAM, 0);
 	if (socket_fd == -1) {
-		std::cerr << "[Server] Socket error: " << strerror(errno) << std::endl;
+		std::cerr << SERVER_INFO << "Socket error: " << strerror(errno) << std::endl;
 		return (-1);
 	}
 	const int enable = 1;
 	if (setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0) {
-		std::cerr << "[Server] Socket option error: " << strerror(errno) << std::endl;
+		std::cerr << SERVER_INFO << "Socket option error: " << strerror(errno) << std::endl;
 		return (-1);
 	}
 
-	std::cout << "[Server] Created server socket fd: " << socket_fd << std::endl;
+	std::cout << SERVER_INFO << "Created server socket fd: " << socket_fd << std::endl;
 	fcntl(socket_fd, F_SETFL, O_NONBLOCK);
 	if (bind(socket_fd, (const struct sockaddr *)(&sa), sizeof(sa)))
 	{
-		std::cerr << "[Server] Bind error: " <<  strerror(errno) << std::endl;
+		std::cerr << SERVER_INFO << "Bind error: " <<  strerror(errno) << std::endl;
         exit(1);
 	}
-	std::cout << "[Server] Bound server socket to port: " << port << std::endl;
+	std::cout << SERVER_INFO << "Bound server socket to port: " << port << std::endl;
 
 	return(socket_fd);
 }

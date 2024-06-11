@@ -6,7 +6,7 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 14:56:20 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/06/06 18:28:52 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/06/10 15:34:59 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,16 @@
 #include <ostream>
 #include <stdio.h>
 
+# define RESET "\033[0m"
+# define YELLOW "\033[0;33m"
+# define RED "\033[0;91m"
+# define GREEN "\033[0;32m"
+# define SERVER_INFO "\033[0;91m[SERVER]\033[0m "
+
 void	check_args(int ac, char **av);
+
+
+
 
 int		ft_send(int socketfd, std::string msg);
 short	get_port(int ac, char **av);

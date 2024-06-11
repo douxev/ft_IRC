@@ -33,7 +33,7 @@ bool User::operator==( const User& Other ) const {
 }
 
 void	User::_change_op_nick( const std::string new_name ) {
-	std::vector<Channel *> chans = this->get_list_channel();
+	std::vector<Channel *>& chans = this->get_list_channel();
 	const size_t len = chans.size();
 
 	for (size_t i = 0; i < len; i++) {
@@ -82,18 +82,15 @@ int			User::get_socketfd( void ) const {
 	return (this->_socketfd);
 }
 
-std::vector<Channel *> User::get_list_channel()
-{
+std::vector<Channel *>& User::get_list_channel() {
     return _joined_channel;
 }
 
-void User::add_channel_list(Channel& channel)
-{
+void User::add_channel_list(Channel& channel) {
 	_joined_channel.push_back(&channel);
 }
 
-void User::remove_channel_list(Channel *channel)
-{
+void User::remove_channel_list(Channel *channel) {
 	const size_t len = _joined_channel.size();
 		for (size_t i = 0; i < len; i++) {
 			if (_joined_channel[i]->get_name() == channel->get_name()) {
@@ -107,12 +104,10 @@ void User::remove_channel_list(Channel *channel)
 	_joined_channel.erase(it);
 }
 
-bool User::password_passed()
-{
+bool User::password_passed( void ) {
     return _password_passed;
 }
 
-void User::pass_password()
-{
+void User::pass_password( void ) {
 	_password_passed = true;
 }

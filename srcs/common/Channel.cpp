@@ -74,17 +74,22 @@ void Channel::send_who( Server& server, int reply_socket ) {
 	User& user = server.get_user_class(reply_socket);
 	for (size_t i = 0; i < len; i++) {
 		// if (this->_connected_users[i].get_socketfd() != reply_socket)
+		std::string msg = "";
+		msg =	"352 " + user.get_name() + 
+				" " + 
+				this->_name + " " + 
+				this->_connected_users[i]->get_name() + " " + 
+				this->_connected_users[i]->get_ip() + " " + 
+				server.get_ip() + " " + 
+				this->_connected_users[i]->get_name() + " H";
+
+		if (this->is_op(*this->_connected_users[i]))
+			msg += "@";
 		ft_send(reply_socket, 
-			"352 " + user.get_name() + 
-			" " + 
-			this->_name + " " + 
-			this->_connected_users[i]->get_name() + " " + 
-			this->_connected_users[i]->get_ip() + " " + 
-			server.get_ip() + " " + 
-			this->_connected_users[i]->get_name() + " H : 0 " + 
+			msg + " :0 " + 
 			this->_connected_users[i]->get_realname() + "\n");
 	}
-	ft_send(reply_socket, "315 " + user.get_name() + " :End of WHO list");
+	ft_send(reply_socket, "315 " + user.get_name() + " :End of WHO list\n");
 }
 
 void Channel::user_join( User& user, std::string pass ) {
@@ -170,7 +175,7 @@ void Channel::set_mode( t_enum_modes mode, const User& user, const std::string t
 		return ;
 	if (this->is_op(user)) {
 		if (value == false && this->is_op(target)) {
-			std::cout << "IS DEOPING SOMEONE" << std::endl;
+		std::cout << SERVER_INFO << target << " is no longer OP on " << this->_name << std::endl;
 			const size_t len = this->_op_users.size();
 			for (size_t i = 0; i < len; i++) {
 				if (this->_op_users[i] == target) {
@@ -180,7 +185,7 @@ void Channel::set_mode( t_enum_modes mode, const User& user, const std::string t
 			}
 		}
 		else if (value == true) {
-			std::cout << "IS OPING SOMEONE" << std::endl;
+		std::cout << SERVER_INFO << target << " is now OP on " << this->_name << std::endl;
 			this->_op_users.push_back(target);
 		}
 	}
@@ -191,11 +196,11 @@ void Channel::set_mode( t_enum_modes mode, bool value, std::string password ) {
 	if (mode != KEY)
 		return ;
 	if (!value) {
-		std::cout << "REMOVING PASSWORD CHANNEL" << std::endl;
+		std::cout << SERVER_INFO << "channel password cleared on " << this->_name << std::endl;
 		this->_modes.password.clear();
 	}
 	else {
-		std::cout << "ADDING PASSWORD CHANNEL" << std::endl;
+		std::cout << SERVER_INFO << "channel password added on " << this->_name << std::endl;
 		this->_modes.password = password;
 	}
 }
@@ -205,15 +210,15 @@ void Channel::set_mode( t_enum_modes mode, size_t value ) {
 	switch (mode)
 	{
 	case INVITE:
-		std::cout << "CHANGING INVITE ONLY" << std::endl;
+		std::cout << SERVER_INFO << "invite only " << (value ? "ON": "OFF") << " on " << this->_name << std::endl;
 		this->_modes.invite_only = value;
 		break ;
 	case TOPIC:
-		std::cout << "CHANGING OPTOPIC" << std::endl;
+		std::cout << SERVER_INFO << "invite only " << (value ? "ON": "OFF") << " on " << this->_name << std::endl;
 		this->_modes.op_topic = value;
 		break ;
 	case LIMIT:
-		std::cout << "CHANGING LIMIT ONLY" << std::endl;
+		std::cout << SERVER_INFO << "changing limits on " << this->_name << " to " << value << std::endl;
 		this->_modes.limit = value;
 		break ;
 	default:
@@ -224,7 +229,10 @@ void Channel::set_mode( t_enum_modes mode, size_t value ) {
 std::string	Channel::get_modes( void ) {
 
 	std::stringstream modes;
-	modes << "+";
+	if (this->_modes.invite_only == 1 || this->_modes.op_topic == 1 || this->_modes.limit != 0 || 
+		this->_modes.password != "" || this->_modes.limit != 0)
+		modes << "+";
+
 	if (this->_modes.invite_only == 1)
 		modes << "i";
 	if (this->_modes.op_topic == 1)
@@ -233,10 +241,11 @@ std::string	Channel::get_modes( void ) {
 		modes <<"l";
 	if (this->_modes.password != "")
 		modes <<"k";
-	if (this->_modes.limit != 0){
+	if (this->_modes.limit != 0) {
 		modes <<" " << this->_modes.limit;
 	}
-	return ( modes.str() );
+
+	return ( modes.str() + "\n" );
 }
 
 void	Channel::print_ops( void ) {
@@ -294,6 +303,15 @@ void Channel::send_channel( const std::string msg ) {
 	}
 }
 
+void Channel::refresh_topic( void ) {
+	const size_t len = this->_connected_users.size();
+	for (size_t i = 0; i < len; i++) {
+		ft_send(this->_connected_users[i]->get_socketfd(), 
+			RPL_TOPIC + this->_connected_users[i]->get_name() + " " + 
+			this->_name + " :" + this->_topic + "\n");
+	}
+}
+
 void Channel::send_channel( int sender_fd, const std::string msg ) {
 	const size_t len = this->_connected_users.size();
 	for (size_t i = 0; i < len; i++) {
@@ -317,6 +335,10 @@ void Channel::set_topic( std::string topic, std::string topic_whotime ) {
 	this->_topic_whotime = topic_whotime;
 }
 
+void Channel::set_topic( std::string topic ) {
+	this->_topic = topic;
+}
+
 void	Channel::add_invited( const std::string user ) {
 	if (!this->is_invited(user))
 		this->_invited.push_back(user);
@@ -331,7 +353,6 @@ void	Channel::remove_invited( const std::string user ) {
 		}
 	}
 }
-
 
 bool	Channel::is_invited( const User& user ) {
 	const size_t len = this->_invited.size();

@@ -1,5 +1,6 @@
 #include "Channel.hpp"
 #include "error_numeric.hpp"
+#include "exceptions.hpp"
 #include "ft_irc.hpp"
 #include "numeric_replies.hpp"
 #include <cstddef>
@@ -32,8 +33,18 @@ void	nick_command( Server& server, int reply_socket, std::string message ) {
 	User& user = server.get_user_class(reply_socket);
 	std::string oldnick = user.get_name();
 	
-	server.change_nick(user, message);
-	server.send_all(":" + oldnick + " NICK " + user.get_name() + "\n");
+	try {
+		server.change_nick(user, message);
+	}
+	catch (const NickAlreadyTakenException& e) {
+		ft_send(reply_socket, ERR_NICKNAMEINUSE + oldnick + " " + message + " :Nickname is already in use\n");
+		return ;
+	}
+	server.send_all(":" + oldnick + " NICK :" + user.get_name() + "\n");
+	const size_t len = user.get_list_channel().size();
+	for (size_t i = 0; i < len; i++) {
+		user.get_list_channel()[i]->send_who(server, reply_socket);
+	}
 }
 
 void	cap_command( Server& server, int reply_socket, std::istringstream &message ) {
@@ -60,11 +71,14 @@ void	join_command( Server& server, int reply_socket, std::istringstream &message
 
 	if (!server.get_channel_class(channel).is_on_channel(server.get_user_class(reply_socket).get_name()))
 		return ;
-	if (server.get_channel_class(channel).get_topic().empty())
+	if (server.get_channel_class(channel).get_topic().empty()) {
 		no_topic_set(reply_socket, channel);
+		
+	}
 	else {
-		std::istringstream channel_iss(channel);
-		topic_command(server, reply_socket, channel_iss);
+		ft_send(reply_socket, RPL_TOPIC + server.get_user_class(reply_socket).get_name() + 
+			" " + channel + " :" + server.get_channel_class(channel).get_topic() + "\n");
+		std::cout << RED << "Topic is: " << RESET << server.get_channel_class(channel).get_topic() << std::endl;
 	}
 }
 
@@ -92,7 +106,7 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 		try
 		{
 			User user = server.get_user_class(recipient);
-			std::cout << recipient << " is a user\n";
+			// std::cout << recipient << " is a user\n";
 			ft_send(user.get_socketfd(), ":" + server.get_user_class(reply_socket).get_name() + " PRIVMSG " + recipient + " :" + msg + "\n");
 		}
 		catch(const std::exception& e)	//ce n'est pas un user
@@ -100,7 +114,7 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 			try
 			{
 				Channel channel = server.get_channel_class(recipient);
-				std::cout << recipient << " is a channel\n";
+				// std::cout << recipient << " is a channel\n";
 				if (channel.is_on_channel(server.get_user_class(reply_socket).get_name()))
 					channel.send_channel(reply_socket, ":" + server.get_user_class(reply_socket).get_name() + " PRIVMSG " + recipient + " :" + msg + "\n");
 				else
@@ -129,13 +143,12 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 
 
 	if (value.size() < 2){
-		ft_send(reply_socket,RPL_CHANNELMODEIS + server.get_user_class(reply_socket).get_name() + " " + target + " " + server.get_channel_class(target).get_modes());
-		return ; //ERROR	
+		ft_send(reply_socket,":" + server.get_ip() + " " + RPL_CHANNELMODEIS + 
+			server.get_user_class(reply_socket).get_name() + " " + target + " " + server.get_channel_class(target).get_modes() + "\n");
+		return ; //MODE QUERY
 	}	
-		
 
-	if (value.at(0) == '+')
-		op_sign = true;
+
 	if (value.at(0) == '+')
 		op_sign = true;
 
@@ -149,49 +162,56 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 			ft_send(reply_socket, ERR_CHANOPRIVSNEEDED + server.get_user_class(reply_socket).get_name() + " " + target + " :You're not channel operator\n");
 			return ;
 		}
+		(void) server.get_user_class(target);
+
 	}
 	catch(const NoSuchChannelException& e) {
 
 		switch (mode)
 		{
 		case 'i':
-			server.get_channel_class(target).set_mode( INVITE, op_sign );
+			std::cout << SERVER_INFO << "Client '" << reply_socket << "' wants invisible role" << std::endl;
+			// server.get_channel_class(target).set_mode( INVITE, op_sign );
 			break ;
 		case 'o':
-		server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
-		break ;
+			server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
+			break ;
 		}
+
 	}
 	catch(const NoSuchNickException& e) {
 
 		switch(mode)
 		{
 		case 'i':
-		server.get_channel_class(target).set_mode( INVITE, op_sign );
-		break ;
+			server.get_channel_class(target).set_mode( INVITE, op_sign );
+			break ;
 		case 't':
-		server.get_channel_class(target).set_mode( TOPIC, op_sign );
-		break ;
+			server.get_channel_class(target).set_mode( TOPIC, op_sign );
+			break ;
 		case 'l':
-		if (op_sign)
-			server.get_channel_class(target).set_mode( LIMIT, size );
-		else
-			server.get_channel_class(target).set_mode(LIMIT, op_sign);
-		break ;
+			if (op_sign)
+				server.get_channel_class(target).set_mode( LIMIT, size );
+			else
+				server.get_channel_class(target).set_mode(LIMIT, op_sign);
+			break ;
 		case 'k':
-		server.get_channel_class(target).set_mode(KEY, op_sign, password);
-		break ;
+			server.get_channel_class(target).set_mode(KEY, op_sign, password);
+			break ;
 		case 'o':
-		server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
-		break ;
+			server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
+			break ;
 		case KEY:
-		server.get_channel_class(target).set_mode(KEY, op_sign, password);
+			server.get_channel_class(target).set_mode(KEY, op_sign, password);
+			break ;
 		case OP:
-		server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), target, op_sign ) ;
+			server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), target, op_sign ) ;
+			break ;
 		default:
-		std::cout << "Mode not recognized, is: [" << mode << "]" << std::endl;
-		break;
-	}
+			std::cout << "Mode not recognized, is: [" << mode << "]" << std::endl;
+			break;
+		}
+}
 }
 
 void	who_command( Server& server, int reply_socket, std::istringstream &message ) {
@@ -208,33 +228,38 @@ void	topic_command( Server& server, int reply_socket, std::istringstream &messag
 	const std::string user = server.get_user_class(reply_socket).get_name();
 
 if (channel.empty())
-	ft_send(reply_socket, ERR_NEEDMOREPARAMS + user + "TOPIC :Not enough parameters");
+	ft_send(reply_socket, ERR_NEEDMOREPARAMS + user + "TOPIC :Not enough parameters\n");
 
 try {
 	if (server.is_on_channel(channel, user)) {
 		if (server.is_op(channel, user) || server.get_channel_class(channel).topic_mode_is_off() == true || topic_message.empty()) {
 			if (topic_message.empty()) {
-				if (server.get_topic(channel).empty())
+				if (server.get_topic(channel).empty()) {
 					no_topic_set(reply_socket, message.str());
+					return ;
+				}
 				else {
 					msg_to_send << RPL_TOPIC << server.get_user_class(reply_socket).get_name() << channel << "\n";
 					if (ft_send(reply_socket, msg_to_send.str()) == -1)
-						std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
+						std::cerr << SERVER_INFO << "Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
+					return ;
 				}
 			}
 			else {
+				std::cout << SERVER_INFO << channel << " topic is now: " << topic_message << std::endl;
+				server.get_channel_class(channel).set_topic(topic_message);
+				server.get_channel_class(channel).refresh_topic();
 
-				msg_to_send << RPL_TOPIC << server.get_user_class(reply_socket).get_name() << " " << channel << " :" << topic_message << "\n";
-				server.send_channel(channel, reply_socket, msg_to_send.str());
-				if (ft_send(reply_socket, msg_to_send.str()) == -1)
-					std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
+				// msg_to_send << RPL_TOPIC << server.get_user_class(reply_socket).get_name() << " " << channel << " :" << topic_message << "\n";
+				// server.get_channel_class(channel).send_channel(msg_to_send.str());
+				return ;
 			}
 		}
 		else {
 			if (!server.is_op(channel, user)) {
 				msg_to_send << ERR_CHANOPRIVSNEEDED << user << " " << channel << " :You're not channel operator\n";
 				if (ft_send(reply_socket, msg_to_send.str()) == -1)
-					std::cerr << "[Server] Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
+					std::cerr << SERVER_INFO << "Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
 			}
 		}
 	}
@@ -259,26 +284,22 @@ void	names_command( Server& server, int reply_socket, std::istringstream &messag
 	User user = server.get_user_class(reply_socket);
 
 	for (std::string channel_name; std::getline(message, channel_name, ',');i++) {
-		try
-		{
+		try {
 			server.get_channel_class(channel_name).send_userlist(user);
 		}
-		catch(const std::exception& e)
-		{
+		catch(const std::exception& e) {
 			ft_send(reply_socket, "366 " + user.get_name() + " " + channel_name + " :End of /NAMES list/n");
 		}
 	}
 	if (!i ) //aucuns parametres
 	{
 		std::vector<Channel*> channel_list = server.get_channels_list();
-		for (int j = 0; channel_list[j] != channel_list.back(); j++)
-		{
+		for (int j = 0; channel_list[j] != channel_list.back(); j++) {
 			channel_list[j]->send_userlist(user);
 		}
 		ft_send(reply_socket, "353 " + user.get_name() + " * :");
 		std::vector<User*> user_list = server.get_connected_user();
-		for (int j = 0; user_list[j] < user_list.back(); j++)
-		{
+		for (int j = 0; user_list[j] < user_list.back(); j++) {
 			if (!user_list[j]->get_list_channel().size())
 				ft_send(reply_socket, user_list[j]->get_name());
 		}
@@ -335,7 +356,6 @@ void	whois_command( Server& server, int reply_socket, std::istringstream &messag
 	}
 }
 
-//TODO How to answer an invite???
 void	invite_command( Server& server, int reply_socket, std::istringstream &message ) {
 	(void) server;
 	(void) reply_socket;
@@ -375,10 +395,10 @@ void	kick_command( Server& server, int reply_socket, std::istringstream &message
 	std::getline(message, channel, ' ');
 	std::getline(message, users_str, ' ');
 	std::istringstream users(users_str);
-	if (message.str().empty())
+	std::getline(message, kick_message, ':');
+	;
+	if (!std::getline(message, kick_message, ':'))
 		kick_message = "kicked from channel by " + server.get_user_class(reply_socket).get_name();
-	else
-		kick_message = message.str();
 
 	if (users_str.empty())
 		throw NeedMoreParamsException();
@@ -390,7 +410,9 @@ void	kick_command( Server& server, int reply_socket, std::istringstream &message
 		if (!server.is_on_channel(channel, user)) //user not in channel
 			ft_send(reply_socket, "441 " + user + " " + channel + ":They Aren't on that channel");
 		else {
-			server.get_channel_class(channel).send_channel(reply_socket, "NOTICE " + channel + kick_message);
+			server.get_channel_class(channel).send_channel(":" + 
+				server.get_user_class(reply_socket).get_name() + " KICK " + 
+				channel + " " + user + " :" + kick_message + "\n");
 		}
 	}
 }
@@ -418,7 +440,7 @@ void	part_command( Server& server, int reply_socket, std::istringstream &message
 }
 
 void	quit_command( Server& server, int reply_socket, std::istringstream &message ) {
-	std::cout << "[SERVER] " << server.get_connected_user().size() << " disconnected" << std::endl;
+	std::cout << SERVER_INFO << "" << server.get_connected_user().size() << " disconnected" << std::endl;
 	
 	try
 	{
@@ -440,12 +462,11 @@ void	quit_command( Server& server, int reply_socket, std::istringstream &message
 	server.remove_poll_fd(reply_socket);
 }
 
-void pass_command(Server &server, int reply_socket, std::istringstream &message)
-{
+void pass_command(Server &server, int reply_socket, std::istringstream &message) {
 	try
 	{
 		if (server.get_user_class(reply_socket).password_passed()) {
-			ft_send(reply_socket, "464 " + server.get_user_class(reply_socket).get_name() + " :You may not reregister");
+			ft_send(reply_socket, "464 " + server.get_user_class(reply_socket).get_name() + " :You may not reregister\n");
 			return ;
 		}
 	}
