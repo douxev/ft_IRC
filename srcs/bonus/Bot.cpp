@@ -29,21 +29,23 @@ bool Bot::is_op( std::string nick ) {
 	std::string rpl_code;
 
 	this->send("WHOIS " + nick);
+	received.str(this->recv());
 
-	std::getline(received, rpl_code, ' ');
-	if (rpl_code != "311") {
-		notice( "received " + received.str() + " not 311 RPL_WHOISUSER.");
-	}
-	std::getline(received, line, ' ');
-	while (std::getline(received, line, ' ') && !line.empty()) {
-		if (line[0] == '@')
+	while (std::getline(received, line)) {
+
+		std::istringstream line_is(line);
+
+		std::getline(line_is, rpl_code, ' ');
+		if (rpl_code != "311") {
+			notice( "received " + line_is.str() + " not 311 RPL_WHOISUSER.");
+		}
+		std::getline(line_is, line, ' ');
+		if (!line.empty() && line[0] == '@')
 			return true;
 		else
-			return false;
+			continue;
 	}
-	//while not endofWHOIS
-	//knows whether its op or not
-
+	return false;
 }
 
 //joins when invited
