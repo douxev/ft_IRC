@@ -2,6 +2,7 @@
 #include <iostream>
 #include "bot/ft_bot.hpp"
 #include <algorithm>
+#include <sstream>
 
 Bot::Bot( void ) {}
 
@@ -23,8 +24,23 @@ Bot::~Bot() {
 
 //Does a WHOIS
 bool Bot::is_op( std::string nick ) {
+	std::string line;
+	std::istringstream received;
+	std::string rpl_code;
 
-	//sends a whois msg to the server
+	this->send("WHOIS " + nick);
+
+	std::getline(received, rpl_code, ' ');
+	if (rpl_code != "311") {
+		notice( "received " + received.str() + " not 311 RPL_WHOISUSER.");
+	}
+	std::getline(received, line, ' ');
+	while (std::getline(received, line, ' ') && !line.empty()) {
+		if (line[0] == '@')
+			return true;
+		else
+			return false;
+	}
 	//while not endofWHOIS
 	//knows whether its op or not
 
