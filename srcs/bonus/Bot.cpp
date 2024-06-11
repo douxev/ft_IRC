@@ -115,3 +115,7 @@ void Bot::send( std::string msg ) {
 void Bot::notice( std::string msg ) {
 	std::cout << BOTINFO << msg << std::endl;
 }
+
+std::string Bot::recv( void ) {
+
+}

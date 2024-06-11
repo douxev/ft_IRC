@@ -24,6 +24,8 @@ public:
 	void kick_user( std::string channel, std::string user, std::string word );
 	void not_op( void );
 	void send( std::string msg );
+	std::string recv( void );
+
 	void notice( std::string msg );
 
 private:
