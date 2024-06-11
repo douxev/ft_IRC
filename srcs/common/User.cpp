@@ -6,22 +6,24 @@ User::User( void ) {
 	this->_name = "";
 	this->_socketfd = 0;
 	this->_ip_address = "127.0.0.1";
-	_password_passed = false;
+	_user_authenticate = false;
+	_sent_password = "";
 }
 
 User::User( const User& Other ) {
 	this->_name = Other._name;
 	this->_socketfd = Other._socketfd;
 	this->_ip_address = Other._ip_address;
-	_password_passed = Other._password_passed;
-
+	_user_authenticate = Other._user_authenticate;
+	_sent_password = Other._sent_password;
 }
 
 User& User::operator=( const User& Other ) {
 	this->_name = Other._name;
 	this->_socketfd = Other._socketfd;
 	this->_ip_address = Other._ip_address;
-	_password_passed = Other._password_passed;
+	_user_authenticate = Other._user_authenticate;
+	_sent_password = Other._sent_password;
 
 	return (*this);
 }
@@ -64,10 +66,19 @@ void User::set_ip( std::string ip ) {
 	this->_ip_address = ip;
 }
 
+void User::set_password(std::string pass)
+{
+	_sent_password = pass;
+}
+
 std::string User::get_ip( void ) {
 	return (this->_ip_address);
 }
 
+std::string User::get_password()
+{
+    return _sent_password;
+}
 
 const std::string User::get_name( void ) const {
 	return (this->_name);
@@ -104,10 +115,10 @@ void User::remove_channel_list(Channel *channel) {
 	_joined_channel.erase(it);
 }
 
-bool User::password_passed( void ) {
-    return _password_passed;
+bool User::user_authenticate( void ) {
+    return _user_authenticate;
 }
 
-void User::pass_password( void ) {
-	_password_passed = true;
+void User::authenticate( void ) {
+	_user_authenticate = true;
 }

@@ -465,8 +465,8 @@ void	quit_command( Server& server, int reply_socket, std::istringstream &message
 void pass_command(Server &server, int reply_socket, std::istringstream &message) {
 	try
 	{
-		if (server.get_user_class(reply_socket).password_passed()) {
-			ft_send(reply_socket, "464 " + server.get_user_class(reply_socket).get_name() + " :You may not reregister\n");
+		if (server.get_user_class(reply_socket).user_authenticate()) {
+			ft_send(reply_socket, "462 " + server.get_user_class(reply_socket).get_name() + " :You may not reregister\n");
 			return ;
 		}
 	}
@@ -494,7 +494,7 @@ void pass_command(Server &server, int reply_socket, std::istringstream &message)
 	} else {
 		try
 		{
-			server.get_user_class(reply_socket).pass_password();
+			server.get_user_class(reply_socket).set_password(message.str());
 		}
 		catch(const std::exception& e)
 		{

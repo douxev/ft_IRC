@@ -19,13 +19,16 @@ public:
 	void					set_realname( std::string name );
 	void					set_fd( int fd );
 	void					set_ip( std::string ip );
+	void					set_password( std::string pass );
 	std::string				get_ip( void );
+	std::string				get_password();
 	int						get_socketfd( void ) const;
 	std::vector<Channel*>&	get_list_channel();
 	void					add_channel_list(Channel& channel);
 	void					remove_channel_list(Channel* channel);
-	bool					password_passed();
-	void					pass_password();
+	bool					user_authenticate();
+
+	void					authenticate();
 	User( void );
 	User& operator=( const User& Other );
 	bool operator==( const User& Other ) const;
@@ -41,7 +44,8 @@ private:
 	std::string				_name;
 	std::string				_realname;
 	std::vector<Channel*>	_joined_channel;
-	bool					_password_passed;
+	bool					_user_authenticate;
+	std::string				_sent_password;
 
 };
 
