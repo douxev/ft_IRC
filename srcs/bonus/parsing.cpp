@@ -6,7 +6,12 @@ void	parse_commands(Bot& bot, std::istringstream& line) {
 	//! get the channel string in this string same for user
 	std::string channel;
 	std::string user;
-
+	std::getline(line, user, ' ');
+	if (user.size() > 1)
+		user = user.substr(1);
+	std::getline(line, channel, ' ');
+	std::getline(line, channel, ' ');
+	
 	//! starting parsing the message
 	std::string msg;
 	std::getline(line, msg, ':');
