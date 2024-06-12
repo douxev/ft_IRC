@@ -11,6 +11,7 @@ int main( int ac, char **av) {
 
 	//!CHECK ALL PARAM ARE GOOD BEFORE
 
+	//!maybe allow for user set nickname
 	Bot bot(av[1], av[2], av[3]);
 
 
