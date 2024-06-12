@@ -1,4 +1,5 @@
 #include "bot/Bot.hpp"
+#include <cstddef>
 #include <iostream>
 #include "bot/ft_bot.hpp"
 #include <algorithm>
@@ -10,7 +11,11 @@ Bot::Bot( const Bot& Other ) {
 
 }
 
-Bot::Bot( std::string host, std::string port, std::string password ): _host(host), _port(port), _pass(password) {}
+Bot::Bot( std::string host, std::string port, std::string password ): 
+_host(host), _port(port), _pass(password), _nick("Marvin"), _username("Marvin"), _realname("Marvin") {}
+
+Bot::Bot( std::string name, std::string host, std::string port, std::string password ): 
+_host(host), _port(port), _pass(password), _nick(name), _username(name), _realname(name) {}
 
 
 Bot& Bot::operator=( const Bot& Other ) {
@@ -21,6 +26,9 @@ Bot::~Bot() {
 
 }
 
+bool Bot::check_op( void ) {
+	return this->is_op(this->_nick);
+}
 
 //Does a WHOIS
 bool Bot::is_op( std::string nick ) {
@@ -106,6 +114,11 @@ void Bot::kick_user( std::string channel, std::string user, std::string fword ) 
 //says it's not op on channel
 void Bot::not_op( void ) {
 
+
+	const size_t len = this->_not_op_channel.size();
+	for (size_t i = 0; i < len; i++) {
+		notice("The bot is a normal user on " + this->_not_op_channel[i]);
+	}
 }
 
 //sends a PRIVMSG

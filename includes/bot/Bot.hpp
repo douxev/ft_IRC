@@ -11,10 +11,13 @@ class Bot {
 public:
 
 	Bot( std::string host, std::string port, std::string password );
+	Bot( std::string name, std::string host, std::string port, std::string password );
 	Bot& operator=( const Bot& Other );
 	Bot( const Bot& copied);
 	~Bot();
 
+
+	bool check_op( void );
 	bool is_op( std::string nick );
 	void join_channel( std::string channel );
 	void leave_channel( std::string channel );
@@ -37,7 +40,12 @@ private:
 	const std::string 	_pass;
 	int					_fd;
 
-	std::map<std::string, std::vector<std::string>> _channels;
+	std::string			_nick;
+	const std::string	_username;
+	const std::string	_realname;
+
+	std::map<std::string, std::vector<std::string>>	_channels;
+	std::vector<std::string>						_not_op_channel;
 
 };
 
