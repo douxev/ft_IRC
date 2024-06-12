@@ -99,7 +99,7 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 	// catch (...) {
 	// 	std::cout << "EXCEPTION THROWN" << std::endl;
 	// }
-
+		std::cout << SERVER_INFO << cmd << std::endl;
 		try {
 
 			if (!std::isprint(line.str().at(line.str().size() - 1)))
@@ -112,13 +112,15 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 				pass_command(server, reply_socket, line);
 			else if (cmd == "USER")
 				init_client(server, reply_socket, line.str());
+			else if (cmd == "NICK")
+				nick_command(server, reply_socket, line.str());
 			else if (cmd == "PING")
 				pong(reply_socket, line.str());
 			else {
 				try
 				{
 					User& user = server.get_user_class(reply_socket);
-					if (user.user_authenticate() || user.get_password() == server.get_pass()) {
+					if (!user.user_authenticate() && user.get_password() != server.get_pass()) {
 						ft_send(reply_socket, "464 " + user.get_name() + " :Password incorrect\n");
 							continue;
 					}
@@ -134,8 +136,6 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 					motd_command(server, reply_socket);
 				else if (cmd == "VERSION")
 					version_command(reply_socket);
-				else if (cmd == "NICK")
-					nick_command(server, reply_socket, line.str());
 				else if (cmd == "JOIN")
 					join_command(server, reply_socket, line);
 				else if (cmd == "PRIVMSG")
