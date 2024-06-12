@@ -104,18 +104,18 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 
 			if (!std::isprint(line.str().at(line.str().size() - 1)))
 				line.str(line.str().substr(0, line.str().size() - 1)); //remove weird char
-			else if (cmd == "CAP")
-				cap_command(server, reply_socket, line);
 			else if (cmd == "SQUIT")
 				shutdown_command(server);
-			if (cmd == "PASS")
-				pass_command(server, reply_socket, line);
-			else if (cmd == "USER")
-				init_client(server, reply_socket, line.str());
-			else if (cmd == "NICK")
-				nick_command(server, reply_socket, line.str());
 			else if (cmd == "PING")
 				pong(reply_socket, line.str());
+			else if (cmd == "CAP")
+				cap_command(server, reply_socket, line);
+			if (cmd == "PASS")
+				pass_command(server, reply_socket, line);
+			else if (cmd == "NICK")
+				nick_command(server, reply_socket, line.str());
+			else if (cmd == "USER")
+				init_client(server, reply_socket, line.str());
 			else {
 				try
 				{

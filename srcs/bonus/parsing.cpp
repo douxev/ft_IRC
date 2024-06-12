@@ -43,7 +43,7 @@ void	parse_commands(Bot& bot, std::istringstream& line) {
 		unlog_cmd(bot, line);
 	else { //? Process like a general message
 		line.str(msg);
-		for (std::string word; std::getline(line, word, ' ')) {
+		for (std::string word; std::getline(line, word, ' ');) {
 			if (bot.forbidden(channel, word)) {
 				bot.kick_user(channel, user, word);
 			}
