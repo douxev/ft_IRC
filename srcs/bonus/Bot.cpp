@@ -113,8 +113,6 @@ void Bot::kick_user( std::string channel, std::string user, std::string fword ) 
 
 //says it's not op on channel
 void Bot::not_op( void ) {
-
-
 	const size_t len = this->_not_op_channel.size();
 	for (size_t i = 0; i < len; i++) {
 		notice("The bot is a normal user on " + this->_not_op_channel[i]);
@@ -133,4 +131,13 @@ void Bot::notice( std::string msg ) {
 
 std::string Bot::recv( void ) {
 
+}
+
+bool Bot::forbidden( std::string channel, std::string word ) {
+	const size_t len = this->_channels[channel].size();
+	for (size_t i = 0; i < len; i++) {
+		if (this->_channels[channel][i] == word)
+			return true;
+	}
+	return false;
 }

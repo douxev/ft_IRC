@@ -17,6 +17,7 @@ public:
 	~Bot();
 
 
+	bool forbidden( std::string channel, std::string word );
 	bool check_op( void );
 	bool is_op( std::string nick );
 	void join_channel( std::string channel );
