@@ -57,12 +57,15 @@ int 	Bot::init_connection() {
 	}
 	std::cout << "[Client] Connected to server socket via port: " << _port << std::endl;
 	_fd = socket_fd;
+
+	//send authentification msg
 	std::stringstream msg_to_send;
 	msg_to_send << "CAP LS\n";
 	if (!_pass.empty())
 		msg_to_send << "PASS " << _pass << "\n";
 	msg_to_send << "NICK " << _nick << "\n";
 	msg_to_send << "USER "<< _username << " 0 * :" << _realname << "\n";
+	send(msg_to_send.str());
 	return(socket_fd);
 }
 
