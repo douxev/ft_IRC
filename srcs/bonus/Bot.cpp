@@ -38,10 +38,16 @@ Bot::~Bot() {
 
 int 	Bot::init_connection() {
 	struct sockaddr_in sa;
-	
+	char* addr = (char *)_host.c_str();
 	memset(&sa, 0, sizeof(sa));
+	if (_host == "localhost")
+		addr = "172.0.0.1";
+	if (inet_pton(AF_INET,_host.c_str(), &(sa.sin_addr)) <= 0) {
+		std::cerr << "[Client] Addr error: invalid address" << std::endl;
+		return (-1);
+
+	}
     sa.sin_family = AF_INET; // IPv4
-    inet_pton(AF_INET, _host.c_str(), &(sa.sin_addr));
     sa.sin_port = htons(atoi(_port.c_str()));
 
 	int socket_fd = socket(sa.sin_family, SOCK_STREAM, 0);
