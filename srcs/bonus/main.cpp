@@ -14,6 +14,9 @@ int main( int ac, char **av) {
 	//!maybe allow for user set nickname
 	Bot bot(av[1], av[2], av[3]);
 
+	while (true) {
+		parse_commands(bot);
+	}
 
 
 }

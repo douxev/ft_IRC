@@ -5,6 +5,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <list>
 
 class Bot {
 
@@ -13,7 +14,7 @@ public:
 	Bot( std::string host, std::string port, std::string password );
 	Bot( std::string name, std::string host, std::string port, std::string password );
 	Bot& operator=( const Bot& Other );
-	Bot( const Bot& copied);
+	Bot( const Bot& Other );
     ~Bot();
 
     int	 init_connection();
@@ -28,9 +29,11 @@ public:
 	void kick_user( std::string channel, std::string user, std::string word );
 	void not_op( void );
 	void send( std::string msg );
-	std::string recv( void );
+	void receive( void );
 
 	void notice( std::string msg );
+
+	std::list<std::string>	buffer;
 
 private:
 
@@ -45,8 +48,8 @@ private:
 	const std::string	_username;
 	const std::string	_realname;
 
-	std::map<std::string, std::vector<std::string>>	_channels;
-	std::vector<std::string>						_not_op_channel;
+	std::map<std::string, std::vector<std::string> >	_channels;
+	std::vector<std::string>							_not_op_channel;
 
 };
 

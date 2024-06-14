@@ -1,20 +1,22 @@
 #include "bot/Bot.hpp"
+#include <climits>
 #include <cstddef>
+#include <cstdio>
 #include <iostream>
 #include "bot/ft_bot.hpp"
 #include <algorithm>
 #include <sstream>
-#include "Bot.hpp"
 #include <string.h>
 #include <netinet/in.h> // For sockaddr_in
 #include <arpa/inet.h>
 #include <fcntl.h>
+#include <errno.h>
 
 
 Bot::Bot( void ) {}
 
 Bot::Bot( const Bot& Other ) {
-
+	buffer = Other.buffer;
 }
 
 
@@ -29,6 +31,7 @@ _host(host), _port(port), _pass(password), _nick(name), _username(name), _realna
 
 
 Bot& Bot::operator=( const Bot& Other ) {
+	buffer = Other.buffer;
 	return (*this);
 }
 
@@ -36,13 +39,15 @@ Bot::~Bot() {
 
 }
 
-int 	Bot::init_connection() {
+int 	Bot::init_connection( void ) {
 	struct sockaddr_in sa;
 	char* addr = (char *)_host.c_str();
 	memset(&sa, 0, sizeof(sa));
-	if (_host == "localhost")
-		addr = "172.0.0.1";
-	if (inet_pton(AF_INET,_host.c_str(), &(sa.sin_addr)) <= 0) {
+	if (_host == "localhost") {
+		std::string address = "127.0.0.1";
+		addr = (char *) address.c_str();
+	}
+	if (inet_pton(AF_INET, addr, &(sa.sin_addr)) <= 0) {
 		std::cerr << "[Client] Addr error: invalid address" << std::endl;
 		return (-1);
 
@@ -71,7 +76,7 @@ int 	Bot::init_connection() {
 		msg_to_send << "PASS " << _pass << "\n";
 	msg_to_send << "NICK " << _nick << "\n";
 	msg_to_send << "USER "<< _username << " 0 * :" << _realname << "\n";
-	send(msg_to_send.str());
+	this->send(msg_to_send.str());
 	return(socket_fd);
 }
 
@@ -82,26 +87,24 @@ bool Bot::check_op( void ) {
 //Does a WHOIS
 bool Bot::is_op( std::string nick ) {
 	std::string line;
-	std::istringstream received;
 	std::string rpl_code;
 
+	size_t before = this->buffer.size();
 	this->send("WHOIS " + nick);
-	received.str(this->recv());
+	while (this->buffer.size() == before)
+		this->receive();
 
-	while (std::getline(received, line)) {
+	std::istringstream line_is;
+	line_is.str(this->buffer.back());
+	
+	this->buffer.pop_back();
 
-		std::istringstream line_is(line);
-
-		std::getline(line_is, rpl_code, ' ');
-		if (rpl_code != "311") {
-			notice( "received " + line_is.str() + " not 311 RPL_WHOISUSER.");
-		}
-		std::getline(line_is, line, ' ');
-		if (!line.empty() && line[0] == '@')
-			return true;
-		else
-			continue;
-	}
+	std::getline(line_is, rpl_code, ' ');
+	if (rpl_code != "311")
+		notice( "received " + line_is.str() + " not 311 RPL_WHOISUSER.");
+	std::getline(line_is, line, ' ');
+	if (!line.empty() && line[0] == '@')
+		return true;
 	return false;
 }
 
@@ -178,8 +181,16 @@ void Bot::notice( std::string msg ) {
 	std::cout << BOTINFO << msg << std::endl;
 }
 
-std::string Bot::recv( void ) {
+void Bot::receive( void ) {
+	char buffer[BUFSIZ];
 
+	recv(this->_fd, &buffer, BUFSIZ, 0);
+
+	std::istringstream buf;
+	buf.str(buffer);
+	for (std::string line; std::getline(buf, line);) {
+		this->buffer.push_back(line);
+	}
 }
 
 bool Bot::forbidden( std::string channel, std::string word ) {

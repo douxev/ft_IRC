@@ -3,10 +3,13 @@
 
 
 # include <string>
-# include <vector>
+// # include <vector>
 #include <sstream>
-
+#include <sys/socket.h> // For socket functions
+#include <sys/types.h>	// For socket read/write
+#include <netinet/in.h> // For sockaddr_in
 # include "Bot.hpp"
+
 
 # define RESET "\033[0m"
 # define YELLOW "\033[0;33m"
@@ -23,7 +26,8 @@ void	forbidden_cmd( Bot& bot, std::istringstream& message );
 void	time_cmd( Bot& bot, std::istringstream& message );
 void	log_cmd( Bot& bot, std::istringstream& message );
 void	unlog_cmd( Bot& bot, std::istringstream& message );
-void	ft_send( int reply_socket, std::string msg );
+int		ft_send( int reply_socket, std::string msg );
+void	parse_commands(Bot& bot);
 
 
 #endif
