@@ -43,15 +43,10 @@ int 	Bot::init_connection( void ) {
 	struct sockaddr_in sa;
 	char* addr = (char *)_host.c_str();
 	memset(&sa, 0, sizeof(sa));
-<<<<<<< HEAD
 	if (_host == "localhost") {
 		std::string address = "127.0.0.1";
 		addr = (char *) address.c_str();
 	}
-=======
-	if (_host == "localhost")
-		addr = "172.0.0.1";
->>>>>>> refs/remotes/origin/main
 	if (inet_pton(AF_INET, addr, &(sa.sin_addr)) <= 0) {
 		std::cerr << "[Client] Addr error: invalid address" << std::endl;
 		return (-1);
