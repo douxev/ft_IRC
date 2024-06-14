@@ -152,12 +152,13 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 	if (value.at(0) == '+')
 		op_sign = true;
 
+	mode = value.at(1);
 	std::string password;
 	std::getline(message, password, ' ');
 	int size = std::strtol(password.c_str(), NULL, 0);
 
-	for (int i = 1; value != " " || value == "\0"; i++) {
-		mode = value.at(i);
+	// for (int i = 1; value != " " || value == "\0"; i++) {
+	// 	mode = value.at(i);
 		try{
 			if (!server.is_op(target, server.get_user_class(reply_socket).get_name())) {
 				ft_send(reply_socket, ERR_CHANOPRIVSNEEDED + server.get_user_class(reply_socket).get_name() + " " + target + " :You're not channel operator\n");
@@ -207,7 +208,7 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 				break;
 			}
 		}
-	}
+	// }
 }
 
 void	who_command( Server& server, int reply_socket, std::istringstream &message ) {
