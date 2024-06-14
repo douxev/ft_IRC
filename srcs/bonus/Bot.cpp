@@ -42,7 +42,7 @@ int 	Bot::init_connection() {
 	memset(&sa, 0, sizeof(sa));
 	if (_host == "localhost")
 		addr = "172.0.0.1";
-	if (inet_pton(AF_INET,_host.c_str(), &(sa.sin_addr)) <= 0) {
+	if (inet_pton(AF_INET, addr, &(sa.sin_addr)) <= 0) {
 		std::cerr << "[Client] Addr error: invalid address" << std::endl;
 		return (-1);
 
