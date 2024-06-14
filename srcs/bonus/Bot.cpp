@@ -176,7 +176,6 @@ void Bot::not_op( void ) {
 //sends a PRIVMSG
 void Bot::send( std::string msg ) {
 	ft_send(this->_fd, msg);
-	std::cout << SENT << msg << std::endl;
 }
 
 void Bot::notice( std::string msg ) {
@@ -190,7 +189,8 @@ void Bot::receive( void ) {
 
 	std::istringstream buf;
 	buf.str(buffer);
-	for (std::string line; std::getline(buf, line);) {
+	std::string line; 
+	while (std::getline(buf, line)) {
 		this->buffer.push_back(line);
 	}
 }

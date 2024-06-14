@@ -54,27 +54,10 @@ void	init_client( Server& server, int reply_socket, std::string message) {
 	std::getline(msg, address, ' ');
 	server.get_user_class(reply_socket).set_ip(address);
 
-	msg_to_send.str("");
 	msg_to_send << RPL_WELCOME << server.get_user_class(reply_socket).get_name() << " :Welcome to the GuiRaMa Internet Relay Chat Network\n";
-	if (ft_send(reply_socket, msg_to_send.str()) == -1)
-		std::cerr << SERVER_INFO << "Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
-
-	msg_to_send.str("");
 	msg_to_send << RPL_YOURHOST << server.get_user_class(reply_socket).get_name() << " :Your host is irc.guirama.42, running on version Server version: 1.0 \n";
-	if (ft_send(reply_socket, msg_to_send.str()) == -1)
-		std::cerr << SERVER_INFO << "Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
-
-	msg_to_send.str("");
 	msg_to_send << RPL_CREATED << server.get_user_class(reply_socket).get_name() << " :This server was created " << std::asctime(std::localtime(&result)) << "\n";
-	if (ft_send(reply_socket, msg_to_send.str()) == -1)
-		std::cerr << SERVER_INFO << "Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
-
-	msg_to_send.str("");
 	msg_to_send << RPL_MYNFO << server.get_user_class(reply_socket).get_name() << " :irc.guirama.42 Server version: 1.0 \n"/*<available user modes><available channel modes> [<channel modes with a parameter>]*/;
-	if (ft_send(reply_socket, msg_to_send.str()) == -1)
-		std::cerr << SERVER_INFO << "Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
-
-	msg_to_send.str("");
 	msg_to_send << RPL_ISUPPORT << server.get_user_class(reply_socket).get_name() << " :Des trucs... \n"/* tous les parametres qu'on utilisera pour ISUPPORT */;
 	if (ft_send(reply_socket, msg_to_send.str()) == -1)
 		std::cerr << SERVER_INFO << "Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;

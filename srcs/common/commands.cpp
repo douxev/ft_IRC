@@ -123,7 +123,7 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 			}
 			catch(const std::exception& e) //ce n'est pas un channel non plus
 			{
-				ft_send(reply_socket, "401 " + server.get_user_class(reply_socket).get_name() + " " + recipient + " :No such nick/channel");
+				ft_send(reply_socket, "401 " + server.get_user_class(reply_socket).get_name() + " " + recipient + " :No such nick/channel\n");
 			}
 		}
 	}

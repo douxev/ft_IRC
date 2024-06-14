@@ -15,6 +15,7 @@ int main( int ac, char **av) {
 	Bot bot(av[1], av[2], av[3]);
 
 	while (true) {
+		bot.receive();
 		parse_commands(bot);
 	}
 

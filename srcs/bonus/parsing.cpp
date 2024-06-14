@@ -1,5 +1,6 @@
 #include "bot/ft_bot.hpp"
 #include <sstream>
+#include <iostream>
 
 void	parse_commands(Bot& bot) {
 
@@ -9,6 +10,12 @@ void	parse_commands(Bot& bot) {
 		line.str(bot.buffer.front());
 		bot.buffer.pop_front();
 
+		std::cout << BOTINFO << line.str() << std::endl;
+
+		// while (bot.buffer.size() > 0 && (!line.str().size() || line.str().at(0) != ':'))  {
+		// 	line.str(bot.buffer.front());
+		// 	bot.buffer.pop_front();
+		// }
 		//! get the channel string in this string same for user
 		std::string channel;
 		std::string user;
@@ -27,8 +34,8 @@ void	parse_commands(Bot& bot) {
 		std::istringstream cmd_is;
 		cmd_is.str(msg);
 		std::getline(cmd_is, cmd, ' ');
-		// if (line.str().size() >= cmd.size() + 1)
-		// 	line.str(&line.str()[cmd.size() + 1]);
+		if (line.str().size() >= cmd.size() + 1)
+			line.str(&line.str()[cmd.size() + 1]);
 
 		//!CHECK IF BOT IS OP
 
@@ -45,7 +52,9 @@ void	parse_commands(Bot& bot) {
 			time_cmd(bot, line);
 		else { //? Process like a general message
 			line.str(msg);
+			std::cout << "HERE: " << line.str() << std::endl; 
 			for (std::string word; std::getline(line, word, ' ');) {
+
 				if (bot.forbidden(channel, word)) {
 					bot.kick_user(channel, user, word);
 				}
