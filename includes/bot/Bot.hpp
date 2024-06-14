@@ -19,8 +19,8 @@ public:
 
     int	 init_connection();
     bool forbidden( std::string channel, std::string word );
-	bool check_op( void );
-	bool is_op( std::string nick );
+	bool check_op( std::string channel );
+	bool is_op( std::string channel, std::string nick );
 	void join_channel( std::string channel );
 	void leave_channel( std::string channel );
 	void add_word( std::string channel, std::string word );
@@ -30,6 +30,8 @@ public:
 	void not_op( void );
 	void send( std::string msg );
 	void receive( void );
+	
+	std::string get_nick( void );
 
 	void notice( std::string msg );
 

@@ -10,55 +10,50 @@ void	parse_commands(Bot& bot) {
 		line.str(bot.buffer.front());
 		bot.buffer.pop_front();
 
+		if (!line.str().size() || line.str().at(0) != ':')
+			continue ;
+
 		std::cout << BOTINFO << line.str() << std::endl;
 
-		// while (bot.buffer.size() > 0 && (!line.str().size() || line.str().at(0) != ':'))  {
-		// 	line.str(bot.buffer.front());
-		// 	bot.buffer.pop_front();
-		// }
-		//! get the channel string in this string same for user
-		std::string channel;
-		std::string user;
-		std::getline(line, user, ' ');
-		if (user.size() > 1)
-			user = user.substr(1);
-		std::getline(line, channel, ' ');
-		std::getline(line, channel, ' ');
-		
-		//! starting parsing the message
-		std::string msg;
-		std::getline(line, msg, ':');
-		std::getline(line, msg);
+
 
 		std::string cmd;
-		std::istringstream cmd_is;
-		cmd_is.str(msg);
-		std::getline(cmd_is, cmd, ' ');
-		if (line.str().size() >= cmd.size() + 1)
-			line.str(&line.str()[cmd.size() + 1]);
+		std::string target;
+		std::string user;
+		std::string msg;
+		std::istringstream message;
 
-		//!CHECK IF BOT IS OP
+		std::getline(line, user, ' ');
+		user = user.substr(1);
+		std::getline(line, cmd, ' ');
+		std::getline(line, target, ' ');
+		std::getline(line, msg);
+		if (msg.size())
+			message.str(msg.substr(1));
+		else
+			message.str(msg);
+		if (target == bot.get_nick()) { 		//? Commands that targets the bot directly
+			if (cmd == "INVITE") {
+				bot.join_channel(msg);
+				continue;
+			}
 
-		//! NOT SURE WE HAVE TIME FOR ANYTHING OTHER THAN FORBIDDEN ADD AND REMOVE
-		
-		//?process like a private command
-		if (cmd == "ADD") //? Add to channel
-			add_cmd(bot, line);
-		else if (cmd == "REMOVE") //? Remove from channel
-			remove_cmd(bot, line);
-		else if (cmd == "FORBIDDEN") //? Add or remove forbidden words
-			forbidden_cmd(bot, line);
-		else if (cmd == "TIME") //? Get time
-			time_cmd(bot, line);
-		else { //? Process like a general message
-			line.str(msg);
-			std::cout << "HERE: " << line.str() << std::endl; 
-			for (std::string word; std::getline(line, word, ' ');) {
+			std::getline(message, cmd, ' ');
+			if (cmd == "ADD") 		//? Add forbidden words
+				add_cmd(bot, message);
+			if (cmd == "REMOVE") 		//? Remove forbidden words
+				remove_cmd(bot, message);
+			else if (cmd == "TIME") 			//? Get time
+				time_cmd(bot, message);
+		}
+		else if (cmd == "PRIVMSG") {
+			if (!bot.check_op(target))
+				bot.not_op();
 
-				if (bot.forbidden(channel, word)) {
-					bot.kick_user(channel, user, word);
-				}
-				//!Log messages in a file if LOG is ON?
+			for (std::string word; std::getline(message, word, ' ');) {
+				std::cout << BOTINFO << "[CHECKS] " << word << std::endl; 
+				if (bot.forbidden(target, word))
+					bot.kick_user(target, user, word);
 			}
 		}
 	}
