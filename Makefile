@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+         #
+#    By: gbonnard <gbonnard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/07 16:11:15 by jdoukhan          #+#    #+#              #
-#    Updated: 2024/06/14 15:33:07 by jdoukhan         ###   ########.fr        #
+#    Updated: 2024/06/14 16:36:53 by gbonnard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -83,7 +83,7 @@ clean:
 	@echo "\033[0;33mCleaned .o files ✔️\033[0m"
 
 fclean: clean
-	@rm -rf $(NAME)
+	@rm -rf $(NAME) $(B_NAME)
 	@echo "\033[0;91mCleaned exe ✔️\033[1;37m"
 
 re: fclean all
