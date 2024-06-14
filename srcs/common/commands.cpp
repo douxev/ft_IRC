@@ -152,66 +152,62 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 	if (value.at(0) == '+')
 		op_sign = true;
 
-	mode = value.at(1);
 	std::string password;
 	std::getline(message, password, ' ');
 	int size = std::strtol(password.c_str(), NULL, 0);
 
-	try{
-		if (!server.is_op(target, server.get_user_class(reply_socket).get_name())) {
-			ft_send(reply_socket, ERR_CHANOPRIVSNEEDED + server.get_user_class(reply_socket).get_name() + " " + target + " :You're not channel operator\n");
-			return ;
-		}
-		(void) server.get_user_class(target);
+	for (int i = 1; value != " " || value == "\0"; i++) {
+		mode = value.at(i);
+		try{
+			if (!server.is_op(target, server.get_user_class(reply_socket).get_name())) {
+				ft_send(reply_socket, ERR_CHANOPRIVSNEEDED + server.get_user_class(reply_socket).get_name() + " " + target + " :You're not channel operator\n");
+				return ;
+			}
+			(void) server.get_user_class(target);
 
+		}
+		catch(const NoSuchChannelException& e) {
+
+			switch (mode)
+			{
+			case 'i':
+				std::cout << SERVER_INFO << "Client '" << reply_socket << "' wants invisible role" << std::endl;
+				// server.get_channel_class(target).set_mode( INVITE, op_sign );
+				break ;
+			case 'o':
+				server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
+				break ;
+			}
+
+		}
+		catch(const NoSuchNickException& e) {
+
+			switch(mode)
+			{
+			case 'i':
+				server.get_channel_class(target).set_mode( INVITE, op_sign );
+				break ;
+			case 't':
+				server.get_channel_class(target).set_mode( TOPIC, op_sign );
+				break ;
+			case 'l':
+				if (op_sign)
+					server.get_channel_class(target).set_mode( LIMIT, size );
+				else
+					server.get_channel_class(target).set_mode(LIMIT, op_sign);
+				break ;
+			case 'k':
+				server.get_channel_class(target).set_mode(KEY, op_sign, password);
+				break ;
+			case 'o':
+				server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
+				break ;
+			default:
+				std::cout << "Mode not recognized, is: [" << mode << "]" << std::endl;
+				break;
+			}
+		}
 	}
-	catch(const NoSuchChannelException& e) {
-
-		switch (mode)
-		{
-		case 'i':
-			std::cout << SERVER_INFO << "Client '" << reply_socket << "' wants invisible role" << std::endl;
-			// server.get_channel_class(target).set_mode( INVITE, op_sign );
-			break ;
-		case 'o':
-			server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
-			break ;
-		}
-
-	}
-	catch(const NoSuchNickException& e) {
-
-		switch(mode)
-		{
-		case 'i':
-			server.get_channel_class(target).set_mode( INVITE, op_sign );
-			break ;
-		case 't':
-			server.get_channel_class(target).set_mode( TOPIC, op_sign );
-			break ;
-		case 'l':
-			if (op_sign)
-				server.get_channel_class(target).set_mode( LIMIT, size );
-			else
-				server.get_channel_class(target).set_mode(LIMIT, op_sign);
-			break ;
-		case 'k':
-			server.get_channel_class(target).set_mode(KEY, op_sign, password);
-			break ;
-		case 'o':
-			server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
-			break ;
-		case KEY:
-			server.get_channel_class(target).set_mode(KEY, op_sign, password);
-			break ;
-		case OP:
-			server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), target, op_sign ) ;
-			break ;
-		default:
-			std::cout << "Mode not recognized, is: [" << mode << "]" << std::endl;
-			break;
-		}
-}
 }
 
 void	who_command( Server& server, int reply_socket, std::istringstream &message ) {
