@@ -184,7 +184,7 @@ void Channel::set_mode( t_enum_modes mode, const User& user, const std::string t
 				}
 			}
 		}
-		else if (value == true) {
+		else if (value == true && !this->is_op(target)) {
 		std::cout << SERVER_INFO << target << " is now OP on " << this->_name << std::endl;
 			this->_op_users.push_back(target);
 		}
