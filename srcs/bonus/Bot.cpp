@@ -11,6 +11,7 @@
 #include <arpa/inet.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <variant>
 
 
 Bot::Bot( void ) {}
@@ -19,6 +20,9 @@ Bot::Bot( const Bot& Other ) {
 	buffer = Other.buffer;
 }
 
+std::string Bot::get_nick( void ) {
+	return this->_nick;
+}
 
 
 Bot::Bot( std::string host, std::string port, std::string password ): 
@@ -80,31 +84,42 @@ int 	Bot::init_connection( void ) {
 	return(socket_fd);
 }
 
-bool Bot::check_op( void ) {
-	return this->is_op(this->_nick);
+bool Bot::check_op( std::string channel ) {
+	return this->is_op( channel, this->_nick);
 }
 
 //Does a WHOIS
-bool Bot::is_op( std::string nick ) {
+bool Bot::is_op( std::string channel, std::string nick ) {
 	std::string line;
 	std::string rpl_code;
 
 	size_t before = this->buffer.size();
-	this->send("WHOIS " + nick);
+	this->send("WHOIS " + nick + "\n");
 	while (this->buffer.size() == before)
 		this->receive();
 
 	std::istringstream line_is;
 	line_is.str(this->buffer.back());
-	
 	this->buffer.pop_back();
+	
 
-	std::getline(line_is, rpl_code, ' ');
-	if (rpl_code != "311")
+	while (rpl_code != "319") {
+		std::getline(line_is, rpl_code, ' ');
 		notice( "received " + line_is.str() + " not 311 RPL_WHOISUSER.");
+		this->buffer.pop_front();
+		line_is.str(this->buffer.front());
+	}
 	std::getline(line_is, line, ' ');
-	if (!line.empty() && line.at(0) == '@')
-		return true;
+	if (!line.empty() && line.at(0) == '@') {
+		std::getline(line_is, line, ':');
+		std::getline(line_is, line, ':');
+		size_t pos = line.find_first_of(channel);
+		if ( pos > 2 ) {
+			if (line.at(pos - 2) == '@') {
+				return true;
+			}
+		}
+	}
 	return false;
 }
 
@@ -112,7 +127,10 @@ bool Bot::is_op( std::string nick ) {
 void Bot::join_channel( std::string channel ) {
 
 	(void) this->_channels[channel];
-	this->notice("Joined or was already on " + channel);
+	if (channel.size() > 0 && channel.at(0) != '#')
+		channel = "#" + channel;
+	this->send("JOIN " + channel + "\n");
+	this->notice("Joined " + channel);
 }
 
 //removes the channel from map
@@ -128,13 +146,14 @@ void Bot::add_word( std::string channel, std::string word ) {
 	if (this->_channels.find(channel) == this->_channels.end())
 		notice("Not on that channel.");
 	else {
-	// 	if (std::find((this->_channels[channel]).begin(), (this->_channels[channel]).end(), this->_channels[channel]) == this->_channels[channel].end()) {
-	// 		this->_channels[channel].push_back(word);
-	// 		notice("Added word '" + word + "' to " + channel + "'s forbidden words.");
-	// 	}
-	// 	else
-	// 		notice("Word '" + word + "' already registered for " + channel + ".");
-	;
+		if (std::find((this->_channels[channel]).begin(), 
+			(this->_channels[channel]).end(), 
+			word) == this->_channels[channel].end()) {
+			this->_channels[channel].push_back(word);
+			notice("Added word '" + word + "' to " + channel + "'s forbidden words.");
+		}
+		else
+			notice("Word '" + word + "' already registered for " + channel + ".");
 	}
 }
 
@@ -143,7 +162,7 @@ void Bot::remove_word( std::string channel, std::string word ) {
 	if (this->_channels.find(channel) == this->_channels.end())
 		notice("Not on that channel.");
 	else {
-		if (std::find(this->_channels[channel].begin(), this->_channels[channel].end(), channel) == this->_channels[channel].end()) {
+		if (std::find(this->_channels[channel].begin(), this->_channels[channel].end(), word) == this->_channels[channel].end()) {
 			this->_channels[channel].erase(std::remove(this->_channels[channel].begin(), this->_channels[channel].end(), word));
 			notice("Word '" + word + "' has been removed for " + channel + ".");
 		}
@@ -161,7 +180,7 @@ void Bot::process_msg( std::istringstream& message ) {
 
 //kicks a user
 void Bot::kick_user( std::string channel, std::string user, std::string fword ) {
-	this->send("KICK " + channel + " " + user + ":You used a forbidden word: " + fword + "\n");
+	this->send("KICK " + channel + " " + user + " :You used a forbidden word: " + fword + "\n");
 	notice("Kicked " + user + " from " + channel + " because of the forbidden word '" + fword + "'.");
 }
 
