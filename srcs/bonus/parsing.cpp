@@ -10,8 +10,8 @@ void	parse_commands(Bot& bot) {
 		line.str(bot.buffer.front());
 		bot.buffer.pop_front();
 
-		if (!line.str().size() || line.str().at(0) != ':')
-			continue ;
+		// if (!line.str().size() || line.str().at(0) != ':')
+		// 	continue ;
 
 		std::cout << BOTINFO << line.str() << std::endl;
 
@@ -47,8 +47,10 @@ void	parse_commands(Bot& bot) {
 				time_cmd(bot, message);
 		}
 		else if (cmd == "PRIVMSG") {
-			if (!bot.check_op(target))
-				bot.not_op();
+			if (!bot.check_op(target)) {
+				bot.not_op(target);
+				continue;
+			}
 
 			for (std::string word; std::getline(message, word, ' ');) {
 				std::cout << BOTINFO << "[CHECKS] " << word << std::endl; 

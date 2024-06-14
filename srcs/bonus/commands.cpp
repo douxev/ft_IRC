@@ -10,7 +10,7 @@ void	add_cmd( Bot& bot, std::istringstream& message ) {
 	if (std::getline(message, channel, ' ')) {
 		
 		if (!bot.check_op(channel))
-			bot.not_op();
+			bot.not_op(channel);
 
 		if (channel.size() && channel.at(0) != '#')
 			channel = "#" + channel;
@@ -25,8 +25,9 @@ void	remove_cmd( Bot& bot, std::istringstream& message ) {
 
 	if (std::getline(message, channel, ' ')) {
 		
-		if (!bot.check_op(channel))
-			bot.not_op();
+		if (!bot.check_op(channel)) {
+			bot.not_op(channel);
+		}
 		
 		if (channel.size() && channel.at(0) != '#')
 			channel = "#" + channel;

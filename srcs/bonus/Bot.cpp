@@ -92,34 +92,39 @@ bool Bot::check_op( std::string channel ) {
 bool Bot::is_op( std::string channel, std::string nick ) {
 	std::string line;
 	std::string rpl_code;
+	std::istringstream line_is;
 
-	size_t before = this->buffer.size();
 	this->send("WHOIS " + nick + "\n");
-	while (this->buffer.size() == before)
+	this->receive();
+	while (this->buffer.size() > 0) {
 		this->receive();
 
-	std::istringstream line_is;
-	line_is.str(this->buffer.back());
-	this->buffer.pop_back();
-	
-
-	while (rpl_code != "319") {
+		line_is.clear();
+		line_is.str(this->buffer.back());
+		this->buffer.pop_back();
+		
 		std::getline(line_is, rpl_code, ' ');
-		notice( "received " + line_is.str() + " not 311 RPL_WHOISUSER.");
-		this->buffer.pop_front();
-		line_is.str(this->buffer.front());
-	}
-	std::getline(line_is, line, ' ');
-	if (!line.empty() && line.at(0) == '@') {
-		std::getline(line_is, line, ':');
-		std::getline(line_is, line, ':');
-		size_t pos = line.find_first_of(channel);
-		if ( pos > 2 ) {
-			if (line.at(pos - 2) == '@') {
-				return true;
-			}
+		while (rpl_code != "319" && this->buffer.size()) {
+			std::getline(line_is, rpl_code, ' ');
+			if (rpl_code == "319")
+				break ;
+			line_is.clear();
+			line_is.str(this->buffer.back());
+			this->buffer.pop_back();
 		}
+		if (rpl_code == "319")
+			break ;
 	}
+		std::getline(line_is, line, ':');
+		std::getline(line_is, line);
+		if (line.size() && line.at(0) != '#' && line.at(0) != '@')
+			line = "#" + line;
+		size_t pos = line.find_first_of(channel);
+		// std::cout << "Parsed: " << line.at(pos) << std::endl;
+		if (pos >= 1 && line.at(pos - 1) == '@') {
+			return true;
+		}
+	
 	return false;
 }
 
@@ -192,6 +197,12 @@ void Bot::not_op( void ) {
 	}
 }
 
+void Bot::not_op( std::string channel ) {
+	if (channel.size() > 2 && channel.at(0) != '#')
+		channel = "#" + channel;
+	std::cout << BOTINFO << "NOT OP on " << channel << std::endl;
+	this->send("PRIVMSG " + channel + " :Not OP on this channel.");
+}
 //sends a PRIVMSG
 void Bot::send( std::string msg ) {
 	ft_send(this->_fd, msg);
@@ -202,15 +213,16 @@ void Bot::notice( std::string msg ) {
 }
 
 void Bot::receive( void ) {
-	char buffer[BUFSIZ];
-
+	char buffer[BUFSIZ] = {};
+	
 	recv(this->_fd, buffer, BUFSIZ, 0);
 
 	std::istringstream buf;
 	buf.str(buffer);
 	std::string line; 
 	while (std::getline(buf, line)) {
-		this->buffer.push_back(line);
+		if (!line.empty())
+			this->buffer.push_back(line);
 	}
 }
 

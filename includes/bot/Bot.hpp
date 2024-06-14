@@ -27,7 +27,10 @@ public:
 	void remove_word( std::string channel, std::string word );
 	void process_msg( std::istringstream& message );
 	void kick_user( std::string channel, std::string user, std::string word );
+	
 	void not_op( void );
+	void not_op( std::string channel );
+	
 	void send( std::string msg );
 	void receive( void );
 	
