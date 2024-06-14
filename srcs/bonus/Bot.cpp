@@ -76,11 +76,7 @@ int 	Bot::init_connection( void ) {
 		msg_to_send << "PASS " << _pass << "\n";
 	msg_to_send << "NICK " << _nick << "\n";
 	msg_to_send << "USER "<< _username << " 0 * :" << _realname << "\n";
-<<<<<<< HEAD
 	this->send(msg_to_send.str());
-=======
-	ft_send(socket_fd, msg_to_send.str());
->>>>>>> refs/remotes/origin/main
 	return(socket_fd);
 }
 
