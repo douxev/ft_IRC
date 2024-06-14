@@ -39,7 +39,7 @@ private:
 
 	Bot( void );
 
-	const std::string 	_host;
+	std::string 		_host;
 	const std::string 	_port;
 	const std::string 	_pass;
 	int					_fd;

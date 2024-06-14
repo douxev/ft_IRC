@@ -6,7 +6,7 @@
 #    By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/07 16:11:15 by jdoukhan          #+#    #+#              #
-#    Updated: 2024/06/10 18:27:47 by jdoukhan         ###   ########.fr        #
+#    Updated: 2024/06/14 15:33:07 by jdoukhan         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -71,8 +71,7 @@ objs/%.o : srcs/%.cpp
 	@$(CC) $(CFLAGS) -MMD -c -o $@ $< $(INCLUDES)
 
 $(B_NAME) : $(B_OBJS)
-	@rm -rf $(NAME)
-	@$(CC) $(B_SRCS) $(CFLAGS) -o $(NAME) $(INCLUDES)
+	@$(CC) $(B_SRCS) $(CFLAGS) -o $(B_NAME) $(INCLUDES)
 	@echo "\033[0;32mBonus part compiled ✔️\033[0m"
 
 $(NAME) : $(OBJS)

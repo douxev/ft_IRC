@@ -43,7 +43,7 @@ int 	Bot::init_connection( void ) {
 	struct sockaddr_in sa;
 	char* addr = (char *)_host.c_str();
 	memset(&sa, 0, sizeof(sa));
-	if (_host == "localhost") {
+	if (this->_host == "localhost") {
 		std::string address = "127.0.0.1";
 		addr = (char *) address.c_str();
 	}
@@ -103,7 +103,7 @@ bool Bot::is_op( std::string nick ) {
 	if (rpl_code != "311")
 		notice( "received " + line_is.str() + " not 311 RPL_WHOISUSER.");
 	std::getline(line_is, line, ' ');
-	if (!line.empty() && line[0] == '@')
+	if (!line.empty() && line.at(0) == '@')
 		return true;
 	return false;
 }
@@ -124,15 +124,17 @@ void Bot::leave_channel( std::string channel ) {
 
 //adds word to the map
 void Bot::add_word( std::string channel, std::string word ) {
+	(void) word;
 	if (this->_channels.find(channel) == this->_channels.end())
 		notice("Not on that channel.");
 	else {
-		if (std::find(this->_channels[channel].begin(), this->_channels[channel].end(), this->_channels[channel]) == this->_channels[channel].end()) {
-			this->_channels[channel].push_back(word);
-			notice("Added word '" + word + "' to " + channel + "'s forbidden words.");
-		}
-		else
-			notice("Word '" + word + "' already registered for " + channel + ".");
+	// 	if (std::find((this->_channels[channel]).begin(), (this->_channels[channel]).end(), this->_channels[channel]) == this->_channels[channel].end()) {
+	// 		this->_channels[channel].push_back(word);
+	// 		notice("Added word '" + word + "' to " + channel + "'s forbidden words.");
+	// 	}
+	// 	else
+	// 		notice("Word '" + word + "' already registered for " + channel + ".");
+	;
 	}
 }
 
@@ -184,7 +186,7 @@ void Bot::notice( std::string msg ) {
 void Bot::receive( void ) {
 	char buffer[BUFSIZ];
 
-	recv(this->_fd, &buffer, BUFSIZ, 0);
+	recv(this->_fd, buffer, BUFSIZ, 0);
 
 	std::istringstream buf;
 	buf.str(buffer);

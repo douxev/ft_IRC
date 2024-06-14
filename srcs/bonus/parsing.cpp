@@ -23,12 +23,12 @@ void	parse_commands(Bot& bot) {
 		std::getline(line, msg, ':');
 		std::getline(line, msg);
 
+		std::string cmd;
 		std::istringstream cmd_is;
 		cmd_is.str(msg);
-		std::string cmd;
 		std::getline(cmd_is, cmd, ' ');
-		if (line.str().size() >= cmd.size() + 1)
-			line.str(&line.str()[cmd.size() + 1]);
+		// if (line.str().size() >= cmd.size() + 1)
+		// 	line.str(&line.str()[cmd.size() + 1]);
 
 		//!CHECK IF BOT IS OP
 
@@ -43,10 +43,6 @@ void	parse_commands(Bot& bot) {
 			forbidden_cmd(bot, line);
 		else if (cmd == "TIME") //? Get time
 			time_cmd(bot, line);
-		else if (cmd == "LOG") //? Start logging on said Channel
-			log_cmd(bot, line);
-		else if (cmd == "UNLOG") //? Stop logging
-			unlog_cmd(bot, line);
 		else { //? Process like a general message
 			line.str(msg);
 			for (std::string word; std::getline(line, word, ' ');) {
