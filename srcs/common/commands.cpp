@@ -152,6 +152,12 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 	if (value.at(0) == '+')
 		op_sign = true;
 
+	if (value.at(0) == 'b') {
+		ft_send(reply_socket, "368 " + server.get_user_class(reply_socket).get_name() + " " + target + " :End of channel banlist.\n");
+		return ;
+	}
+
+
 	mode = value.at(1);
 	std::string password;
 	std::getline(message, password, ' ');
@@ -177,6 +183,8 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 				break ;
 			case 'o':
 				server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
+				server.get_channel_class(target).send_channel(":" + server.get_user_class(reply_socket).get_name() + " MODE " + target + " " + value.at(0) + "o " + password + "\n");
+				server.get_channel_class(target).send_who(server, reply_socket);
 				break ;
 			}
 
@@ -202,6 +210,8 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 				break ;
 			case 'o':
 				server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
+				server.get_channel_class(target).send_channel(":" + server.get_user_class(reply_socket).get_name() + " MODE " + target + " " + value.at(0) + "o " + password + "\n");
+				server.get_channel_class(target).send_who(server, reply_socket);
 				break ;
 			default:
 				std::cout << "Mode not recognized, is: [" << mode << "]" << std::endl;
@@ -209,6 +219,7 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 			}
 		}
 	// }
+	ft_send(reply_socket, RPL_UMODEIS + server.get_user_class(reply_socket).get_name() + "\n");
 }
 
 void	who_command( Server& server, int reply_socket, std::istringstream &message ) {
@@ -322,6 +333,12 @@ void	list_command( Server& server, int reply_socket, std::istringstream &message
 	}
 	ft_send(reply_socket, RPL_LISTEND + user.get_name() + " :End of /LIST\n");
 }
+
+void	whois_command( Server& server, int reply_socket, std::string message ) {
+	std::istringstream msg(message);
+	whois_command(server, reply_socket, msg);
+}
+
 
 void	whois_command( Server& server, int reply_socket, std::istringstream &message ) {
 	const User& user = server.get_user_class(reply_socket);

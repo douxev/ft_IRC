@@ -6,7 +6,7 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 14:56:20 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/06/10 15:34:59 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/06/15 16:06:21 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ void	part_command( Server& server, int reply_socket, std::istringstream &message
 void	quit_command( Server& server, int reply_socket, std::istringstream &message );
 void	pass_command( Server& server, int reply_socket, std::istringstream &message );
 void	whois_command( Server& server, int reply_socket, std::istringstream &message );
+void	whois_command( Server& server, int reply_socket, std::string message );
 
 
 void	no_topic_set( int reply_socket, std::string channel );

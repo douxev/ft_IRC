@@ -7,6 +7,8 @@
 # define RPL_MYNFO "004 "
 # define RPL_ISUPPORT "005 "
 
+# define RPL_UMODEIS "221 "
+
 # define RPL_WHOISUSER "311 "
 # define RPL_WHOISCHANNELS "319 "
 # define RPL_ENDOFWHOIS "318 "

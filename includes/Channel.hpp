@@ -6,7 +6,7 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 12:59:03 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/06/10 17:09:36 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/06/15 16:33:07 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ class Channel {
 public:
 
 	void		send_channel( const std::string msg );
+	void		send_channel_client( const std::string msg );
 	void		send_channel( int sender_fd, const std::string msg );
 	void		send_userlist( const User& user );
 	void		send_who( Server& server, int reply_socket );
