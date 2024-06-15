@@ -1,3 +1,4 @@
+#include "error_numeric.hpp"
 #include "ft_irc.hpp"
 #include <cstddef>
 #include <exception>
@@ -147,8 +148,20 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 					std::cout << RED << "[WARN!]" << RESET << " Unknown Command: " << cmd << std::endl;
 			}
 		}
+		catch (const NoSuchNickException& e) {
+			ft_send(reply_socket, ERR_NOSUCHNICK + server.get_user_class(reply_socket).get_name() + " " + line.str() + " :No such nick\n");
+		}
+		catch (const NoSuchChannelException& e) {
+			ft_send(reply_socket, ERR_NOSUCHCHANNEL + server.get_user_class(reply_socket).get_name() + " " + line.str() + " :No such channel " + line.str() + "\n");
+		}
+		catch (const NotOnChannelException& e) {
+			ft_send(reply_socket, ERR_NOTONCHANNEL + server.get_user_class(reply_socket).get_name() + " " + line.str() + " :You aren't on that channel\n");
+		}
+		catch (const NeedMoreParamsException& e) {
+			ft_send(reply_socket, ERR_NEEDMOREPARAMS + server.get_user_class(reply_socket).get_name() + cmd + " :Not enough parameters\n");
+		}
 		catch (std::exception& e) {
-			std::cout << e.what() << std::endl;
+			std::cout << SERVER_INFO  << "Generic exception caught: " <<  e.what() << std::endl;
 		}
 	}
 }

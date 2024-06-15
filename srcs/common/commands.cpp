@@ -152,7 +152,7 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 	if (value.at(0) == '+')
 		op_sign = true;
 
-	if (value.at(0) == 'b') {
+	if (value.size() == 2 && op_sign && value.at(1) == 'b') {
 		ft_send(reply_socket, "368 " + server.get_user_class(reply_socket).get_name() + " " + target + " :End of channel banlist.\n");
 		return ;
 	}
@@ -183,9 +183,13 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 				break ;
 			case 'o':
 				server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
-				server.get_channel_class(target).send_channel(":" + server.get_user_class(reply_socket).get_name() + " MODE " + target + " " + value.at(0) + "o " + password + "\n");
+				server.get_channel_class(target).send_channel(":" + server.get_user_class(reply_socket).get_name() 
+					+ "!~" + server.get_user_class(reply_socket).get_realname() + "@" + server.get_user_class(reply_socket).get_ip() +
+					"" + " MODE " + target + " " + value.at(0) + "o " + password + " \n");
 				// server.get_channel_class(target).send_who(server, reply_socket);
 				break ;
+			default:
+				ft_send(reply_socket, RPL_UMODEIS + server.get_user_class(reply_socket).get_name() + "\n");
 			}
 
 		}
@@ -210,7 +214,9 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 				break ;
 			case 'o':
 				server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
-				server.get_channel_class(target).send_channel(":" + server.get_user_class(reply_socket).get_name() + " MODE " + target + " " + value.at(0) + "o " + password + "\n");
+				server.get_channel_class(target).send_channel(":" + server.get_user_class(reply_socket).get_name() 
+					+ "!~" + server.get_user_class(reply_socket).get_realname() + "@" + server.get_user_class(reply_socket).get_ip() +
+					"" + " MODE " + target + " " + value.at(0) + "o " + password + " \n");
 				// server.get_channel_class(target).send_who(server, reply_socket);
 				break ;
 			default:
@@ -219,9 +225,9 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 			}
 		}
 	// }
-	// ft_send(reply_socket, RPL_UMODEIS + server.get_user_class(reply_socket).get_name() + "\n");
 }
 
+//send_who from channel
 void	who_command( Server& server, int reply_socket, std::istringstream &message ) {
 	server.get_channel_class(message.str()).send_who(server, reply_socket);
 }
