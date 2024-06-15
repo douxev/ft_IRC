@@ -161,7 +161,7 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 	// 	mode = value.at(i);
 		try{
 			if (!server.is_op(target, server.get_user_class(reply_socket).get_name())) {
-				ft_send(reply_socket,":" + server.get_ip() + " " + ERR_CHANOPRIVSNEEDED + server.get_user_class(reply_socket).get_name() + " " + target + " :You're not channel operator\n");
+				ft_send(reply_socket, (std::string) ERR_CHANOPRIVSNEEDED + target + " :You're not channel operator\n");
 				return ;
 			}
 			(void) server.get_user_class(target);
