@@ -64,8 +64,8 @@ void	Channel::send_userlist( const User& user ) {
 			msg_to_send << "@";
 		msg_to_send << this->_connected_users[i]->get_name() << " ";
 	}
-	ft_send(user.get_socketfd(), msg_to_send.str() + "\n");
-	ft_send(user.get_socketfd(), "366 " + user.get_name() + " " + this->get_name() + " :End of /NAMES list\n");
+	ft_send(user.get_socketfd(), msg_to_send.str() + "\r\n");
+	ft_send(user.get_socketfd(), "366 " + user.get_name() + " " + this->get_name() + " :End of /NAMES list\r\n");
 }
 
 void Channel::send_who( Server& server, int reply_socket ) {
@@ -87,21 +87,21 @@ void Channel::send_who( Server& server, int reply_socket ) {
 			msg += "@";
 		ft_send(reply_socket, 
 			msg + " :0 " + 
-			this->_connected_users[i]->get_realname() + "\n");
+			this->_connected_users[i]->get_realname() + "\r\n");
 	}
-	ft_send(reply_socket, "315 " + user.get_name() + " :End of WHO list\n");
+	ft_send(reply_socket, "315 " + user.get_name() + " :End of WHO list\r\n");
 }
 
 void Channel::user_join( User& user, std::string pass ) {
 
 	if (this->_modes.invite_only && !this->is_invited(user)) {
 		ft_send(user.get_socketfd(), ERR_INVITEONLYCHAN + user.get_name() + " " + 
-			this->get_name() + " :Invite Only (+i)\n");
+			this->get_name() + " :Invite Only (+i)\r\n");
 		return ; //!NO INVITE
 	}
 	if (this->_modes.limit && this->_connected_users.size() == this->_modes.limit) {
 		ft_send(user.get_socketfd(), ERR_CHANNELISFULL + user.get_name() + " " + 
-			this->get_name() + " :Channel is Full (+l)\n");
+			this->get_name() + " :Channel is Full (+l)\r\n");
 		return ; //!USER LIMIT REACHED
 	}
 	if (this->_modes.password.empty() || pass == this->_modes.password) {
@@ -114,13 +114,13 @@ void Channel::user_join( User& user, std::string pass ) {
 	}
 	else {
 		ft_send(user.get_socketfd(), ERR_BADCHANNELKEY + user.get_name() + " " + 
-			this->get_name() + " :Bad Channel Key (+k)\n");
+			this->get_name() + " :Bad Channel Key (+k)\r\n");
 		return ; //!Password Mismatch
 	}
 }
 
 void Channel::user_quit( User& user, const std::string quit_message ) {
-	this->send_channel(user.get_socketfd(), ":" + user.get_name() + " QUIT :Quit: " + quit_message);
+	this->send_channel(user.get_socketfd(), ":" + user.get_name() + " QUIT :" + quit_message);
 	this->_remove_connected_user(user);
 }
 
@@ -137,14 +137,14 @@ void Channel::change_op_nick( const std::string user, const std::string new_name
 
 void Channel::user_part( User& user, const std::string part_message ) {
 	this->send_channel(":" + user.get_name() + "!" + user.get_name() + "@" + user.get_ip() + " PART " + this->get_name() + " :" + part_message + "\n");
-	ft_send(user.get_socketfd(), "404 " + user.get_name() + " " + this->get_name() + " :Parted from Channel\n");
+	ft_send(user.get_socketfd(), "404 " + user.get_name() + " " + this->get_name() + " :Parted from Channel\r\n");
 	this->_remove_connected_user(user);
 }
 
 void Channel::user_kicked( User& user, const User& target, std::string kick_message ) {
 	this->_remove_connected_user(user);
 	this->send_channel(user.get_socketfd(), ":" + user.get_name() + " KICK #" + this->get_name() + 
-						" " + target.get_name() + " :" + kick_message + "\n");
+						" " + target.get_name() + " :" + kick_message + "\r\n");
 }
 
 std::string Channel::user_count( void ) {
@@ -173,10 +173,7 @@ void Channel::change_role( const User& user, const User& target, bool is_op ) {
 void Channel::set_mode( t_enum_modes mode, const User& user, const std::string target, bool value ) {
 	if (mode != OP)
 		return ;
-	std::cout << SERVER_INFO << target << " " << user.get_name() << " " << value << std::endl;
-
 	if (this->is_op(user)) {
-		std::cout << SERVER_INFO << "HERE" << std::endl;
 		if (value == false && this->is_op(target)) {
 			std::cout << SERVER_INFO << target << " is no longer OP on " << this->_name << std::endl;
 			const size_t len = this->_op_users.size();
@@ -319,7 +316,7 @@ void Channel::refresh_topic( void ) {
 	for (size_t i = 0; i < len; i++) {
 		ft_send(this->_connected_users[i]->get_socketfd(), 
 			RPL_TOPIC + this->_connected_users[i]->get_name() + " " + 
-			this->_name + " :" + this->_topic + "\n");
+			this->_name + " :" + this->_topic + "\r\n");
 	}
 }
 
