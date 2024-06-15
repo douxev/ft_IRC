@@ -12,15 +12,15 @@
 #include <algorithm>
 
 void	pong(int reply_socket, std::string message) {
-	ft_send(reply_socket, "PONG " + message + "\n");
+	ft_send(reply_socket, "PONG " + message + "\r\n");
 }
 
 void	motd_command( Server& server, int reply_socket ) {
 	if (server.get_motd().empty())
-		ft_send(reply_socket, "422 " + server.get_user_class(reply_socket).get_name() + " :No MOTD set");
+		ft_send(reply_socket, "422 " + server.get_user_class(reply_socket).get_name() + " :No MOTD set\r\n");
 	else
 		ft_send(reply_socket, "375 " + server.get_user_class(reply_socket).get_name() + " :Message of the Day \n372 :" + 
-				server.get_motd() + "\n376 " + server.get_user_class(reply_socket).get_name() + " :End of MOTD.");
+				server.get_motd() + "\n376 " + server.get_user_class(reply_socket).get_name() + " :End of MOTD.\r\n");
 }
 
 void	version_command( int reply_socket ) {
@@ -37,7 +37,7 @@ void	nick_command( Server& server, int reply_socket, std::string message ) {
 		server.change_nick(user, message);
 	}
 	catch (const NickAlreadyTakenException& e) {
-		ft_send(reply_socket, ERR_NICKNAMEINUSE + oldnick + " " + message + " :Nickname is already in use\n");
+		ft_send(reply_socket, ERR_NICKNAMEINUSE + oldnick + " " + message + " :Nickname is already in use\r\n");
 		return ;
 	}
 	server.send_all(":" + oldnick + " NICK :" + user.get_name() + "\n");
@@ -85,7 +85,7 @@ void	join_command( Server& server, int reply_socket, std::istringstream &message
 void	privmsg_command( Server& server, int reply_socket, std::istringstream &message ) {
 
 	if (find(message.str().begin(), message.str().end(), ':') == message.str().end()) {	//detection de l'absence de cible
-		ft_send(reply_socket, "411 " + server.get_user_class(reply_socket).get_name() + " :No recipient given (PRIVMSG " + message.str() + " )\n");
+		ft_send(reply_socket, "411 " + server.get_user_class(reply_socket).get_name() + " :No recipient given (PRIVMSG " + message.str() + " )\r\n");
 		return ;
 	}
 
@@ -94,7 +94,7 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 	std::string msg;
 	std::getline(message, msg);
 	if (!msg.size()) {
-		ft_send(reply_socket, "412 " + server.get_user_class(reply_socket).get_name() + " :No text to send\n");
+		ft_send(reply_socket, "412 " + server.get_user_class(reply_socket).get_name() + " :No text to send\r\n");
 		return ;
 	}
 
@@ -107,7 +107,7 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 		{
 			User user = server.get_user_class(recipient);
 			// std::cout << recipient << " is a user\n";
-			ft_send(user.get_socketfd(), ":" + server.get_user_class(reply_socket).get_name() + " PRIVMSG " + recipient + " :" + msg + "\n");
+			ft_send(user.get_socketfd(), ":" + server.get_user_class(reply_socket).get_name() + " PRIVMSG " + recipient + " :" + msg + "\r\n");
 		}
 		catch(const std::exception& e)	//ce n'est pas un user
 		{
@@ -116,14 +116,13 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 				Channel channel = server.get_channel_class(recipient);
 				// std::cout << recipient << " is a channel\n";
 				if (channel.is_on_channel(server.get_user_class(reply_socket).get_name()))
-					channel.send_channel(reply_socket, ":" + server.get_user_class(reply_socket).get_name() + " PRIVMSG " + recipient + " :" + msg + "\n");
+					channel.send_channel(reply_socket, ":" + server.get_user_class(reply_socket).get_name() + " PRIVMSG " + recipient + " :" + msg + "\r\n");
 				else
-					ft_send(reply_socket, "404 " + server.get_user_class(reply_socket).get_name() + " " + channel.get_name() + " :Cannot send to channel\n");
+					ft_send(reply_socket, "404 " + server.get_user_class(reply_socket).get_name() + " " + channel.get_name() + " :Cannot send to channel\r\n");
 
 			}
-			catch(const std::exception& e) //ce n'est pas un channel non plus
-			{
-				ft_send(reply_socket, "401 " + server.get_user_class(reply_socket).get_name() + " " + recipient + " :No such nick/channel\n");
+			catch(const std::exception& e) { //ce n'est pas un channel non plus
+				ft_send(reply_socket, "401 " + server.get_user_class(reply_socket).get_name() + " " + recipient + " :No such nick/channel\r\n");
 			}
 		}
 	}
@@ -144,7 +143,7 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 
 	if (value.size() < 2){
 		ft_send(reply_socket,":" + server.get_ip() + " " + RPL_CHANNELMODEIS + 
-			server.get_user_class(reply_socket).get_name() + " " + target + " " + server.get_channel_class(target).get_modes() + "\n");
+			server.get_user_class(reply_socket).get_name() + " " + target + " " + server.get_channel_class(target).get_modes() + "\r\n");
 		return ; //MODE QUERY
 	}	
 
@@ -153,7 +152,7 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 		op_sign = true;
 
 	if (value.size() == 2 && op_sign && value.at(1) == 'b') {
-		ft_send(reply_socket, "368 " + server.get_user_class(reply_socket).get_name() + " " + target + " :End of channel banlist.\n");
+		ft_send(reply_socket, "368 " + server.get_user_class(reply_socket).get_name() + " " + target + " :End of channel banlist.\r\n");
 		return ;
 	}
 
@@ -167,7 +166,7 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 	// 	mode = value.at(i);
 		try{
 			if (!server.is_op(target, server.get_user_class(reply_socket).get_name())) {
-				ft_send(reply_socket, (std::string) ERR_CHANOPRIVSNEEDED + target + " :You're not channel operator\n");
+				ft_send(reply_socket, (std::string) ERR_CHANOPRIVSNEEDED + target + " :You're not channel operator\r\n");
 				return ;
 			}
 			(void) server.get_user_class(target);
@@ -185,11 +184,11 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 				server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
 				server.get_channel_class(target).send_channel(":" + server.get_user_class(reply_socket).get_name() 
 					+ "!~" + server.get_user_class(reply_socket).get_realname() + "@" + server.get_user_class(reply_socket).get_ip() +
-					"" + " MODE " + target + " " + value.at(0) + "o " + password + " \n");
+					"" + " MODE " + target + " " + value.at(0) + "o " + password + " \r\n");
 				// server.get_channel_class(target).send_who(server, reply_socket);
 				break ;
 			default:
-				ft_send(reply_socket, RPL_UMODEIS + server.get_user_class(reply_socket).get_name() + "\n");
+				ft_send(reply_socket, RPL_UMODEIS + server.get_user_class(reply_socket).get_name() + "\r\n");
 			}
 
 		}
@@ -216,7 +215,7 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 				server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
 				server.get_channel_class(target).send_channel(":" + server.get_user_class(reply_socket).get_name() 
 					+ "!~" + server.get_user_class(reply_socket).get_realname() + "@" + server.get_user_class(reply_socket).get_ip() +
-					"" + " MODE " + target + " " + value.at(0) + "o " + password + " \n");
+					"" + " MODE " + target + " " + value.at(0) + "o " + password + " \r\n");
 				// server.get_channel_class(target).send_who(server, reply_socket);
 				break ;
 			default:
@@ -242,7 +241,7 @@ void	topic_command( Server& server, int reply_socket, std::istringstream &messag
 	const std::string user = server.get_user_class(reply_socket).get_name();
 
 if (channel.empty())
-	ft_send(reply_socket, ERR_NEEDMOREPARAMS + user + "TOPIC :Not enough parameters\n");
+	ft_send(reply_socket, ERR_NEEDMOREPARAMS + user + "TOPIC :Not enough parameters\r\n");
 
 try {
 	if (server.is_on_channel(channel, user)) {
@@ -253,7 +252,7 @@ try {
 					return ;
 				}
 				else {
-					msg_to_send << RPL_TOPIC << server.get_user_class(reply_socket).get_name() << channel << "\n";
+					msg_to_send << RPL_TOPIC << server.get_user_class(reply_socket).get_name() << channel << "\r\n";
 					if (ft_send(reply_socket, msg_to_send.str()) == -1)
 						std::cerr << SERVER_INFO << "Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
 					return ;
@@ -271,17 +270,17 @@ try {
 		}
 		else {
 			if (!server.is_op(channel, user)) {
-				msg_to_send << ERR_CHANOPRIVSNEEDED << user << " " << channel << " :You're not channel operator\n";
+				msg_to_send << ERR_CHANOPRIVSNEEDED << user << " " << channel << " :You're not channel operator\r\n";
 				if (ft_send(reply_socket, msg_to_send.str()) == -1)
 					std::cerr << SERVER_INFO << "Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
 			}
 		}
 	}
 	else
-		ft_send(reply_socket, "442 " + user + " " + channel + "You are not on channel " + channel + "\n");
+		ft_send(reply_socket, "442 " + user + " " + channel + "You are not on channel " + channel + "\r\n");
 	}
 catch(const NoSuchChannelException& e) {
-	ft_send(reply_socket, ERR_NOSUCHCHANNEL + user + " " + channel + " :No such channel " + channel + "\n");
+	ft_send(reply_socket, ERR_NOSUCHCHANNEL + user + " " + channel + " :No such channel " + channel + "\r\n");
 }
 }
 
@@ -302,7 +301,7 @@ void	names_command( Server& server, int reply_socket, std::istringstream &messag
 			server.get_channel_class(channel_name).send_userlist(user);
 		}
 		catch(const std::exception& e) {
-			ft_send(reply_socket, "366 " + user.get_name() + " " + channel_name + " :End of /NAMES list/n");
+			ft_send(reply_socket, "366 " + user.get_name() + " " + channel_name + " :End of /NAMES list\r\n");
 		}
 	}
 	if (!i ) //aucuns parametres
@@ -317,7 +316,7 @@ void	names_command( Server& server, int reply_socket, std::istringstream &messag
 			if (!user_list[j]->get_list_channel().size())
 				ft_send(reply_socket, user_list[j]->get_name());
 		}
-		ft_send(reply_socket, "366 " + user.get_name() + " * :End of /NAMES list/n");
+		ft_send(reply_socket, "366 " + user.get_name() + " * :End of /NAMES list\r\n");
 	}
 }
 
@@ -334,9 +333,9 @@ void	list_command( Server& server, int reply_socket, std::istringstream &message
 	for (size_t i = 0; i < len; i++) {
 		std::cout << chans[i]->user_count();
 		ft_send(reply_socket, RPL_LIST + user.get_name() + " " + chans[i]->get_name() + " " +
-		chans[i]->user_count() + " :" + chans[i]->get_topic() + "\n");
+		chans[i]->user_count() + " :" + chans[i]->get_topic() + "\r\n");
 	}
-	ft_send(reply_socket, RPL_LISTEND + user.get_name() + " :End of /LIST\n");
+	ft_send(reply_socket, RPL_LISTEND + user.get_name() + " :End of /LIST\r\n");
 }
 
 void	whois_command( Server& server, int reply_socket, std::string message ) {
@@ -350,14 +349,14 @@ void	whois_command( Server& server, int reply_socket, std::istringstream &messag
 	std::string target;
 
 	if (message.str().empty()) {
-		ft_send(reply_socket, ERR_NONICKNAMEGIVEN + user.get_name() + " :No nickname given\n");
+		ft_send(reply_socket, ERR_NONICKNAMEGIVEN + user.get_name() + " :No nickname given\r\n");
 		return ;
 	}
 	
 	std::getline(message, target);
 	try {
 		ft_send(reply_socket, RPL_WHOISUSER + user.get_name() + " " + target + " " + target + " " +
-			server.get_user_class(target).get_ip() + " * :" + server.get_user_class(target).get_realname() + "\n"); // whoisUSER
+			server.get_user_class(target).get_ip() + " * :" + server.get_user_class(target).get_realname() + "\r\n"); // whoisUSER
 		const size_t len = server.get_user_class(target).get_list_channel().size();
 		User& target_u = server.get_user_class(target);
 		const std::vector<Channel *> chans = target_u.get_list_channel();
@@ -368,10 +367,10 @@ void	whois_command( Server& server, int reply_socket, std::istringstream &messag
 			whois_channel_string += chans[i]->get_name() + " ";
 		}
 		ft_send(reply_socket, whois_channel_string + "\n");
-		ft_send(reply_socket, RPL_ENDOFWHOIS + user.get_name() + " " + target + " :End of /WHOIS list\n");
+		ft_send(reply_socket, RPL_ENDOFWHOIS + user.get_name() + " " + target + " :End of /WHOIS list\r\n");
 	}
 	catch(const NoSuchNickException& e) {
-		ft_send(reply_socket, ERR_NOSUCHNICK + user.get_name() + " " + target + " :No such nick\n");
+		ft_send(reply_socket, ERR_NOSUCHNICK + user.get_name() + " " + target + " :No such nick\r\n");
 		return ;
 	}
 }
@@ -385,24 +384,24 @@ void	invite_command( Server& server, int reply_socket, std::istringstream &messa
 	std::string channel;
 
 	if (message.str().empty()) {
-		ft_send(reply_socket, ERR_NEEDMOREPARAMS + server.get_user_class(reply_socket).get_name() + " INVITE :Not enough parameters\n");
+		ft_send(reply_socket, ERR_NEEDMOREPARAMS + server.get_user_class(reply_socket).get_name() + " INVITE :Not enough parameters\r\n");
 		return ;
 	}
 	std::getline(message, user, ' ');
 	std::getline(message, channel);
 	std::cout << "channel: " << channel << " user: " << user << std::endl;
 	if (!server.is_on_channel(channel, server.get_user_class(reply_socket).get_name()))
-		ft_send(reply_socket, ERR_NOTONCHANNEL + server.get_user_class(reply_socket).get_name() + " " + channel + " :You aren't on that channel\n");
+		ft_send(reply_socket, ERR_NOTONCHANNEL + server.get_user_class(reply_socket).get_name() + " " + channel + " :You aren't on that channel\r\n");
 	else if (server.is_on_channel(channel, user))
-		ft_send(reply_socket, ERR_USERONCHANNEL + server.get_user_class(reply_socket).get_name() + " " + user + " " + channel + " :is already on channel\n");
+		ft_send(reply_socket, ERR_USERONCHANNEL + server.get_user_class(reply_socket).get_name() + " " + user + " " + channel + " :is already on channel\r\n");
 	else {
 		ft_send(server.get_user_class(user).get_socketfd(), ":" + 
-			server.get_user_class(reply_socket).get_name() + " INVITE " + user + " " + channel + "\n");
+			server.get_user_class(reply_socket).get_name() + " INVITE " + user + " " + channel + "\r\n");
 
 		server.get_channel_class(channel).add_invited(user);
 
 		ft_send(reply_socket, RPL_INVITING + 
-			server.get_user_class(reply_socket).get_name() + " " + user + " " + channel + "\n");
+			server.get_user_class(reply_socket).get_name() + " " + user + " " + channel + "\r\n");
 	}
 }
 
@@ -428,11 +427,11 @@ void	kick_command( Server& server, int reply_socket, std::istringstream &message
 		throw NotOnChannelException();
 	while (std::getline(users, user, ',')) {
 		if (!server.is_on_channel(channel, user)) //user not in channel
-			ft_send(reply_socket, "441 " + user + " " + channel + ":They Aren't on that channel");
+			ft_send(reply_socket, "441 " + user + " " + channel + ":They Aren't on that channel\r\n");
 		else {
 			server.get_channel_class(channel).send_channel(":" + 
 				server.get_user_class(reply_socket).get_name() + " KICK " + 
-				channel + " " + user + " :" + kick_message + "\n");
+				channel + " " + user + " :" + kick_message + "\r\n");
 		}
 	}
 }
@@ -468,7 +467,7 @@ void	quit_command( Server& server, int reply_socket, std::istringstream &message
 		std::vector<Channel*> channel_list = user.get_list_channel();
 
 		for (size_t j = 0; j < channel_list.size(); j++)
-			channel_list[j]->user_quit(user, message.str() + "\n");
+			channel_list[j]->user_quit(user, message.str() + "\r\n");
 		
 		server.get_connected_user().erase(std::remove(server.get_connected_user().begin(), server.get_connected_user().end(), 
 			&user), server.get_connected_user().end());
@@ -486,7 +485,7 @@ void pass_command(Server &server, int reply_socket, std::istringstream &message)
 	try
 	{
 		if (server.get_user_class(reply_socket).user_authenticate()) {
-			ft_send(reply_socket, "462 " + server.get_user_class(reply_socket).get_name() + " :You may not reregister\n");
+			ft_send(reply_socket, "462 " + server.get_user_class(reply_socket).get_name() + " :You may not reregister\r\n");
 			return ;
 		}
 	}
@@ -499,7 +498,7 @@ void pass_command(Server &server, int reply_socket, std::istringstream &message)
 		try 	//remove user object
 		{
 			User& user = server.get_user_class(reply_socket);
-			ft_send(reply_socket, "464 " + user.get_name() + " :Password incorrect\n");
+			ft_send(reply_socket, "464 " + user.get_name() + " :Password incorrect\r\n");
 
 			server.get_connected_user().erase(std::remove(server.get_connected_user().begin(), server.get_connected_user().end(), 
 			&user), server.get_connected_user().end());
