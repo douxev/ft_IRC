@@ -6,7 +6,7 @@
 /*   By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/27 12:59:03 by jdoukhan          #+#    #+#             */
-/*   Updated: 2024/06/15 16:33:07 by jdoukhan         ###   ########.fr       */
+/*   Updated: 2024/06/15 18:26:52 by jdoukhan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ public:
 	void		user_join( User& user, std::string pass );
     void		user_quit( User &user, const std::string quit_message );
     void		user_part( User &user, const std::string part_message );
-    void		user_kicked( User& user, const User& target, std::string kick_message );
+    void		user_kicked( User& user, User& target, std::string kick_message );
 
 	void		remove_invited( const std::string user );
 	void		add_invited( const std::string user );
