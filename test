@@ -1,0 +1,120 @@
+<< CAP LS
+<< NICK gbonnard
+<< USER gbonnard gbonnard irc.rizon.net :Guillaume BONNARD
+>> :irc.rizon.club NOTICE * :*** Looking up your hostname...
+>> :irc.rizon.club NOTICE * :*** Checking Ident
+>> :irc.rizon.club NOTICE * :*** No Ident response
+>> :irc.rizon.club NOTICE * :*** Couldn't look up your hostname
+>> :irc.rizon.club CAP * LS :away-notify chghost invite-notify multi-prefix sasl userhost-in-names
+<< CAP REQ :multi-prefix
+>> :irc.rizon.club CAP gbonnard ACK :multi-prefix
+<< CAP END
+>> PING :2928295209
+<< PONG :2928295209
+>> :irc.rizon.club NOTICE gbonnard :*** Connected securely via TLSv1.3 TLS_AES_256_GCM_SHA384-256
+>> :irc.rizon.club NOTICE gbonnard :*** Your host is masked (8117B26F.14F43A6B.9C3C57A1.IP)
+>> :irc.rizon.club 001 gbonnard :Welcome to the Rizon Internet Relay Chat Network gbonnard
+<< MODE gbonnard +i
+>> :irc.rizon.club 002 gbonnard :Your host is irc.rizon.club, running version plexus-4(hybrid-8.1.20)
+>> :irc.rizon.club 003 gbonnard :This server was created Apr  8 2022 at 19:49:58
+>> :irc.rizon.club 004 gbonnard irc.rizon.club plexus-4(hybrid-8.1.20) CDGNRSUWagilopqrswxyz BCIMNORSabcehiklmnopqstvz Iabehkloqv
+>> :irc.rizon.club 005 gbonnard CALLERID CASEMAPPING=rfc1459 DEAF=D KICKLEN=180 MODES=4 PREFIX=(qaohv)~&@%+ STATUSMSG=~&@%+ EXCEPTS=e INVEX=I NICKLEN=30 NETWORK=Rizon MAXLIST=beI:250 MAXTARGETS=4 :are supported by this server
+>> :irc.rizon.club 005 gbonnard CHANTYPES=# CHANLIMIT=#:250 CHANNELLEN=50 TOPICLEN=390 CHANMODES=beI,k,l,BCMNORScimnpstz NAMESX UHNAMES WATCH=60 AWAYLEN=180 ELIST=CMNTU SAFELIST KNOCK :are supported by this server
+>> :irc.rizon.club 251 gbonnard :There are 16 users and 9221 invisible on 17 servers
+>> :irc.rizon.club 252 gbonnard 42 :IRC Operators online
+>> :irc.rizon.club 253 gbonnard 1 :unknown connection(s)
+>> :irc.rizon.club 254 gbonnard 7855 :channels formed
+>> :irc.rizon.club 255 gbonnard :I have 9237 clients and 17 servers
+>> :irc.rizon.club 265 gbonnard :Current local users: 9237  Max: 11502
+>> :irc.rizon.club 266 gbonnard :Current global users: 9237  Max: 11502
+>> :irc.rizon.club 375 gbonnard :- irc.rizon.club Message of the Day - 
+>> :irc.rizon.club 372 gbonnard :-          11oo                            
+>> :irc.rizon.club 372 gbonnard :- 
+>> :irc.rizon.club 372 gbonnard :- 88d888b. dP d888888b .d8888b. 88d888b. 
+>> :irc.rizon.club 372 gbonnard :- 88'  `88 88    .d8P' 88'  `88 88'  `88 
+>> :irc.rizon.club 372 gbonnard :- 1188       88  .Y8P    88.  .88 88    88 
+>> :irc.rizon.club 372 gbonnard :- 11dP       dP d888888P `88888P' dP    dP
+>> :irc.rizon.club 372 gbonnard :- 
+>> :irc.rizon.club 372 gbonnard :- Rizon Chat Network -- http://rizon.net
+>> :irc.rizon.club 372 gbonnard :- 
+>> :irc.rizon.club 372 gbonnard :- Listening on ports: 6660 - 6669, 7000. SSL: 6697, 9999
+>> :irc.rizon.club 372 gbonnard :- 
+>> :irc.rizon.club 372 gbonnard :- Rules:
+>> :irc.rizon.club 372 gbonnard :- o No spamming or flooding
+>> :irc.rizon.club 372 gbonnard :- o No clones or malicious bots
+>> :irc.rizon.club 372 gbonnard :- o No takeovers
+>> :irc.rizon.club 372 gbonnard :- o No distribution of child pornography
+>> :irc.rizon.club 372 gbonnard :- o Clients must respond to VERSION requests
+>> :irc.rizon.club 372 gbonnard :- o Rizon staff may disconnect clients for any or no reason
+>> :irc.rizon.club 372 gbonnard :- 
+>> :irc.rizon.club 372 gbonnard :- First steps:
+>> :irc.rizon.club 372 gbonnard :- o To register your nick: /msg NickServ HELP
+>> :irc.rizon.club 372 gbonnard :- o To register your channel: /msg ChanServ HELP
+>> :irc.rizon.club 372 gbonnard :- o To get a vHost: /msg HostServ HELP REQUEST
+>> :irc.rizon.club 372 gbonnard :- o For other help with Rizon: /join #help
+>> :irc.rizon.club 372 gbonnard :- 
+>> :irc.rizon.club 372 gbonnard :- Usage of this network is a privilege, not a right. Rizon is a
+>> :irc.rizon.club 372 gbonnard :- transit provider, therefore no person or entity involved with
+>> :irc.rizon.club 372 gbonnard :- *.rizon.net or irc.rizon.club takes any responsibility for
+>> :irc.rizon.club 372 gbonnard :- users' actions. Absolutely no warranty is expressed or implied.
+>> :irc.rizon.club 376 gbonnard :End of /MOTD command.
+>> :gbonnard!~gbonnard@8117B26F.14F43A6B.9C3C57A1.IP MODE gbonnard :+Six
+>> :Global!service@rizon.net NOTICE gbonnard :[Logon News - Dec 16 2013] Own a large/active channel or plan to get one going? Please read http://s.rizon.net/authline
+>> :Global!service@rizon.net NOTICE gbonnard :[Logon News - Feb 16 2022] First time on Rizon? Be sure to check out our wiki! https://wiki.rizon.net
+>> :Global!service@rizon.net NOTICE gbonnard :[Random News - May 07 2013] Looking for a quotes, trivia, or other extra bots? /msg funserv help
+>> :NickServ!service@rizon.net NOTICE gbonnard :This nickname is registered and protected. If it is your
+>> :NickServ!service@rizon.net NOTICE gbonnard :nick, type /msg NickServ IDENTIFY password. Otherwise,
+>> :NickServ!service@rizon.net NOTICE gbonnard :please choose a different nick.
+>> :py-ctcp!ctcp@ctcp-scanner.rizon.net PRIVMSG gbonnard :VERSION
+<< JOIN #42
+>> :gbonnard!~gbonnard@8117B26F.14F43A6B.9C3C57A1.IP JOIN :#42
+>> :irc.rizon.club MODE #42 +nt
+>> :irc.rizon.club 353 gbonnard = #42 :@gbonnard
+>> :irc.rizon.club 366 gbonnard #42 :End of /NAMES list.
+<< MODE #42
+>> :irc.rizon.club 324 gbonnard #42 +nt 
+--> chanquery mode
+<< WHO #42
+>> :irc.rizon.club 329 gbonnard #42 1718382403
+--> event 329
+>> :irc.rizon.club 352 gbonnard #42 ~gbonnard 8117B26F.14F43A6B.9C3C57A1.IP * gbonnard H@ :0 Guillaume BONNARD
+--> silent event who
+>> :irc.rizon.club 315 gbonnard #42 :End of /WHO list.
+--> chanquery who end
+<< MODE #42 b
+>> :irc.rizon.club 368 gbonnard #42 :End of Channel Ban List
+--> chanquery ban end
+<< NOTICE py-ctcp :VERSION irssi v1.2.3-1ubuntu4
+<< PING irc.rizon.club
+>> :irc.rizon.club PONG irc.rizon.club :irc.rizon.club
+--> lag pong
+>> :DIO!~gbonnard@8117B26F.14F43A6B.9C3C57A1.IP JOIN :#42
+<< PING irc.rizon.club
+>> :irc.rizon.club PONG irc.rizon.club :irc.rizon.club
+--> lag pong
+<< PING irc.rizon.club
+>> :irc.rizon.club PONG irc.rizon.club :irc.rizon.club
+--> lag pong
+<< PING irc.rizon.club
+>> :irc.rizon.club PONG irc.rizon.club :irc.rizon.club
+--> lag pong
+<< PING irc.rizon.club
+>> :irc.rizon.club PONG irc.rizon.club :irc.rizon.club
+--> lag pong
+<< PING irc.rizon.club
+>> :irc.rizon.club PONG irc.rizon.club :irc.rizon.club
+--> lag pong
+<< PING irc.rizon.club
+>> :irc.rizon.club PONG irc.rizon.club :irc.rizon.club
+--> lag pong
+<< PING irc.rizon.club
+>> :irc.rizon.club PONG irc.rizon.club :irc.rizon.club
+--> lag pong
+<< PRIVMSG #42 :gjsdig
+<< MODE #42 -o gbonnard
+>> :gbonnard!~gbonnard@8117B26F.14F43A6B.9C3C57A1.IP MODE #42 -o gbonnard
+<< PING irc.rizon.club
+>> :irc.rizon.club PONG irc.rizon.club :irc.rizon.club
+--> lag pong
+<< MODE #42 +o gbonnard
+>> :irc.rizon.club 482 gbonnard #42 :You're not channel operator
