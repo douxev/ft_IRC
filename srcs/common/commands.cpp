@@ -470,8 +470,15 @@ void	quit_command( Server& server, int reply_socket, std::istringstream &message
 		User& user = server.get_user_class(reply_socket);
 		std::vector<Channel*> channel_list = user.get_list_channel();
 
-		for (size_t j = 0; j < channel_list.size(); j++)
+		for (size_t j = 0; j < channel_list.size(); j++){
 			channel_list[j]->user_quit(user, message.str() + "\r\n");
+			if (!channel_list[j]->get_size()) {
+				Channel& chan = server.get_channel_class(channel_list[j]->get_name());
+				server.get_channels_list().erase(std::remove(server.get_channels_list().begin(), server.get_channels_list().end(), &chan), server.get_channels_list().end());
+				delete &chan;
+			}
+
+		}
 		
 		server.get_connected_user().erase(std::remove(server.get_connected_user().begin(), server.get_connected_user().end(), 
 			&user), server.get_connected_user().end());
