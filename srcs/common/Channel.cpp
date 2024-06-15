@@ -46,7 +46,6 @@ bool Channel::operator==( const Channel& Other ){
 	if (this->_name == Other._name)
 		return (true);
 	return (false);
-
 }
 
 Channel::~Channel() {

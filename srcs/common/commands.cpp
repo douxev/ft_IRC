@@ -19,8 +19,8 @@ void	motd_command( Server& server, int reply_socket ) {
 	if (server.get_motd().empty())
 		ft_send(reply_socket, "422 " + server.get_user_class(reply_socket).get_name() + " :No MOTD set\r\n");
 	else
-		ft_send(reply_socket, "375 " + server.get_user_class(reply_socket).get_name() + " :Message of the Day \n372 :" + 
-				server.get_motd() + "\n376 " + server.get_user_class(reply_socket).get_name() + " :End of MOTD.\r\n");
+		ft_send(reply_socket, "375 " + server.get_user_class(reply_socket).get_name() + " :Message of the Day \r\n372 :" + 
+				server.get_motd() + "\r\n376 " + server.get_user_class(reply_socket).get_name() + " :End of MOTD.\r\n");
 }
 
 void	version_command( int reply_socket ) {
@@ -40,7 +40,7 @@ void	nick_command( Server& server, int reply_socket, std::string message ) {
 		ft_send(reply_socket, ERR_NICKNAMEINUSE + oldnick + " " + message + " :Nickname is already in use\r\n");
 		return ;
 	}
-	server.send_all(":" + oldnick + " NICK :" + user.get_name() + "\n");
+	server.send_all(":" + oldnick + " NICK :" + user.get_name() + "\r\n");
 	const size_t len = user.get_list_channel().size();
 	for (size_t i = 0; i < len; i++) {
 		user.get_list_channel()[i]->send_who(server, reply_socket);
@@ -54,9 +54,9 @@ void	cap_command( Server& server, int reply_socket, std::istringstream &message 
 	std::string	param;
 	std::getline(message, param, ' ');
 	if (param == "LS")
-		ft_send(reply_socket, "CAP * LS :");
+		ft_send(reply_socket, "CAP * LS :\r\n");
 	else if (param == "LIST")
-		ft_send(reply_socket, "CAP * LIST :");
+		ft_send(reply_socket, "CAP * LIST :\r\n");
 }
 
 void	join_command( Server& server, int reply_socket, std::istringstream &message ) {
@@ -77,7 +77,7 @@ void	join_command( Server& server, int reply_socket, std::istringstream &message
 	}
 	else {
 		ft_send(reply_socket, RPL_TOPIC + server.get_user_class(reply_socket).get_name() + 
-			" " + channel + " :" + server.get_channel_class(channel).get_topic() + "\n");
+			" " + channel + " :" + server.get_channel_class(channel).get_topic() + "\r\n");
 		std::cout << RED << "Topic is: " << RESET << server.get_channel_class(channel).get_topic() << std::endl;
 	}
 }
@@ -142,8 +142,14 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 
 
 	if (value.size() < 2){
-		ft_send(reply_socket,":" + server.get_ip() + " " + RPL_CHANNELMODEIS + 
-			server.get_user_class(reply_socket).get_name() + " " + target + " " + server.get_channel_class(target).get_modes() + "\r\n");
+		if (target.size() > 1 && target.at(0) == '#') {
+			ft_send(reply_socket, RPL_CHANNELMODEIS + 
+				server.get_user_class(reply_socket).get_name() + " " + target + " " + server.get_channel_class(target).get_modes() + "\r\n");
+		}
+		else {
+			ft_send(reply_socket, RPL_UMODEIS + 
+				server.get_user_class(reply_socket).get_name() + " \r\n");
+		}
 		return ; //MODE QUERY
 	}	
 
@@ -151,7 +157,7 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 	if (value.at(0) == '+')
 		op_sign = true;
 
-	if (value.size() == 2 && op_sign && value.at(1) == 'b') {
+	if (value.size() == 2 && value.at(1) == 'b') {
 		ft_send(reply_socket, "368 " + server.get_user_class(reply_socket).get_name() + " " + target + " :End of channel banlist.\r\n");
 		return ;
 	}
@@ -183,8 +189,7 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 			case 'o':
 				server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
 				server.get_channel_class(target).send_channel(":" + server.get_user_class(reply_socket).get_name() 
-					+ "!~" + server.get_user_class(reply_socket).get_realname() + "@" + server.get_user_class(reply_socket).get_ip() +
-					"" + " MODE " + target + " " + value.at(0) + "o " + password + " \r\n");
+					+ " MODE " + target + " " + value.at(0) + "o " + password + " \r\n");
 				// server.get_channel_class(target).send_who(server, reply_socket);
 				break ;
 			default:
@@ -214,8 +219,7 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 			case 'o':
 				server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
 				server.get_channel_class(target).send_channel(":" + server.get_user_class(reply_socket).get_name() 
-					+ "!~" + server.get_user_class(reply_socket).get_realname() + "@" + server.get_user_class(reply_socket).get_ip() +
-					"" + " MODE " + target + " " + value.at(0) + "o " + password + " \r\n");
+					+ " MODE " + target + " " + value.at(0) + "o " + password + " \r\n");
 				// server.get_channel_class(target).send_who(server, reply_socket);
 				break ;
 			default:
