@@ -184,7 +184,7 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 			case 'o':
 				server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
 				server.get_channel_class(target).send_channel(":" + server.get_user_class(reply_socket).get_name() + " MODE " + target + " " + value.at(0) + "o " + password + "\n");
-				server.get_channel_class(target).send_who(server, reply_socket);
+				// server.get_channel_class(target).send_who(server, reply_socket);
 				break ;
 			}
 
@@ -211,7 +211,7 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 			case 'o':
 				server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
 				server.get_channel_class(target).send_channel(":" + server.get_user_class(reply_socket).get_name() + " MODE " + target + " " + value.at(0) + "o " + password + "\n");
-				server.get_channel_class(target).send_who(server, reply_socket);
+				// server.get_channel_class(target).send_who(server, reply_socket);
 				break ;
 			default:
 				std::cout << "Mode not recognized, is: [" << mode << "]" << std::endl;
@@ -219,7 +219,7 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 			}
 		}
 	// }
-	ft_send(reply_socket, RPL_UMODEIS + server.get_user_class(reply_socket).get_name() + "\n");
+	// ft_send(reply_socket, RPL_UMODEIS + server.get_user_class(reply_socket).get_name() + "\n");
 }
 
 void	who_command( Server& server, int reply_socket, std::istringstream &message ) {
