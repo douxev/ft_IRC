@@ -415,12 +415,13 @@ void	kick_command( Server& server, int reply_socket, std::istringstream &message
 	std::string user;
 	std::string kick_message;
 
+
+
 	std::getline(message, channel, ' ');
 	std::getline(message, users_str, ' ');
 	std::istringstream users(users_str);
 	std::getline(message, kick_message, ':');
-	;
-	if (!std::getline(message, kick_message, ':'))
+	if (!std::getline(message, kick_message))
 		kick_message = "kicked from channel by " + server.get_user_class(reply_socket).get_name();
 
 	if (users_str.empty())
@@ -434,8 +435,9 @@ void	kick_command( Server& server, int reply_socket, std::istringstream &message
 			ft_send(reply_socket, "441 " + user + " " + channel + ":They Aren't on that channel\r\n");
 		else {
 			server.get_channel_class(channel).send_channel(":" + 
-				server.get_user_class(reply_socket).get_name() + " KICK " + 
+			server.get_user_class(reply_socket).get_name() + " KICK " + 
 				channel + " " + user + " :" + kick_message + "\r\n");
+			server.get_channel_class(channel).user_kicked(server.get_user_class(reply_socket), server.get_user_class(user), kick_message);
 		}
 	}
 }

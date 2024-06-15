@@ -140,10 +140,11 @@ void Channel::user_part( User& user, const std::string part_message ) {
 	this->_remove_connected_user(user);
 }
 
-void Channel::user_kicked( User& user, const User& target, std::string kick_message ) {
+void Channel::user_kicked( User& user, User& target, std::string kick_message ) {
+	(void) target;
+	(void) kick_message;
+	(void) user;
 	this->_remove_connected_user(user);
-	this->send_channel(user.get_socketfd(), ":" + user.get_name() + " KICK #" + this->get_name() + 
-						" " + target.get_name() + " :" + kick_message + "\r\n");
 }
 
 std::string Channel::user_count( void ) {
