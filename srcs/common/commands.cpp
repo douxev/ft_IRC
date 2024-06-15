@@ -438,6 +438,12 @@ void	kick_command( Server& server, int reply_socket, std::istringstream &message
 			server.get_user_class(reply_socket).get_name() + " KICK " + 
 				channel + " " + user + " :" + kick_message + "\r\n");
 			server.get_channel_class(channel).user_kicked(server.get_user_class(reply_socket), server.get_user_class(user), kick_message);
+	
+			if (!server.get_channel_class(channel).get_size()) {
+				Channel& chan = server.get_channel_class(channel);
+				server.get_channels_list().erase(std::remove(server.get_channels_list().begin(), server.get_channels_list().end(), &chan), server.get_channels_list().end());
+				delete &chan;
+			}
 		}
 	}
 }
