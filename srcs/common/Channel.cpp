@@ -171,7 +171,7 @@ void Channel::change_role( const User& user, const User& target, bool is_op ) {
 
 //Operators change modes
 void Channel::set_mode( t_enum_modes mode, const User& user, const std::string target, bool value ) {
-	if (mode != OP)
+	if (mode != OP || (value == false && !this->is_op(target)) || (value == true && this->is_op(target)))
 		return ;
 	if (this->is_op(user)) {
 		if (value == false && this->is_op(target)) {
@@ -193,7 +193,7 @@ void Channel::set_mode( t_enum_modes mode, const User& user, const std::string t
 
 //Password KEY
 void Channel::set_mode( t_enum_modes mode, bool value, std::string password ) {
-	if (mode != KEY)
+	if (mode != KEY || (!value && this->_modes.password.empty()))
 		return ;
 	if (!value) {
 		std::cout << SERVER_INFO << "channel password cleared on " << this->_name << std::endl;
@@ -210,14 +210,20 @@ void Channel::set_mode( t_enum_modes mode, size_t value ) {
 	switch (mode)
 	{
 	case INVITE:
+		if (this->_modes.invite_only == value)
+			break;
 		std::cout << SERVER_INFO << "invite only " << (value ? "ON": "OFF") << " on " << this->_name << std::endl;
 		this->_modes.invite_only = value;
 		break ;
 	case TOPIC:
+		if (this->_modes.op_topic == value)
+			break;
 		std::cout << SERVER_INFO << "topic can be change by mod only " << (value ? "ON": "OFF") << " on " << this->_name << std::endl;
 		this->_modes.op_topic = value;
 		break ;
 	case LIMIT:
+		if (this->_modes.limit == false)
+			break;
 		std::cout << SERVER_INFO << "changing limits on " << this->_name << " to " << value << std::endl;
 		this->_modes.limit = value;
 		break ;

@@ -156,14 +156,12 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 		return ;
 	}
 
-
-	mode = value.at(1);
 	std::string password;
 	std::getline(message, password, ' ');
 	int size = std::strtol(password.c_str(), NULL, 0);
 
-	// for (int i = 1; value != " " || value == "\0"; i++) {
-	// 	mode = value.at(i);
+	for (size_t i = 1; i < value.size(); i++) {
+		mode = value.at(i);
 		try{
 			if (!server.is_op(target, server.get_user_class(reply_socket).get_name())) {
 				ft_send(reply_socket, (std::string) ERR_CHANOPRIVSNEEDED + target + " :You're not channel operator\r\n");
@@ -198,18 +196,38 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 			{
 			case 'i':
 				server.get_channel_class(target).set_mode( INVITE, op_sign );
+				server.get_channel_class(target).send_channel(":" + server.get_user_class(reply_socket).get_name() 
+					+ "!~" + server.get_user_class(reply_socket).get_realname() + "@" + server.get_user_class(reply_socket).get_ip() +
+					"" + " MODE " + target + " " + value.at(0) + "i " + " \r\n");
 				break ;
 			case 't':
 				server.get_channel_class(target).set_mode( TOPIC, op_sign );
+				server.get_channel_class(target).send_channel(":" + server.get_user_class(reply_socket).get_name() 
+					+ "!~" + server.get_user_class(reply_socket).get_realname() + "@" + server.get_user_class(reply_socket).get_ip() +
+					"" + " MODE " + target + " " + value.at(0) + "t " + " \r\n");
 				break ;
 			case 'l':
-				if (op_sign)
+				if (op_sign) {
 					server.get_channel_class(target).set_mode( LIMIT, size );
-				else
+					std::ostringstream oss;
+					oss << size;
+					std::string size_string = oss.str();
+					server.get_channel_class(target).send_channel(":" + server.get_user_class(reply_socket).get_name() 
+					+ "!~" + server.get_user_class(reply_socket).get_realname() + "@" + server.get_user_class(reply_socket).get_ip() +
+					"" + " MODE " + target + " " + value.at(0) + "l " + size_string +  " \r\n");
+				}
+				else {
 					server.get_channel_class(target).set_mode(LIMIT, op_sign);
+					server.get_channel_class(target).send_channel(":" + server.get_user_class(reply_socket).get_name() 
+					+ "!~" + server.get_user_class(reply_socket).get_realname() + "@" + server.get_user_class(reply_socket).get_ip() +
+					"" + " MODE " + target + " " + value.at(0) + "l " + "0" + " \r\n");
+				}
 				break ;
 			case 'k':
 				server.get_channel_class(target).set_mode(KEY, op_sign, password);
+				server.get_channel_class(target).send_channel(":" + server.get_user_class(reply_socket).get_name() 
+					+ "!~" + server.get_user_class(reply_socket).get_realname() + "@" + server.get_user_class(reply_socket).get_ip() +
+					"" + " MODE " + target + " " + value.at(0) + "k " + " \r\n");
 				break ;
 			case 'o':
 				server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
@@ -223,7 +241,9 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 				break;
 			}
 		}
-	// }
+	if (value.at(i) == 'o' || value.at(i) == 'k' || value.at(i) == 'b' || value.at(i) == 'l')
+		break;
+	}
 }
 
 //send_who from channel
