@@ -173,9 +173,12 @@ void Channel::change_role( const User& user, const User& target, bool is_op ) {
 void Channel::set_mode( t_enum_modes mode, const User& user, const std::string target, bool value ) {
 	if (mode != OP)
 		return ;
+	std::cout << SERVER_INFO << target << " " << user.get_name() << " " << value << std::endl;
+
 	if (this->is_op(user)) {
+		std::cout << SERVER_INFO << "HERE" << std::endl;
 		if (value == false && this->is_op(target)) {
-		std::cout << SERVER_INFO << target << " is no longer OP on " << this->_name << std::endl;
+			std::cout << SERVER_INFO << target << " is no longer OP on " << this->_name << std::endl;
 			const size_t len = this->_op_users.size();
 			for (size_t i = 0; i < len; i++) {
 				if (this->_op_users[i] == target) {
@@ -185,7 +188,7 @@ void Channel::set_mode( t_enum_modes mode, const User& user, const std::string t
 			}
 		}
 		else if (value == true && !this->is_op(target)) {
-		std::cout << SERVER_INFO << target << " is now OP on " << this->_name << std::endl;
+			std::cout << SERVER_INFO << target << " is now OP on " << this->_name << std::endl;
 			this->_op_users.push_back(target);
 		}
 	}
@@ -300,6 +303,14 @@ void Channel::send_channel( const std::string msg ) {
 	const size_t len = this->_connected_users.size();
 	for (size_t i = 0; i < len; i++) {
 		ft_send(this->_connected_users[i]->get_socketfd(), msg);
+	}
+}
+
+//adds ':user ' before sending it
+void Channel::send_channel_client( const std::string msg ) {
+	const size_t len = this->_connected_users.size();
+	for (size_t i = 0; i < len; i++) {
+		ft_send(this->_connected_users[i]->get_socketfd(), ":" + this->_connected_users[i]->get_name() + " " + msg);
 	}
 }
 
