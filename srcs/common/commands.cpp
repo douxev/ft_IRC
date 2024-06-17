@@ -188,13 +188,11 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 			{
 			case 'i':
 				std::cout << SERVER_INFO << "Client '" << reply_socket << "' wants invisible role" << std::endl;
-				// server.get_channel_class(target).set_mode( INVITE, op_sign );
 				break ;
 			case 'o':
 				server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
 				server.get_channel_class(target).send_channel(":" + server.get_user_class(reply_socket).get_name() 
 					+ " MODE " + target + " " + value.at(0) + "o " + password + " \r\n");
-				// server.get_channel_class(target).send_who(server, reply_socket);
 				break ;
 			default:
 				ft_send(reply_socket, RPL_UMODEIS + server.get_user_class(reply_socket).get_name() + "\r\n");
@@ -244,7 +242,6 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 				server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
 				server.get_channel_class(target).send_channel(":" + server.get_user_class(reply_socket).get_name() 
 					+ " MODE " + target + " " + value.at(0) + "o " + password + " \r\n");
-				// server.get_channel_class(target).send_who(server, reply_socket);
 				break ;
 			default:
 				std::cout << "Mode not recognized, is: [" << mode << "]" << std::endl;
@@ -292,9 +289,6 @@ try {
 				std::cout << SERVER_INFO << channel << " topic is now: " << topic_message << std::endl;
 				server.get_channel_class(channel).set_topic(topic_message);
 				server.get_channel_class(channel).refresh_topic();
-
-				// msg_to_send << RPL_TOPIC << server.get_user_class(reply_socket).get_name() << " " << channel << " :" << topic_message << "\n";
-				// server.get_channel_class(channel).send_channel(msg_to_send.str());
 				return ;
 			}
 		}
