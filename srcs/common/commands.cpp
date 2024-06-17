@@ -66,11 +66,17 @@ void	join_command( Server& server, int reply_socket, std::istringstream &message
 	std::getline(message, channel, ' ');
 	std::getline(message, password, ' ');
 	
+
+	try {
+		if (server.get_channel_class(channel).is_on_channel(server.get_user_class(reply_socket).get_name()))
+			return ;
+	}
+	catch (const NoSuchChannelException& e) {
+	}
+
+
 	server.join_channel(server.get_user_class(reply_socket).get_name(), 
 						channel, password);
-
-	if (!server.get_channel_class(channel).is_on_channel(server.get_user_class(reply_socket).get_name()))
-		return ;
 	if (server.get_channel_class(channel).get_topic().empty()) {
 		no_topic_set(reply_socket, channel);
 		
