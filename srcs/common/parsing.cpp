@@ -16,10 +16,7 @@ void	init_client( Server& server, int reply_socket, std::string message) {
 			return ;
 		}
 	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
+	catch(const std::exception& e) {}
 	try
 	{
 		User& user = server.get_user_class(reply_socket);
@@ -31,10 +28,7 @@ void	init_client( Server& server, int reply_socket, std::string message) {
 		}
 
 	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
+	catch(const std::exception& e){}
 	
 	std::stringstream msg_to_send;
 	std::time_t result = std::time(NULL);
@@ -43,11 +37,6 @@ void	init_client( Server& server, int reply_socket, std::string message) {
 	std::istringstream msg(message);
 	std::string username;
 	std::getline(msg, username, ' ');
-	// if (!server.nick_already_taken(username))
-	// 	server.get_user_class(reply_socket).set_name(username); //set username
-	// else
-	// 	std::cout << "NICKNAME ALREADY TAKEN" << std::endl;
-
 	std::getline(msg, username, ' ');
 	server.get_user_class(reply_socket).set_realname(username); //set realname
 
@@ -62,7 +51,6 @@ void	init_client( Server& server, int reply_socket, std::string message) {
 	msg_to_send << RPL_ISUPPORT << server.get_user_class(reply_socket).get_name() << " :Des trucs... \n"/* tous les parametres qu'on utilisera pour ISUPPORT */;
 	if (ft_send(reply_socket, msg_to_send.str()) == -1)
 		std::cerr << SERVER_INFO << "Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
-	// ft_send(reply_socket, "NICK :" + server.get_user_class(reply_socket).get_name());
 
 }
 
@@ -77,13 +65,6 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 		if (line.str().size() >= cmd.size() + 1)
 			line.str(&line.str()[cmd.size() + 1]);
 
-	// try {
-	// std::cout << "DEBUG MESSAGE Channel user: " << server.get_channel_class("#42")._connected_users[0]->get_name() << "Server user: " << server.get_connected_user()[i]->get_name() << std::endl;
-	// }
-	// catch (...) {
-	// 	std::cout << "EXCEPTION THROWN" << std::endl;
-	// }
-		// std::cout << SERVER_INFO << cmd << std::endl;
 		try {
 
 			if (!std::isprint(line.str().at(line.str().size() - 1)))
@@ -160,8 +141,6 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 		catch (const NeedMoreParamsException& e) {
 			ft_send(reply_socket, ERR_NEEDMOREPARAMS + server.get_user_class(reply_socket).get_name() + cmd + " :Not enough parameters\n");
 		}
-		catch (std::exception& e) {
-			std::cout << SERVER_INFO  << "Generic exception caught: " <<  e.what() << std::endl;
-		}
+		catch (std::exception& e) {}
 	}
 }

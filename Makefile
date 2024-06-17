@@ -6,7 +6,7 @@
 #    By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/07 16:11:15 by jdoukhan          #+#    #+#              #
-#    Updated: 2024/06/17 15:55:53 by jdoukhan         ###   ########.fr        #
+#    Updated: 2024/06/17 16:21:51 by jdoukhan         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@
 
 NAME = irc_serv
 B_NAME = bot
-CFLAGS = -Wall -Wextra -Werror -std=c++98 -g3
+CFLAGS = -Wall -Wextra -Werror -std=c++98
 CC := c++
 URL = https://cdn.intra.42.fr/pdf/pdf/89250/en.subject.pdf
 
