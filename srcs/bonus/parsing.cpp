@@ -76,5 +76,6 @@ void	parse_commands(Bot& bot) {
 					list_cmd(bot, target);
 			}
 		}
+		
 	}
 }
