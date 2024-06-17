@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: gbonnard <gbonnard@student.42.fr>          +#+  +:+       +#+         #
+#    By: jdoukhan <jdoukhan@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/07 16:11:15 by jdoukhan          #+#    #+#              #
-#    Updated: 2024/06/14 16:36:53 by gbonnard         ###   ########.fr        #
+#    Updated: 2024/06/17 15:55:53 by jdoukhan         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -84,7 +84,7 @@ clean:
 
 fclean: clean
 	@rm -rf $(NAME) $(B_NAME)
-	@echo "\033[0;91mCleaned exe ✔️\033[1;37m"
+	@echo "\033[0;91mCleaned exe ✔️\033[1;37m\033[0m"
 
 re: fclean all
 

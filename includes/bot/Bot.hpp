@@ -29,6 +29,8 @@ public:
 	void process_msg( std::istringstream& message );
 	void kick_user( std::string channel, std::string user, std::string word );
 	
+	std::vector<std::string>& list_word( std::string channel );
+
 	void not_op( void );
 	void not_op( std::string channel );
 	

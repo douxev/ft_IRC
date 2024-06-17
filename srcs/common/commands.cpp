@@ -66,11 +66,17 @@ void	join_command( Server& server, int reply_socket, std::istringstream &message
 	std::getline(message, channel, ' ');
 	std::getline(message, password, ' ');
 	
+
+	try {
+		if (server.get_channel_class(channel).is_on_channel(server.get_user_class(reply_socket).get_name()))
+			return ;
+	}
+	catch (const NoSuchChannelException& e) {
+	}
+
+
 	server.join_channel(server.get_user_class(reply_socket).get_name(), 
 						channel, password);
-
-	if (!server.get_channel_class(channel).is_on_channel(server.get_user_class(reply_socket).get_name()))
-		return ;
 	if (server.get_channel_class(channel).get_topic().empty()) {
 		no_topic_set(reply_socket, channel);
 		
@@ -182,13 +188,11 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 			{
 			case 'i':
 				std::cout << SERVER_INFO << "Client '" << reply_socket << "' wants invisible role" << std::endl;
-				// server.get_channel_class(target).set_mode( INVITE, op_sign );
 				break ;
 			case 'o':
 				server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
 				server.get_channel_class(target).send_channel(":" + server.get_user_class(reply_socket).get_name() 
 					+ " MODE " + target + " " + value.at(0) + "o " + password + " \r\n");
-				// server.get_channel_class(target).send_who(server, reply_socket);
 				break ;
 			default:
 				ft_send(reply_socket, RPL_UMODEIS + server.get_user_class(reply_socket).get_name() + "\r\n");
@@ -238,7 +242,6 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 				server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
 				server.get_channel_class(target).send_channel(":" + server.get_user_class(reply_socket).get_name() 
 					+ " MODE " + target + " " + value.at(0) + "o " + password + " \r\n");
-				// server.get_channel_class(target).send_who(server, reply_socket);
 				break ;
 			default:
 				std::cout << "Mode not recognized, is: [" << mode << "]" << std::endl;
@@ -286,9 +289,6 @@ try {
 				std::cout << SERVER_INFO << channel << " topic is now: " << topic_message << std::endl;
 				server.get_channel_class(channel).set_topic(topic_message);
 				server.get_channel_class(channel).refresh_topic();
-
-				// msg_to_send << RPL_TOPIC << server.get_user_class(reply_socket).get_name() << " " << channel << " :" << topic_message << "\n";
-				// server.get_channel_class(channel).send_channel(msg_to_send.str());
 				return ;
 			}
 		}
@@ -349,15 +349,17 @@ void	list_command( Server& server, int reply_socket, std::istringstream &message
 	(void) reply_socket;
 	(void) message;
 
-	if (!message.str().empty()) 
-		return ;
+	std::string channel;
+	std::getline(message, channel, ' ');
+
 	const User& user = server.get_user_class(reply_socket);
 	const std::vector<Channel *> chans = server.get_channels_list();
 	const size_t len = chans.size();
 	for (size_t i = 0; i < len; i++) {
-		std::cout << chans[i]->user_count();
-		ft_send(reply_socket, RPL_LIST + user.get_name() + " " + chans[i]->get_name() + " " +
-		chans[i]->user_count() + " :" + chans[i]->get_topic() + "\r\n");
+		std::cout << channel.size() << " " << channel << std::endl;
+		if (channel.empty() || chans[i]->get_name() == channel)
+			ft_send(reply_socket, RPL_LIST + user.get_name() + " " + chans[i]->get_name() + " " +
+		chans[i]->user_count() + " :" + "TOPIC: " + chans[i]->get_topic() + "\r\n");
 	}
 	ft_send(reply_socket, RPL_LISTEND + user.get_name() + " :End of /LIST\r\n");
 }

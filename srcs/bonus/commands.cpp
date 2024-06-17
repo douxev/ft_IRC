@@ -1,42 +1,39 @@
 #include <cctype>
+#include <cstddef>
 #include <sstream>
 #include "bot/ft_bot.hpp"
 #include <iostream>
 
-void	add_cmd( Bot& bot, std::string user, std::string channel, std::istringstream& word_list ) {
+void	add_cmd( Bot& bot, std::string channel, std::istringstream& word_list ) {
 	std::string word;
 
-		
-	if (!bot.check_op(channel)) {
-		bot.not_op(channel);
-		return ;
-	}
-
-	if (channel.size() > 0 && channel.at(0) != '#') {
-		return ;
-	}
-	for (; std::getline(word_list, word, ' ');) {
+	for (;std::getline(word_list, word, ' ');) {
+		if (word.empty())
+				return ;
 		bot.add_word(channel, word);
 	}
-	std::getline(word_list, word);
-	bot.add_word(channel, word);
 }
 
-void	remove_cmd( Bot& bot, std::string user, std::string channel, std::istringstream& word_list ) {
+void	remove_cmd( Bot& bot, std::string channel, std::istringstream& word_list ) {
 	std::string word;
 
-		
-	if (!bot.check_op(channel)) {
-		bot.not_op(channel);
-		return ;
-	}
-
-	if (channel.size() > 0 && channel.at(0) != '#') {
-		return ;
-	}
-	for (; std::getline(word_list, word, ' ');) {
+	for (;std::getline(word_list, word, ' ');) {
+		if (word.empty())
+				return ;
 		bot.remove_word(channel, word);
 	}
-	std::getline(word_list, word);
-	bot.remove_word(channel, word);
+}
+
+void	list_cmd( Bot& bot, std::string channel ) {
+	std::vector<std::string>& words = bot.list_word(channel);
+	std::stringstream message;
+
+	std::cout << BOTINFO << "Forbidden words list query" << std::endl;
+
+	message << " :List of forbidden words: ";
+
+	for (size_t i = 0; i < words.size(); i++) {
+		message << "'" << words[i] << "' ";
+	}
+	bot.send("PRIVMSG " + channel + message.str() + "\r\n");
 }
