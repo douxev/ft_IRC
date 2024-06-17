@@ -355,15 +355,12 @@ void	list_command( Server& server, int reply_socket, std::istringstream &message
 	(void) reply_socket;
 	(void) message;
 
-	if (!message.str().empty()) 
-		return ;
 	const User& user = server.get_user_class(reply_socket);
 	const std::vector<Channel *> chans = server.get_channels_list();
 	const size_t len = chans.size();
 	for (size_t i = 0; i < len; i++) {
-		std::cout << chans[i]->user_count();
 		ft_send(reply_socket, RPL_LIST + user.get_name() + " " + chans[i]->get_name() + " " +
-		chans[i]->user_count() + " :" + chans[i]->get_topic() + "\r\n");
+		chans[i]->user_count() + " :" + "TOPIC: " + chans[i]->get_topic() + "\r\n");
 	}
 	ft_send(reply_socket, RPL_LISTEND + user.get_name() + " :End of /LIST\r\n");
 }
