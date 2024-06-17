@@ -20,7 +20,7 @@ void	init_client( Server& server, int reply_socket, std::string message) {
 	{
 		std::cerr << e.what() << '\n';
 	}
-	try 
+	try
 	{
 		User& user = server.get_user_class(reply_socket);
 		if (user.get_password() == server.get_pass())
