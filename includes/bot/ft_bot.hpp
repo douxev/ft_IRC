@@ -21,8 +21,9 @@
 # define WARN "\033[0;95m[WARN]\033[0m "
 
 void	check_args( char **av );
-void	add_cmd( Bot& bot, std::istringstream& message );
-void	remove_cmd( Bot& bot, std::istringstream& message );
+
+void	add_cmd( Bot& bot, std::string user, std::string target, std::istringstream& message );
+void	remove_cmd( Bot& bot, std::string user, std::string target, std::istringstream& message );
 void	time_cmd( Bot& bot, std::istringstream& message );
 
 

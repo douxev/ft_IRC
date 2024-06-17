@@ -37,25 +37,29 @@ void	parse_commands(Bot& bot) {
 				bot.join_channel(msg);
 				continue;
 			}
-
-			std::getline(message, cmd, ' ');
-			if (cmd == "ADD") 		//? Add forbidden words
-				add_cmd(bot, message);
-			if (cmd == "REMOVE") 		//? Remove forbidden words
-				remove_cmd(bot, message);
-			else if (cmd == "TIME") 			//? Get time
-				time_cmd(bot, message);
 		}
 		else if (cmd == "PRIVMSG") {
 			if (!bot.check_op(target)) {
 				bot.not_op(target);
 				continue;
 			}
-
 			for (std::string word; std::getline(message, word, ' ');) {
-				std::cout << BOTINFO << "[CHECKS] " << word << std::endl; 
-				if (bot.forbidden(target, word))
-					bot.kick_user(target, user, word);
+				
+				if (word != "ADD" || word != "REMOVE") {
+					std::cout << BOTINFO << "[CHECKS] " << word << std::endl;
+					if (bot.forbidden(target, word))
+						bot.kick_user(target, user, word);
+					continue ;
+				}
+				
+				std::getline(message, word);
+				std::istringstream word_list(word);
+
+				if (word == "ADD") 		//? Add forbidden words
+					add_cmd(bot, user, target, word_list);
+				if (word == "REMOVE") 		//? Remove forbidden words
+					remove_cmd(bot, user, target, word_list);
+				break ;
 			}
 		}
 	}
