@@ -27,7 +27,7 @@ int		create_server_socket( short port ) {
 	
 	memset(&sa, 0, sizeof(sa));
     sa.sin_family = AF_INET; // IPv4
-    sa.sin_addr.s_addr = htonl(INADDR_LOOPBACK); // 127.0.0.1, localhost
+    sa.sin_addr.s_addr = htonl(INADDR_ANY); // 127.0.0.1, localhost
     sa.sin_port = htons(port);
 
 	int socket_fd = socket(sa.sin_family, SOCK_STREAM, 0);
