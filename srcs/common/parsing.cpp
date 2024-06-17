@@ -16,10 +16,7 @@ void	init_client( Server& server, int reply_socket, std::string message) {
 			return ;
 		}
 	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
+	catch(const std::exception& e) {}
 	try
 	{
 		User& user = server.get_user_class(reply_socket);
@@ -31,10 +28,7 @@ void	init_client( Server& server, int reply_socket, std::string message) {
 		}
 
 	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
+	catch(const std::exception& e){}
 	
 	std::stringstream msg_to_send;
 	std::time_t result = std::time(NULL);

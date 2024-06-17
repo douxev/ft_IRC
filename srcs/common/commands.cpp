@@ -112,7 +112,6 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 		try
 		{
 			User user = server.get_user_class(recipient);
-			// std::cout << recipient << " is a user\n";
 			ft_send(user.get_socketfd(), ":" + server.get_user_class(reply_socket).get_name() + " PRIVMSG " + recipient + " :" + msg + "\r\n");
 		}
 		catch(const std::exception& e)	//ce n'est pas un user
@@ -120,7 +119,6 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 			try
 			{
 				Channel channel = server.get_channel_class(recipient);
-				// std::cout << recipient << " is a channel\n";
 				if (channel.is_on_channel(server.get_user_class(reply_socket).get_name()))
 					channel.send_channel(reply_socket, ":" + server.get_user_class(reply_socket).get_name() + " PRIVMSG " + recipient + " :" + msg + "\r\n");
 				else
@@ -345,10 +343,6 @@ void	names_command( Server& server, int reply_socket, std::istringstream &messag
 }
 
 void	list_command( Server& server, int reply_socket, std::istringstream &message ) {
-	(void) server;
-	(void) reply_socket;
-	(void) message;
-
 	std::string channel;
 	std::getline(message, channel, ' ');
 
@@ -421,20 +415,11 @@ void	invite_command( Server& server, int reply_socket, std::istringstream &messa
 	else if (server.is_on_channel(channel, username))
 		ft_send(reply_socket, ERR_USERONCHANNEL + server.get_user_class(reply_socket).get_name() + " " + username + " " + channel + " :is already on channel\r\n");
 	else {
-		try
-		{
-			User& user = server.get_user_class(username);
-			ft_send(user.get_socketfd(), ":" + server.get_user_class(reply_socket).get_name() + " INVITE " + username + " " + channel + "\r\n");
-			server.get_channel_class(channel).add_invited(username);
-			ft_send(reply_socket, RPL_INVITING + 
-				server.get_user_class(reply_socket).get_name() + " " + username + " " + channel + "\r\n");
-		}
-		catch(const std::exception& e)
-		{
-			std::cout << SERVER_INFO << e.what() << '\n';
-		}
-		
-
+		User& user = server.get_user_class(username);
+		ft_send(user.get_socketfd(), ":" + server.get_user_class(reply_socket).get_name() + " INVITE " + username + " " + channel + "\r\n");
+		server.get_channel_class(channel).add_invited(username);
+		ft_send(reply_socket, RPL_INVITING + 
+			server.get_user_class(reply_socket).get_name() + " " + username + " " + channel + "\r\n");
 	}
 }
 
@@ -443,8 +428,6 @@ void	kick_command( Server& server, int reply_socket, std::istringstream &message
 	std::string users_str;
 	std::string user;
 	std::string kick_message;
-
-
 
 	std::getline(message, channel, ' ');
 	std::getline(message, users_str, ' ');
@@ -499,9 +482,7 @@ void	part_command( Server& server, int reply_socket, std::istringstream &message
 	}
 }
 
-void	quit_command( Server& server, int reply_socket, std::istringstream &message ) {
-	std::cout << SERVER_INFO << "" << server.get_connected_user().size() << " disconnected" << std::endl;
-	
+void	quit_command( Server& server, int reply_socket, std::istringstream &message ) {	
 	try
 	{
 		User& user = server.get_user_class(reply_socket);
@@ -522,10 +503,7 @@ void	quit_command( Server& server, int reply_socket, std::istringstream &message
 		
 		delete &user;
 	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << "\n";
-	}
+	catch(const std::exception& e) {}
 	server.remove_poll_fd(reply_socket);
 }
 
@@ -537,10 +515,7 @@ void pass_command(Server &server, int reply_socket, std::istringstream &message)
 			return ;
 		}
 	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
+	catch(const std::exception& e) {}
 	
 	if (message.str() != server.get_pass() && server.get_pass() != ""){
 		try 	//remove user object
@@ -553,20 +528,14 @@ void pass_command(Server &server, int reply_socket, std::istringstream &message)
 
 			delete(&user);
 		}
-		catch(const std::exception& e)
-		{
-			std::cerr << e.what() << '\n';
-		}
+		catch(const std::exception& e) {}
 		server.remove_poll_fd(reply_socket);
 	} else {
 		try
 		{
 			server.get_user_class(reply_socket).set_password(message.str());
 		}
-		catch(const std::exception& e)
-		{
-			std::cerr << e.what() << '\n';
-		}
+		catch(const std::exception& e) {}
 		
 	}
 }
