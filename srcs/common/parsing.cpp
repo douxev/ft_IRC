@@ -12,7 +12,7 @@ void	init_client( Server& server, int reply_socket, std::string message) {
 	try
 	{
 		if (server.get_user_class(reply_socket).user_authenticate()) {
-			ft_send(reply_socket, "462 " + server.get_user_class(reply_socket).get_name() + " :You may not reregister");
+			ft_send(reply_socket, "462 " + server.get_user_class(reply_socket).get_name() + " :You may not reregister\r\n");
 			return ;
 		}
 	}
