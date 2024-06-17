@@ -75,6 +75,12 @@ void	parse_commands(Bot& bot) {
 				else if (word == "LIST")
 					list_cmd(bot, target);
 			}
+		} else if (cmd == "PART" || cmd == "QUIT" || cmd == "KICK")
+		{
+			if (bot.is_alone(target)) {
+				bot.send("PART " + target + "\r\n");
+			}
+
 		}
 		
 	}

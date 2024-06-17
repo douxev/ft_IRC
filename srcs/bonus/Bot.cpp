@@ -12,6 +12,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <variant>
+#include "Bot.hpp"
 
 
 Bot::Bot( void ) {}
@@ -88,13 +89,47 @@ bool Bot::check_op( std::string channel ) {
 	return this->is_op( channel, this->_nick);
 }
 
+bool Bot::is_alone(std::string channel)
+{
+	std::string line;
+	std::string rpl_code;
+	std::istringstream line_is;
+
+	this->send("LIST " + channel + "\r\n");
+	this->receive();
+	while (this->buffer.size() > 0) {
+		this->receive();
+
+		line_is.clear();
+		line_is.str(this->buffer.back());
+		this->buffer.pop_back();
+		
+		std::getline(line_is, rpl_code, ' ');
+		while (rpl_code != "322" && this->buffer.size()) {
+			std::getline(line_is, rpl_code, ' ');
+			if (rpl_code == "322")
+				break ;
+			line_is.clear();
+			line_is.str(this->buffer.back());
+			this->buffer.pop_back();
+		}
+		if (rpl_code == "322")
+			break ;
+	}
+	for (std::string word; std::getline(line_is, word, ' ') && word != channel;)
+		;
+	std::getline(line_is, line, ' ');
+	if (line == "1")
+		return true;
+	return false;
+} 
 //Does a WHOIS
 bool Bot::is_op( std::string channel, std::string nick ) {
 	std::string line;
 	std::string rpl_code;
 	std::istringstream line_is;
 
-	this->send("WHOIS " + nick + "\n");
+	this->send("WHOIS " + nick + "\r\n");
 	this->receive();
 	while (this->buffer.size() > 0) {
 		this->receive();
@@ -128,7 +163,7 @@ bool Bot::is_op( std::string channel, std::string nick ) {
 	return false;
 }
 
-//joins when invited
+// joins when invited
 void Bot::join_channel( std::string channel ) {
 
 	(void) this->_channels[channel];

@@ -21,6 +21,7 @@ public:
     bool forbidden( std::string channel, std::string word );
 	bool check_op( std::string channel );
 	bool is_op( std::string channel, std::string nick );
+	bool is_alone(std::string channel);
 	void join_channel( std::string channel );
 	void leave_channel( std::string channel );
 	void add_word( std::string channel, std::string word );
