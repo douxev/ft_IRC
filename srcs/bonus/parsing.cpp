@@ -78,7 +78,7 @@ void	parse_commands(Bot& bot) {
 		} else if (cmd == "PART" || cmd == "QUIT" || cmd == "KICK")
 		{
 			if (bot.is_alone(target)) {
-				
+				bot.send("PART " + target + "\r\n");
 			}
 
 		}

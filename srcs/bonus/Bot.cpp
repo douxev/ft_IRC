@@ -116,7 +116,7 @@ bool Bot::is_alone(std::string channel)
 		if (rpl_code == "322")
 			break ;
 	}
-	for (std::string word; std::getline(line_is, word) && word != channel;)
+	for (std::string word; std::getline(line_is, word, ' ') && word != channel;)
 		;
 	std::getline(line_is, line, ' ');
 	if (line == "1")
