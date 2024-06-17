@@ -167,7 +167,7 @@ void Bot::remove_word( std::string channel, std::string word ) {
 	if (this->_channels.find(channel) == this->_channels.end())
 		notice("Not on that channel.");
 	else {
-		if (std::find(this->_channels[channel].begin(), this->_channels[channel].end(), word) == this->_channels[channel].end()) {
+		if (std::find(this->_channels[channel].begin(), this->_channels[channel].end(), word) != this->_channels[channel].end()) {
 			this->_channels[channel].erase(std::remove(this->_channels[channel].begin(), this->_channels[channel].end(), word));
 			notice("Word '" + word + "' has been removed for " + channel + ".");
 		}
@@ -175,6 +175,11 @@ void Bot::remove_word( std::string channel, std::string word ) {
 			notice("word '" + word + "' not found on " + channel + ".");
 	}
 }
+
+std::vector<std::string>& Bot::list_word( std::string channel ) {
+	return (this->_channels[channel]);
+}
+
 
 //Reads and parses PRIVMSG
 void Bot::process_msg( std::istringstream& message ) {

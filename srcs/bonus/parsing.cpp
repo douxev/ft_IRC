@@ -13,6 +13,9 @@ void	parse_commands(Bot& bot) {
 		// if (!line.str().size() || line.str().at(0) != ':')
 		// 	continue ;
 
+		if (!std::isprint(line.str().at(line.str().size() - 1)))
+			line.str(line.str().substr(0, line.str().size() - 1)); //remove weird char
+
 		std::cout << RECV << line.str() << std::endl;
 
 
@@ -41,25 +44,36 @@ void	parse_commands(Bot& bot) {
 		else if (cmd == "PRIVMSG") {
 			if (!bot.check_op(target)) {
 				bot.not_op(target);
-				continue;
+				return ;
 			}
-			for (std::string word; std::getline(message, word, ' ');) {
-				
-				if (word != "ADD" || word != "REMOVE") {
-					std::cout << BOTINFO << "[CHECKS] " << word << std::endl;
-					if (bot.forbidden(target, word))
-						bot.kick_user(target, user, word);
-					continue ;
-				}
-				
-				std::getline(message, word);
-				std::istringstream word_list(word);
+
+
+			std::string word;
+			for (; std::getline(message, word, ' ');) {
+				if (word == "ADD" || word == "DEL" || word == "LIST")
+					break ;
+				std::cout << BOTINFO << "[CHECKS] " << word << std::endl;
+				if (bot.forbidden(target, word))
+					bot.kick_user(target, user, word);
+			}
+			std::string words;
+			std::getline(message, words);
+			if (word == "ADD" || word == "DEL" || word == "LIST") {
+
+				std::getline(message, words);
+				std::istringstream word_list(words);
+
+				if (!bot.is_op(target, user))
+					return ;
+				if (target.size() > 0 && target.at(0) != '#')
+					return ;
 
 				if (word == "ADD") 		//? Add forbidden words
-					add_cmd(bot, user, target, word_list);
-				if (word == "REMOVE") 		//? Remove forbidden words
-					remove_cmd(bot, user, target, word_list);
-				break ;
+					add_cmd(bot, target, word_list);
+				else if (word == "DEL") 		//? Remove forbidden words
+					remove_cmd(bot, target, word_list);
+				else if (word == "LIST")
+					list_cmd(bot, target);
 			}
 		}
 	}
