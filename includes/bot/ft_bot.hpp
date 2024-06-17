@@ -18,6 +18,7 @@
 # define BOTINFO "\033[0;91m[BOT]\033[0m "
 # define RECV "\033[0;33m[RECV]\033[0m "
 # define SENT "\033[0;32m[SENT]\033[0m "
+# define WARN "\033[0;95m[WARN]\033[0m "
 
 void	check_args( char **av );
 void	add_cmd( Bot& bot, std::istringstream& message );

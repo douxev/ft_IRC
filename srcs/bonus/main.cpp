@@ -1,5 +1,6 @@
 #include "bot/ft_bot.hpp"
-
+#include <exception>
+#include <iostream>
 
 //! ./bot HOST PORT PASSWORD
 int main( int ac, char **av) {
@@ -15,9 +16,12 @@ int main( int ac, char **av) {
 	Bot bot(av[1], av[2], av[3]);
 
 	while (true) {
-		bot.receive();
-		parse_commands(bot);
+		try {
+			bot.receive();
+			parse_commands(bot);
+		}
+		catch (const std::exception& e) {
+			std::cout << WARN << e.what() << std::endl;
+		}
 	}
-
-
 }

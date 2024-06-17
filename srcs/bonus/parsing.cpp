@@ -13,7 +13,7 @@ void	parse_commands(Bot& bot) {
 		// if (!line.str().size() || line.str().at(0) != ':')
 		// 	continue ;
 
-		std::cout << BOTINFO << line.str() << std::endl;
+		std::cout << RECV << line.str() << std::endl;
 
 
 
