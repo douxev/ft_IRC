@@ -61,6 +61,13 @@ void	parse_commands(Bot& bot) {
 					remove_cmd(bot, user, target, word_list);
 				break ;
 			}
+		} else if (cmd == "PART" || cmd == "QUIT" || cmd == "KICK")
+		{
+			if (bot.is_alone(target)) {
+				
+			}
+
 		}
+		
 	}
 }

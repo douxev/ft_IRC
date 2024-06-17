@@ -50,6 +50,8 @@
 		"stdexcept": "cpp",
 		"streambuf": "cpp",
 		"typeinfo": "cpp",
-		"*.tpp": "c"
+		"*.tpp": "c",
+		"list": "cpp",
+		"variant": "cpp"
 	}
 }

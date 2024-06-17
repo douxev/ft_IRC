@@ -404,28 +404,35 @@ void	invite_command( Server& server, int reply_socket, std::istringstream &messa
 	(void) reply_socket;
 	(void) message;
 
-	std::string user;
+	std::string username;
 	std::string channel;
 
 	if (message.str().empty()) {
 		ft_send(reply_socket, ERR_NEEDMOREPARAMS + server.get_user_class(reply_socket).get_name() + " INVITE :Not enough parameters\r\n");
 		return ;
 	}
-	std::getline(message, user, ' ');
+	std::getline(message, username, ' ');
 	std::getline(message, channel);
-	std::cout << "channel: " << channel << " user: " << user << std::endl;
+	std::cout << "channel: " << channel << " user: " << username << std::endl;
 	if (!server.is_on_channel(channel, server.get_user_class(reply_socket).get_name()))
 		ft_send(reply_socket, ERR_NOTONCHANNEL + server.get_user_class(reply_socket).get_name() + " " + channel + " :You aren't on that channel\r\n");
-	else if (server.is_on_channel(channel, user))
-		ft_send(reply_socket, ERR_USERONCHANNEL + server.get_user_class(reply_socket).get_name() + " " + user + " " + channel + " :is already on channel\r\n");
+	else if (server.is_on_channel(channel, username))
+		ft_send(reply_socket, ERR_USERONCHANNEL + server.get_user_class(reply_socket).get_name() + " " + username + " " + channel + " :is already on channel\r\n");
 	else {
-		ft_send(server.get_user_class(user).get_socketfd(), ":" + 
-			server.get_user_class(reply_socket).get_name() + " INVITE " + user + " " + channel + "\r\n");
+		try
+		{
+			User& user = server.get_user_class(username);
+			ft_send(user.get_socketfd(), ":" + server.get_user_class(reply_socket).get_name() + " INVITE " + username + " " + channel + "\r\n");
+			server.get_channel_class(channel).add_invited(username);
+			ft_send(reply_socket, RPL_INVITING + 
+				server.get_user_class(reply_socket).get_name() + " " + username + " " + channel + "\r\n");
+		}
+		catch(const std::exception& e)
+		{
+			std::cout << SERVER_INFO << e.what() << '\n';
+		}
+		
 
-		server.get_channel_class(channel).add_invited(user);
-
-		ft_send(reply_socket, RPL_INVITING + 
-			server.get_user_class(reply_socket).get_name() + " " + user + " " + channel + "\r\n");
 	}
 }
 
