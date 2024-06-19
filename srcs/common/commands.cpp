@@ -152,7 +152,7 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 	if (value.size() < 2){
 		if (target.size() > 1 && target.at(0) == '#') {
 			ft_send(reply_socket, RPL_CHANNELMODEIS + 
-				server.get_user_class(reply_socket).get_name() + " " + target + " " + server.get_channel_class(target).get_modes() + "\r\n");
+				server.get_user_class(reply_socket).get_name() + " " + target + " " + server.get_channel_class(target).get_modes() + " \r\n");
 		}
 		else {
 			ft_send(reply_socket, RPL_UMODEIS + 

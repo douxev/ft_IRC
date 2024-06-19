@@ -20,7 +20,7 @@ public:
 	void					set_fd( int fd );
 	void					set_ip( std::string ip );
 	void					set_password( std::string pass );
-	std::string				get_ip( void );
+	std::string				get_ip( void ) const;
 	std::string				get_password();
 	int						get_socketfd( void ) const;
 	std::vector<Channel*>&	get_list_channel();

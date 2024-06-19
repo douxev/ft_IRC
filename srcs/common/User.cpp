@@ -71,7 +71,7 @@ void User::set_password(std::string pass)
 	_sent_password = pass;
 }
 
-std::string User::get_ip( void ) {
+std::string User::get_ip( void ) const {
 	return (this->_ip_address);
 }
 

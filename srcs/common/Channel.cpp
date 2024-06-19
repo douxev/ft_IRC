@@ -56,7 +56,7 @@ void	Channel::send_userlist( const User& user ) {
 	const size_t len = this->_connected_users.size();
 	std::stringstream msg_to_send;
 
-	msg_to_send << "353 " + user.get_name() << " = " << this->get_name() << " :";
+	msg_to_send << "353 " + user.get_name()  + "!" + user.get_realname() + "@" + user.get_ip() << " = " << this->get_name() << " :";
 
 	for (size_t i = 0; i < len; i++) {
 		if (this->is_op(this->_connected_users[i]->get_name()))
@@ -64,7 +64,7 @@ void	Channel::send_userlist( const User& user ) {
 		msg_to_send << this->_connected_users[i]->get_name() << " ";
 	}
 	ft_send(user.get_socketfd(), msg_to_send.str() + "\r\n");
-	ft_send(user.get_socketfd(), "366 " + user.get_name() + " " + this->get_name() + " :End of /NAMES list\r\n");
+	ft_send(user.get_socketfd(), "366 " + user.get_name() + "!" + user.get_realname() + "@" + user.get_ip() + " " + this->get_name() + " :End of /NAMES list\r\n");
 }
 
 void Channel::send_who( Server& server, int reply_socket ) {
@@ -74,7 +74,7 @@ void Channel::send_who( Server& server, int reply_socket ) {
 	for (size_t i = 0; i < len; i++) {
 		// if (this->_connected_users[i].get_socketfd() != reply_socket)
 		std::string msg = "";
-		msg =	"352 " + user.get_name() + 
+		msg =	"352 " + user.get_name() + "!" + user.get_realname() + "@" + user.get_ip() +
 				" " + 
 				this->_name + " " + 
 				this->_connected_users[i]->get_name() + " " + 
@@ -88,7 +88,7 @@ void Channel::send_who( Server& server, int reply_socket ) {
 			msg + " :0 " + 
 			this->_connected_users[i]->get_realname() + "\r\n");
 	}
-	ft_send(reply_socket, "315 " + user.get_name() + " :End of WHO list\r\n");
+	ft_send(reply_socket, "315 " + user.get_name() + "!" + user.get_realname() + "@" + user.get_ip() + " :End of WHO list\r\n");
 }
 
 void Channel::user_join( User& user, std::string pass ) {
