@@ -75,12 +75,19 @@ void	parse_commands(Bot& bot) {
 				else if (word == "LIST")
 					list_cmd(bot, target);
 			}
-		} else if (cmd == "PART" || cmd == "QUIT" || cmd == "KICK")
-		{
+		} else if (cmd == "PART"  || cmd == "KICK")	{
 			if (bot.is_alone(target)) {
 				bot.send("PART " + target + "\r\n");
-			}
+				bot.leave_channel(target);
 
+			}
+		} else if (cmd == "QUIT") {
+			std::map<std::string, std::vector<std::string> >map = bot.get_words_map();
+			for (std::map<std::string, std::vector<std::string> >::iterator it = map.begin(); it != map.end(); it++)
+				if (bot.is_alone(it->first)) {
+					bot.send("PART " + it->first + "\r\n");
+					bot.leave_channel(it->first);
+				}
 		}
 		
 	}

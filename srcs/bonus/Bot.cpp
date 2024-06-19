@@ -25,6 +25,10 @@ std::string Bot::get_nick( void ) {
 	return this->_nick;
 }
 
+std::map<std::string, std::vector<std::string> > Bot::get_words_map(void)
+{
+    return _channels;
+}
 
 Bot::Bot( std::string host, std::string port, std::string password ): 
 _host(host), _port(port), _pass(password), _nick("Marvin"), _username("Marvin"), _realname("Marvin") {
@@ -95,7 +99,7 @@ bool Bot::is_alone(std::string channel)
 	std::string rpl_code;
 	std::istringstream line_is;
 
-	this->send("LIST " + channel + "\r\n");
+	this->send("NAMES " + channel + "\r\n");
 	this->receive();
 	while (this->buffer.size() > 0) {
 		this->receive();
@@ -105,21 +109,28 @@ bool Bot::is_alone(std::string channel)
 		this->buffer.pop_back();
 		
 		std::getline(line_is, rpl_code, ' ');
-		while (rpl_code != "322" && this->buffer.size()) {
+		while (rpl_code != "353" && this->buffer.size()) {
 			std::getline(line_is, rpl_code, ' ');
-			if (rpl_code == "322")
+			if (rpl_code == "353")
 				break ;
 			line_is.clear();
 			line_is.str(this->buffer.back());
 			this->buffer.pop_back();
 		}
-		if (rpl_code == "322")
+		if (rpl_code == "353")
 			break ;
 	}
-	for (std::string word; std::getline(line_is, word, ' ') && word != channel;)
-		;
+	std::string names;
+	std::getline(line_is, names, ':');
+	std::getline(line_is, names);
+	std::stringstream names_is;
+	names_is.str(names);
+	int i = 0;
+	for (std::string word; std::getline(names_is, word, ' ') && word.at(0) != '\r';i++)
+		std::cout << "[" + word + "]"  << std::endl;
 	std::getline(line_is, line, ' ');
-	if (line == "1")
+	std::cout << line << std::endl;
+	if (i == 1)
 		return true;
 	return false;
 } 

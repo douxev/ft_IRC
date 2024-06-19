@@ -37,8 +37,8 @@ public:
 	void send( std::string msg );
 	void receive( void );
 	
+	std::map<std::string, std::vector<std::string> > get_words_map( void );
 	std::string get_nick( void );
-
 	void notice( std::string msg );
 
 	std::list<std::string>	buffer;
@@ -60,7 +60,4 @@ private:
 	std::vector<std::string>							_not_op_channel;
 
 };
-
-
-
 #endif
