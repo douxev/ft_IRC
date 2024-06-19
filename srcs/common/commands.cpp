@@ -40,7 +40,7 @@ void	nick_command( Server& server, int reply_socket, std::string message ) {
 		ft_send(reply_socket, ERR_NICKNAMEINUSE + oldnick + " " + message + " :Nickname is already in use\r\n");
 		return ;
 	}
-	server.send_all(":" + oldnick + " NICK :" + user.get_name() + "\r\n");
+	server.send_all(":" + oldnick + " NICK " + user.get_name() + "\r\n");
 	const size_t len = user.get_list_channel().size();
 	for (size_t i = 0; i < len; i++) {
 		user.get_list_channel()[i]->send_who(server, reply_socket);
@@ -479,7 +479,6 @@ void	part_command( Server& server, int reply_socket, std::istringstream &message
 		return ; //! NOT ON CHANNEL
 	if (channel.empty())
 		return ; //!NEEDMOREPARAMS
-	std::cout << "Channel: " << channel << " reason: " << part_msg << std::endl;
 	server.part_channel(server.get_user_class(reply_socket).get_name(), channel , part_msg);
 	server.get_user_class(reply_socket).remove_channel_list(&server.get_channel_class(channel));
 	if (!server.get_channel_class(channel).get_size()) {
