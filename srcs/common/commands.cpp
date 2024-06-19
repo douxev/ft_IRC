@@ -218,7 +218,16 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 					"" + " MODE " + target + " " + value.at(0) + "t " + " \r\n");
 				break ;
 			case 'l':
-				if (op_sign) {
+				for (size_t y = 0; y < password.size(); y++) {
+					if (isdigit(password[y]) == 0) {
+						size = -1;
+					}	
+				}
+				if (size == -1) {
+					std::cout << "incorrect limit value" << std::endl;
+					break;
+				}
+				else if (op_sign) {
 					server.get_channel_class(target).set_mode( LIMIT, size );
 					std::ostringstream oss;
 					oss << size;

@@ -222,7 +222,7 @@ void Channel::set_mode( t_enum_modes mode, size_t value ) {
 		this->_modes.op_topic = value;
 		break ;
 	case LIMIT:
-		if (this->_modes.limit == false)
+		if ((this->_modes.limit == false && value == false))
 			break;
 		std::cout << SERVER_INFO << "changing limits on " << this->_name << " to " << value << std::endl;
 		this->_modes.limit = value;
