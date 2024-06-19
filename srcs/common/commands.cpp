@@ -339,11 +339,10 @@ void	names_command( Server& server, int reply_socket, std::istringstream &messag
 		for (int j = 0; channel_list[j] != channel_list.back(); j++) {
 			channel_list[j]->send_userlist(user);
 		}
-		ft_send(reply_socket, "353 " + user.get_name() + " * :");
 		std::vector<User*> user_list = server.get_connected_user();
 		for (int j = 0; user_list[j] < user_list.back(); j++) {
 			if (!user_list[j]->get_list_channel().size())
-				ft_send(reply_socket, user_list[j]->get_name());
+				ft_send(reply_socket, "353 " + user.get_name() + " * :" + user_list[j]->get_name() + "\r\n");
 		}
 		ft_send(reply_socket, "366 " + user.get_name() + " * :End of /NAMES list\r\n");
 	}
@@ -454,7 +453,8 @@ void	kick_command( Server& server, int reply_socket, std::istringstream &message
 			ft_send(reply_socket, "441 " + user + " " + channel + ":They Aren't on that channel\r\n");
 		else {
 			server.get_channel_class(channel).send_channel(":" + 
-			server.get_user_class(reply_socket).get_name() + " KICK " + 
+			server.get_user_class(reply_socket).get_name()  + "!" + server.get_user_class(reply_socket).get_realname() + "@" + 
+				server.get_user_class(reply_socket).get_ip() + " KICK " + 
 				channel + " " + user + " :" + kick_message + "\r\n");
 			server.get_channel_class(channel).user_kicked(server.get_user_class(reply_socket), server.get_user_class(user), kick_message);
 	

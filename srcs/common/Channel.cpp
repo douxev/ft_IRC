@@ -144,7 +144,7 @@ void Channel::user_kicked( User& user, User& target, std::string kick_message ) 
 	(void) target;
 	(void) kick_message;
 	(void) user;
-	this->_remove_connected_user(user);
+	this->_remove_connected_user(target);
 }
 
 std::string Channel::user_count( void ) {
