@@ -71,7 +71,7 @@ void User::set_password(std::string pass)
 	_sent_password = pass;
 }
 
-std::string User::get_ip( void ) {
+std::string User::get_ip( void ) const {
 	return (this->_ip_address);
 }
 
@@ -102,17 +102,7 @@ void User::add_channel_list(Channel& channel) {
 }
 
 void User::remove_channel_list(Channel *channel) {
-	const size_t len = _joined_channel.size();
-		for (size_t i = 0; i < len; i++) {
-			if (_joined_channel[i]->get_name() == channel->get_name()) {
-				_joined_channel.erase(_joined_channel.begin() + i);
-				return ;
-			}
-	}
-
-	return ;
-	std::vector<Channel*>::iterator it = find(this->_joined_channel.begin(), _joined_channel.end(), channel);
-	_joined_channel.erase(it);
+	this->_joined_channel.erase(std::remove(_joined_channel.begin(), _joined_channel.end(), channel), _joined_channel.end());
 }
 
 bool User::user_authenticate( void ) {
