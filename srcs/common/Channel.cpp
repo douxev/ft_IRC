@@ -135,8 +135,8 @@ void Channel::change_op_nick( const std::string user, const std::string new_name
 }
 
 void Channel::user_part( User& user, const std::string part_message ) {
-	this->send_channel(":" + user.get_name() + "!" + user.get_name() + "@" + user.get_ip() + " PART " + this->get_name() + " :" + part_message + "\n");
-	ft_send(user.get_socketfd(), "404 " + user.get_name() + " " + this->get_name() + " :Parted from Channel\r\n");
+	this->send_channel(":" + user.get_name() + "!" + user.get_realname() + "@" + user.get_ip() + " PART " + this->get_name() + " :" + part_message + "\r\n");
+	// ft_send(user.get_socketfd(), "404 " + user.get_name() + " " + this->get_name() + " :Parted from Channel\r\n");
 	this->_remove_connected_user(user);
 }
 

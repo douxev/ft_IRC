@@ -141,6 +141,9 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 		catch (const NeedMoreParamsException& e) {
 			ft_send(reply_socket, ERR_NEEDMOREPARAMS + server.get_user_class(reply_socket).get_name() + cmd + " :Not enough parameters\n");
 		}
+		catch (const ChanOPrivsNeededException& e) {
+			ft_send(reply_socket, (std::string) ERR_CHANOPRIVSNEEDED + line.str() + " :You're not channel operator\r\n");
+		}
 		catch (std::exception& e) {}
 	}
 }

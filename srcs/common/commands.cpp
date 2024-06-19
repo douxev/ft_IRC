@@ -40,7 +40,7 @@ void	nick_command( Server& server, int reply_socket, std::string message ) {
 		ft_send(reply_socket, ERR_NICKNAMEINUSE + oldnick + " " + message + " :Nickname is already in use\r\n");
 		return ;
 	}
-	server.send_all(":" + oldnick + " NICK :" + user.get_name() + "\r\n");
+	server.send_all(":" + oldnick + " NICK " + user.get_name() + "\r\n");
 	const size_t len = user.get_list_channel().size();
 	for (size_t i = 0; i < len; i++) {
 		user.get_list_channel()[i]->send_who(server, reply_socket);
@@ -77,10 +77,14 @@ void	join_command( Server& server, int reply_socket, std::istringstream &message
 
 	server.join_channel(server.get_user_class(reply_socket).get_name(), 
 						channel, password);
-	if (server.get_channel_class(channel).get_topic().empty()) {
+	
+	if (!server.is_on_channel(channel, server.get_user_class(reply_socket).get_name()))
+		return ;
+
+	// names_command(server, reply_socket, channel);
+
+	if (server.get_channel_class(channel).get_topic().empty())
 		no_topic_set(reply_socket, channel);
-		
-	}
 	else {
 		ft_send(reply_socket, RPL_TOPIC + server.get_user_class(reply_socket).get_name() + 
 			" " + channel + " :" + server.get_channel_class(channel).get_topic() + "\r\n");
@@ -292,9 +296,7 @@ try {
 		}
 		else {
 			if (!server.is_op(channel, user)) {
-				msg_to_send << ERR_CHANOPRIVSNEEDED << user << " " << channel << " :You're not channel operator\r\n";
-				if (ft_send(reply_socket, msg_to_send.str()) == -1)
-					std::cerr << SERVER_INFO << "Send error to client " << server.get_user_class(reply_socket).get_name() << ": " <<  strerror(errno)  << std::endl;
+				throw ChanOPrivsNeededException();
 			}
 		}
 	}
@@ -308,6 +310,11 @@ catch(const NoSuchChannelException& e) {
 
 //NAMES => list all channel and their occupant, then all users outside any channel, under the "channel *"
 //NAMES #CHAN1,#CHAN2 => list all users on channel(s)
+void	names_command( Server& server, int reply_socket, std::string message ) { 
+	std::istringstream iss(message);
+	names_command(server, reply_socket, iss);
+}
+
 void	names_command( Server& server, int reply_socket, std::istringstream &message ) {
 	//names
 	(void) server;
@@ -436,7 +443,7 @@ void	kick_command( Server& server, int reply_socket, std::istringstream &message
 	if (!std::getline(message, kick_message))
 		kick_message = "kicked from channel by " + server.get_user_class(reply_socket).get_name();
 
-	if (users_str.empty())
+	if (users_str.empty() || channel.empty())
 		throw NeedMoreParamsException();
 	if (!(server.get_channel_class(channel)).is_op(server.get_user_class(reply_socket).get_name()))
 		throw ChanOPrivsNeededException();
@@ -472,7 +479,6 @@ void	part_command( Server& server, int reply_socket, std::istringstream &message
 		return ; //! NOT ON CHANNEL
 	if (channel.empty())
 		return ; //!NEEDMOREPARAMS
-	std::cout << "Channel: " << channel << " reason: " << part_msg << std::endl;
 	server.part_channel(server.get_user_class(reply_socket).get_name(), channel , part_msg);
 	server.get_user_class(reply_socket).remove_channel_list(&server.get_channel_class(channel));
 	if (!server.get_channel_class(channel).get_size()) {
