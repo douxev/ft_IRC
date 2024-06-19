@@ -126,10 +126,7 @@ bool Bot::is_alone(std::string channel)
 	std::stringstream names_is;
 	names_is.str(names);
 	int i = 0;
-	for (std::string word; std::getline(names_is, word, ' ') && word.at(0) != '\r';i++)
-		std::cout << "[" + word + "]"  << std::endl;
-	std::getline(line_is, line, ' ');
-	std::cout << line << std::endl;
+	for (std::string word; std::getline(names_is, word, ' ') && word.at(0) != '\r';i++);
 	if (i == 1)
 		return true;
 	return false;
