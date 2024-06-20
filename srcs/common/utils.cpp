@@ -31,3 +31,4 @@ int	ft_send(int socketfd, std::string msg) {
 void	no_topic_set(int reply_socket, std::string channel) {
 	ft_send(reply_socket, RPL_NOTOPIC + channel + " :No topic is set for " + channel + "\n");
 }
+

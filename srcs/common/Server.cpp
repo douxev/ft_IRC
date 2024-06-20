@@ -324,3 +324,17 @@ void Server::send_channel( std::string channelname, int sender_fd, std::string m
 	Channel &channel = this->get_channel_class(channelname);
 	channel.send_channel(sender_fd, msg);
 }
+
+
+std::string Server::ft_recv( int sender_fd ) {
+	char buffer[BUFSIZ] = {0};
+	std::stringstream message;
+
+	
+	
+	
+	const int byte_read = recv(sender_fd, buffer, BUFSIZ, 0);
+
+
+
+}

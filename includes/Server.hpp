@@ -13,6 +13,9 @@ public:
 	Server( const Server& Other );
 	~Server( void );
 
+	std::string ft_recv( int server_fd );
+
+
 	std::string get_motd( void );
 	int		init_server( int ac, char **av );
 	void	manage_loop( void );
@@ -22,7 +25,6 @@ public:
 	bool	is_on_channel( std::string channel, std::string user );
 	bool	is_op( std::string channel, std::string user );
 	bool	channel_exists( std::string channel );
-
 
 	void	send_all( std::string msg );
 	void	send_all( int reply_socket, std::string msg );
