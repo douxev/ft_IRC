@@ -49,7 +49,7 @@ bool Channel::operator==( const Channel& Other ){
 }
 
 Channel::~Channel() {
-
+	this->_invited.clear();
 }
 
 void	Channel::send_userlist( const User& user ) {
@@ -145,6 +145,7 @@ void Channel::user_kicked( User& user, User& target, std::string kick_message ) 
 	(void) kick_message;
 	(void) user;
 	this->_remove_connected_user(target);
+	user.remove_channel_list(this);
 }
 
 std::string Channel::user_count( void ) {
@@ -379,13 +380,9 @@ bool	Channel::is_invited( const User& user ) {
 }
 
 bool	Channel::is_invited( const std::string user ) {
-	const size_t len = this->_invited.size();
-
-	for (size_t i = 0; i < len; i++) {
-		if (this->_invited[i] == user)
-			return (true);
-	}
-	return (false);
+	if (std::find(this->_invited.begin(), this->_invited.end(), user) == this->_invited.end())
+		return false;
+	return true;
 }
 
 size_t	Channel::get_size( void ) {

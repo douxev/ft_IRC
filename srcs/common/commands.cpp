@@ -330,6 +330,8 @@ void	names_command( Server& server, int reply_socket, std::istringstream &messag
 	(void) reply_socket;
 	(void) message;
 
+	if (!server.get_connected_user().size() || !server.get_channels_list().size())
+		return ;
 
 	int i = 0;	// le nombre de channel passés en parametre
 	User user = server.get_user_class(reply_socket);
