@@ -168,7 +168,6 @@ void Server::manage_loop()
 			}
 			else {
 				_read_data(i);
-
 			}
 		}
 	}
@@ -226,10 +225,9 @@ void Server::_read_data(int i)
 		std::istringstream message("Quit unexpectedly");
 		quit_command(*this, sender_fd, message);
 	}
-	else if (this->buffer[i].find_first_of("\r\n")) {
-		// std::cout << SERVER_INFO << this->buffer[i].at(this->buffer[i].find("\r\n")) << std::endl;
-		std::cout << YELLOW << "[RECV" << sender_fd << "] " << RESET << this->buffer[i];
-		std::istringstream stream(this->buffer[i]);
+	else if (this->buffer[sender_fd].find_first_of("\r\n")) {
+		std::cout << YELLOW << "[RECV" << sender_fd << "] " << RESET << this->buffer[sender_fd];
+		std::istringstream stream(this->buffer[sender_fd]);
 		parse_commands(*this, sender_fd, stream);
 	}
 }
@@ -250,7 +248,6 @@ void	Server::join_channel( std::string username, std::string channelname, std::s
 		Channel&	channel = this->get_channel_class(channelname);
 		channel.user_join(user, password);
 		channel.send_channel(user.get_socketfd(), ":" + user.get_name() + "!" + user.get_realname() + "@" + user.get_ip() + " JOIN " + channel.get_name() + "\r\n");
-		channel.send_userlist(user);
 	}
 	catch (NoSuchChannelException& e) {
 		Channel *new_channel = new Channel(channelname, user);

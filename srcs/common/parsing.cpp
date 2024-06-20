@@ -57,10 +57,9 @@ void	init_client( Server& server, int reply_socket, std::string message) {
 //ADD TRY CATCH EXCEPTIONS FOR SENDING GOOD REPLIES
 void	parse_commands( Server& server, int reply_socket, std::istringstream& message ) {
 
-
-	std::cout << SERVER_INFO << message.str() << std::endl;
 	for (std::string line_str; std::getline(message, line_str);) {
-		if (line_str.size() < 3 || line_str.substr(line_str.size() - 3) != "\r\n")
+
+		if (line_str.size() < 2 || line_str.at(line_str.size() - 1) != '\r')
 			return ;
 
 		server.buffer[reply_socket] = server.buffer[reply_socket].substr(server.buffer[reply_socket].find_first_of("\r\n") + 2);
@@ -74,7 +73,7 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 		try {
 
 			if (!std::isprint(line.str().at(line.str().size() - 1)))
-				line.str(line.str().substr(0, line.str().size() - 1)); //remove weird char
+				line.str(line.str().substr(0, line.str().size() - 1)); //remove \r char
 			if (cmd == "SQUIT")
 				shutdown_command(server);
 			else if (cmd == "PING")
