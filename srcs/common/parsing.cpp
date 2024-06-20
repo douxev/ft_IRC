@@ -96,14 +96,14 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 				{
 					User& user = server.get_user_class(reply_socket);
 					if (!user.user_authenticate() && user.get_password() != server.get_pass()) {
-						ft_send(reply_socket, "464 " + user.get_name() + " :Password incorrect\n");
+						ft_send(reply_socket, "464 " + user.get_name() + " :Password incorrect\r\n");
 							continue;
 					}
 				}
 				catch(const std::exception& e)
 				{
 					std::cerr << RED << "[WARN!]" << RESET << e.what() << '\n';
-					ft_send(reply_socket, "Not Connected, connection is not made by a user\n");
+					ft_send(reply_socket, "Not Connected, connection is not made by a user\r\n");
 					return;
 				}
 				
@@ -140,16 +140,16 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 			}
 		}
 		catch (const NoSuchNickException& e) {
-			ft_send(reply_socket, ERR_NOSUCHNICK + server.get_user_class(reply_socket).get_name() + " " + line.str() + " :No such nick\n");
+			ft_send(reply_socket, ERR_NOSUCHNICK + server.get_user_class(reply_socket).get_name() + " " + line.str() + " :No such nick\r\n");
 		}
 		catch (const NoSuchChannelException& e) {
-			ft_send(reply_socket, ERR_NOSUCHCHANNEL + server.get_user_class(reply_socket).get_name() + " " + line.str() + " :No such channel " + line.str() + "\n");
+			ft_send(reply_socket, ERR_NOSUCHCHANNEL + server.get_user_class(reply_socket).get_name() + " " + line.str() + " :No such channel " + line.str() + "\r\n");
 		}
 		catch (const NotOnChannelException& e) {
-			ft_send(reply_socket, ERR_NOTONCHANNEL + server.get_user_class(reply_socket).get_name() + " " + line.str() + " :You aren't on that channel\n");
+			ft_send(reply_socket, ERR_NOTONCHANNEL + server.get_user_class(reply_socket).get_name() + " " + line.str() + " :You aren't on that channel\r\n");
 		}
 		catch (const NeedMoreParamsException& e) {
-			ft_send(reply_socket, ERR_NEEDMOREPARAMS + server.get_user_class(reply_socket).get_name() + cmd + " :Not enough parameters\n");
+			ft_send(reply_socket, ERR_NEEDMOREPARAMS + server.get_user_class(reply_socket).get_name() + cmd + " :Not enough parameters\r\n");
 		}
 		catch (const ChanOPrivsNeededException& e) {
 			ft_send(reply_socket, (std::string) ERR_CHANOPRIVSNEEDED + line.str() + " :You're not channel operator\r\n");
