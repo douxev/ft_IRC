@@ -59,10 +59,15 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 
 	for (std::string line_str; std::getline(message, line_str);) {
 
-		if (line_str.size() < 2 || line_str.at(line_str.size() - 1) != '\r')
+		if (line_str.size() < 1) { // the string looks empty
+			server.buffer[reply_socket].erase(0, line_str.size() + 1);
+			continue;
+		}
+		if (line_str.at(line_str.size() - 1) != '\r') { // there is not CR
 			return ;
+		}
 
-		server.buffer[reply_socket] = server.buffer[reply_socket].substr(server.buffer[reply_socket].find_first_of("\r\n") + 2);
+		server.buffer[reply_socket] = server.buffer[reply_socket].substr(line_str.size() + 1);
 
 		std::istringstream line(line_str);
 		std::string cmd;

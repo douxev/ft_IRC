@@ -226,6 +226,14 @@ void Server::_read_data(int i)
 		quit_command(*this, sender_fd, message);
 	}
 	else if (this->buffer[sender_fd].find_first_of("\r\n")) {
+		for (size_t i = 0; i < this->buffer[sender_fd].size(); i++) {
+			if (this->buffer[sender_fd][i] == '\r')
+				std::cout << "HERE IS A CARRIAGE RETURN" << std::endl;
+			if (i > 0 && this->buffer[sender_fd].at(i) == '\n' && this->buffer[sender_fd].at(i - 1) != '\r') {
+				this->buffer[sender_fd].erase(i, 1);
+			i--;
+		}
+	}
 		std::cout << YELLOW << "[RECV" << sender_fd << "] " << RESET << this->buffer[sender_fd];
 		std::istringstream stream(this->buffer[sender_fd]);
 		parse_commands(*this, sender_fd, stream);
