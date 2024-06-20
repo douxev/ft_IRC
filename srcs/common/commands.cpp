@@ -388,7 +388,8 @@ void	whois_command( Server& server, int reply_socket, std::istringstream &messag
 		return ;
 	}
 	
-	std::getline(message, target);
+	if (!std::getline(message, target))
+		return ;
 	try {
 		ft_send(reply_socket, RPL_WHOISUSER + user.get_name() + " " + target + " " + target + " " +
 			server.get_user_class(target).get_ip() + " * :" + server.get_user_class(target).get_realname() + "\r\n"); // whoisUSER

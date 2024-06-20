@@ -108,15 +108,15 @@ bool Bot::is_alone(std::string channel)
 		this->buffer.pop_back();
 		
 		std::getline(line_is, rpl_code, ' ');
-		while (rpl_code != "353" && this->buffer.size()) {
+		while (rpl_code != "353" && rpl_code != "366" && this->buffer.size()) {
 			std::getline(line_is, rpl_code, ' ');
-			if (rpl_code == "353")
+			if (rpl_code == "353" || rpl_code != "366")
 				break ;
 			line_is.clear();
 			line_is.str(this->buffer.back());
 			this->buffer.pop_back();
 		}
-		if (rpl_code == "353")
+		if (rpl_code == "353" || rpl_code != "366")
 			break ;
 	}
 	std::string names;

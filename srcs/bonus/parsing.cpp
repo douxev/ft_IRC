@@ -1,4 +1,5 @@
 #include "bot/ft_bot.hpp"
+#include <cctype>
 #include <sstream>
 #include <iostream>
 
@@ -35,6 +36,12 @@ void	parse_commands(Bot& bot) {
 			message.str(msg.substr(1));
 		else
 			message.str(msg);
+		
+		if (cmd.size() && cmd.at(0) == '3') {
+			bot.buffer.pop_front();
+			continue ;
+		}
+		
 		if (target == bot.get_nick()) { 		//? Commands that targets the bot directly
 			if (cmd == "INVITE") {
 				bot.join_channel(msg);
@@ -46,8 +53,6 @@ void	parse_commands(Bot& bot) {
 				bot.not_op(target);
 				return ;
 			}
-
-
 			std::string word;
 			for (; std::getline(message, word, ' ');) {
 				if (word == "ADD" || word == "DEL" || word == "LIST")
@@ -55,11 +60,10 @@ void	parse_commands(Bot& bot) {
 				std::cout << BOTINFO << "[CHECKS] " << word << std::endl;
 				if (bot.forbidden(target, word)) {
 					bot.kick_user(target, user, word);
-					return ;
-				}
-				if (bot.is_alone(target)) {
-					bot.send("PART " + target + " \r\n");
-					bot.leave_channel(target);
+					if (bot.is_alone(target)) {
+						bot.send("PART " + target + " \r\n");
+						bot.leave_channel(target);
+					}
 					return ;
 				}
 			}
@@ -86,7 +90,7 @@ void	parse_commands(Bot& bot) {
 			if (bot.is_alone(target)) {
 				bot.send("PART " + target + " \r\n");
 				bot.leave_channel(target);
-
+				return ;
 			}
 		} else if (cmd == "QUIT") {
 			std::map<std::string, std::vector<std::string> >map = bot.get_words_map();
@@ -94,8 +98,8 @@ void	parse_commands(Bot& bot) {
 				if (bot.is_alone(it->first)) {
 					bot.send("PART " + it->first + "\r\n");
 					bot.leave_channel(it->first);
+					return ;
 				}
 		}
-		
 	}
 }
