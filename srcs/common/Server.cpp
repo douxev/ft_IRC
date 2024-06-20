@@ -228,7 +228,8 @@ void Server::_read_data(int i)
 		_nb_sockets--;
 		std::istringstream message("Quit unexpectedly");
 		quit_command(*this, sender_fd, message);
-	} else {
+	}
+	else {
 		std::cout << YELLOW << "[RECV" << sender_fd << "] " << RESET << buffer;
 		std::istringstream stream(buffer);
 		parse_commands(*this, sender_fd, stream);
@@ -335,6 +336,6 @@ std::string Server::ft_recv( int sender_fd ) {
 	
 	
 
-	
+
 
 }
