@@ -330,11 +330,11 @@ std::string Server::ft_recv( int sender_fd ) {
 	char buffer[BUFSIZ] = {0};
 	std::stringstream message;
 
-	
-	
-	
 	const int byte_read = recv(sender_fd, buffer, BUFSIZ, 0);
+	this->_buffer[sender_fd] += buffer;
+	
+	
 
-
+	
 
 }

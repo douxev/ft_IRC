@@ -3,6 +3,7 @@
 
 #include "User.hpp"
 #include "Channel.hpp"
+#include <map>
 
 class Server {
 
@@ -59,6 +60,7 @@ private:
 	std::vector<Channel *>				_active_channels;
 	std::vector<User *>					_connected_users;
 	std::vector<struct pollfd> 			_sockets_fds;
+	std::map<int, std::string>			_buffer;
 	int									_nb_sockets;
 	std::string 						_password;
 };
