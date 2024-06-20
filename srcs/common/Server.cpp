@@ -256,7 +256,8 @@ void	Server::join_channel( std::string username, std::string channelname, std::s
 	try {
 		Channel&	channel = this->get_channel_class(channelname);
 		channel.user_join(user, password);
-		channel.send_channel(user.get_socketfd(), ":" + user.get_name() + "!" + user.get_realname() + "@" + user.get_ip() + " JOIN " + channel.get_name() + "\r\n");
+		if (this->is_on_channel(channel.get_name(), user.get_name()))
+			channel.send_channel(user.get_socketfd(), ":" + user.get_name() + "!" + user.get_realname() + "@" + user.get_ip() + " JOIN " + channel.get_name() + "\r\n");
 	}
 	catch (NoSuchChannelException& e) {
 		Channel *new_channel = new Channel(channelname, user);

@@ -401,7 +401,7 @@ void	whois_command( Server& server, int reply_socket, std::istringstream &messag
 				whois_channel_string += "@";
 			whois_channel_string += chans[i]->get_name() + " ";
 		}
-		ft_send(reply_socket, whois_channel_string + "\n");
+		ft_send(reply_socket, whois_channel_string + "\r\n");
 		ft_send(reply_socket, RPL_ENDOFWHOIS + user.get_name() + " " + target + " :End of /WHOIS list\r\n");
 	}
 	catch(const NoSuchNickException& e) {
@@ -424,7 +424,6 @@ void	invite_command( Server& server, int reply_socket, std::istringstream &messa
 	}
 	std::getline(message, username, ' ');
 	std::getline(message, channel);
-	std::cout << "channel: " << channel << " user: " << username << std::endl;
 	if (!server.is_on_channel(channel, server.get_user_class(reply_socket).get_name()))
 		ft_send(reply_socket, ERR_NOTONCHANNEL + server.get_user_class(reply_socket).get_name() + " " + channel + " :You aren't on that channel\r\n");
 	else if (server.is_on_channel(channel, username))

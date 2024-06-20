@@ -11,8 +11,7 @@
 #include <arpa/inet.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <variant>
-#include "Bot.hpp"
+#include "bot/Bot.hpp"
 
 
 Bot::Bot( void ) {}
@@ -80,11 +79,11 @@ int 	Bot::init_connection( void ) {
 
 	//send authentification msg
 	std::stringstream msg_to_send;
-	msg_to_send << "CAP LS\n";
+	msg_to_send << "CAP LS\r\n";
 	if (!_pass.empty())
-		msg_to_send << "PASS " << _pass << "\n";
-	msg_to_send << "NICK " << _nick << "\n";
-	msg_to_send << "USER "<< _username << " 0 * :" << _realname << "\n";
+		msg_to_send << "PASS " << _pass << "\r\n";
+	msg_to_send << "NICK " << _nick << "\r\n";
+	msg_to_send << "USER "<< _username << " 0 * :" << _realname << "\r\n";
 	this->send(msg_to_send.str());
 	return(socket_fd);
 }
@@ -177,14 +176,14 @@ void Bot::join_channel( std::string channel ) {
 	(void) this->_channels[channel];
 	if (channel.size() > 0 && channel.at(0) != '#')
 		channel = "#" + channel;
-	this->send("JOIN " + channel + "\n");
+	this->send("JOIN " + channel + "\r\n");
 	this->notice("Joined " + channel);
 }
 
 //removes the channel from map
 void Bot::leave_channel( std::string channel ) {
 
-	this->_channels.erase(this->_channels.find(channel));
+	this->_channels.erase(channel);
 	this->notice("Left " + channel);
 }
 
@@ -233,7 +232,7 @@ void Bot::process_msg( std::istringstream& message ) {
 
 //kicks a user
 void Bot::kick_user( std::string channel, std::string user, std::string fword ) {
-	this->send("KICK " + channel + " " + user + " :You used a forbidden word: " + fword + "\n");
+	this->send("KICK " + channel + " " + user + " :You used a forbidden word: " + fword + "\r\n");
 	notice("Kicked " + user + " from " + channel + " because of the forbidden word '" + fword + "'.");
 }
 
@@ -249,7 +248,7 @@ void Bot::not_op( std::string channel ) {
 	if (channel.size() > 2 && channel.at(0) != '#')
 		channel = "#" + channel;
 	std::cout << BOTINFO << "NOT OP on " << channel << std::endl;
-	this->send("PRIVMSG " + channel + " :Not OP on this channel.");
+	this->send("PRIVMSG " + channel + " :Not OP on this channel.\r\n");
 }
 //sends a PRIVMSG
 void Bot::send( std::string msg ) {

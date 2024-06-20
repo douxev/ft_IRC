@@ -53,8 +53,15 @@ void	parse_commands(Bot& bot) {
 				if (word == "ADD" || word == "DEL" || word == "LIST")
 					break ;
 				std::cout << BOTINFO << "[CHECKS] " << word << std::endl;
-				if (bot.forbidden(target, word))
+				if (bot.forbidden(target, word)) {
 					bot.kick_user(target, user, word);
+					return ;
+				}
+				if (bot.is_alone(target)) {
+					bot.send("PART " + target + " \r\n");
+					bot.leave_channel(target);
+					return ;
+				}
 			}
 			std::string words;
 			std::getline(message, words);
@@ -77,7 +84,7 @@ void	parse_commands(Bot& bot) {
 			}
 		} else if (cmd == "PART"  || cmd == "KICK")	{
 			if (bot.is_alone(target)) {
-				bot.send("PART " + target + "\r\n");
+				bot.send("PART " + target + " \r\n");
 				bot.leave_channel(target);
 
 			}
