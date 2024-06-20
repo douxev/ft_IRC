@@ -58,7 +58,13 @@ void	init_client( Server& server, int reply_socket, std::string message) {
 void	parse_commands( Server& server, int reply_socket, std::istringstream& message ) {
 
 
+	std::cout << SERVER_INFO << message.str() << std::endl;
 	for (std::string line_str; std::getline(message, line_str);) {
+		if (line_str.size() < 3 || line_str.substr(line_str.size() - 3) != "\r\n")
+			return ;
+
+		server.buffer[reply_socket] = server.buffer[reply_socket].substr(server.buffer[reply_socket].find_first_of("\r\n") + 2);
+
 		std::istringstream line(line_str);
 		std::string cmd;
 		std::getline(line, cmd, ' ');

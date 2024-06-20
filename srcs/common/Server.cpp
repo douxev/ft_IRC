@@ -213,10 +213,8 @@ std::string Server::get_pass(void)
 
 void Server::_read_data(int i)
 {
-	char buffer[BUFSIZ] = {0};
-	std::stringstream msg_to_sent;
 	const int sender_fd = _sockets_fds[i].fd;
-	const int byte_read = recv(sender_fd, buffer, BUFSIZ, 0);
+	const int byte_read = ft_recv(sender_fd);
 	if (byte_read <= 0) {
 		if (!byte_read) {
 			std::cout << SERVER_INFO << "Connection closed with client " << sender_fd << std::endl;
@@ -224,14 +222,14 @@ void Server::_read_data(int i)
 		else
 			std::cerr << SERVER_INFO << "Recv error: " << strerror(errno) << std::endl;
 		close(sender_fd);
-		_sockets_fds[i] = _sockets_fds[_nb_sockets - 1];
-		_nb_sockets--;
+		_sockets_fds[i] = _sockets_fds[--_nb_sockets];
 		std::istringstream message("Quit unexpectedly");
 		quit_command(*this, sender_fd, message);
 	}
-	else {
-		std::cout << YELLOW << "[RECV" << sender_fd << "] " << RESET << buffer;
-		std::istringstream stream(buffer);
+	else if (this->buffer[i].find_first_of("\r\n")) {
+		// std::cout << SERVER_INFO << this->buffer[i].at(this->buffer[i].find("\r\n")) << std::endl;
+		std::cout << YELLOW << "[RECV" << sender_fd << "] " << RESET << this->buffer[i];
+		std::istringstream stream(this->buffer[i]);
 		parse_commands(*this, sender_fd, stream);
 	}
 }
@@ -327,15 +325,10 @@ void Server::send_channel( std::string channelname, int sender_fd, std::string m
 }
 
 
-std::string Server::ft_recv( int sender_fd ) {
+int Server::ft_recv( int sender_fd ) {
 	char buffer[BUFSIZ] = {0};
-	std::stringstream message;
 
 	const int byte_read = recv(sender_fd, buffer, BUFSIZ, 0);
-	this->_buffer[sender_fd] += buffer;
-	
-	
-
-
-
+	this->buffer[sender_fd] += buffer;
+	return byte_read;
 }
