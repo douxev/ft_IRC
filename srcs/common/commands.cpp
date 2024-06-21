@@ -196,6 +196,8 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 				std::cout << SERVER_INFO << "Client '" << reply_socket << "' wants invisible role" << std::endl;
 				break ;
 			case 'o':
+				if (!server.is_on_channel(target, password))
+					return ;
 				server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
 				server.get_channel_class(target).send_channel(":" + server.get_user_class(reply_socket).get_name() 
 					+ " MODE " + target + " " + value.at(0) + "o " + password + " \r\n");
@@ -254,6 +256,8 @@ void	mode_command( Server& server, int reply_socket, std::istringstream &message
 					"" + " MODE " + target + " " + value.at(0) + "k " + " \r\n");
 				break ;
 			case 'o':
+				if (!server.is_on_channel(target, password))
+					return ;
 				server.get_channel_class(target).set_mode( OP,  server.get_user_class(reply_socket), password, op_sign );
 				server.get_channel_class(target).send_channel(":" + server.get_user_class(reply_socket).get_name() 
 					+ " MODE " + target + " " + value.at(0) + "o " + password + " \r\n");
