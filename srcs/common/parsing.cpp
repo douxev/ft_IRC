@@ -79,9 +79,8 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 
 			if (!std::isprint(line.str().at(line.str().size() - 1)))
 				line.str(line.str().substr(0, line.str().size() - 1)); //remove \r char
-			if (cmd == "SQUIT")
-				shutdown_command(server);
-			else if (cmd == "PING")
+
+			if (cmd == "PING")
 				pong(reply_socket, line.str());
 			else if (cmd == "CAP")
 				cap_command(server, reply_socket, line);
@@ -133,8 +132,10 @@ void	parse_commands( Server& server, int reply_socket, std::istringstream& messa
 					invite_command(server, reply_socket, line);
 				else if (cmd == "KICK")
 					kick_command(server, reply_socket, line);
-				else if (cmd == "QUIT")
+				else if (cmd == "QUIT") {
 					quit_command(server, reply_socket, line);
+					return ;
+				}
 				else 
 					std::cout << RED << "[WARN!]" << RESET << " Unknown Command: " << cmd << std::endl;
 			}

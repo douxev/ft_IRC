@@ -116,7 +116,9 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 		try
 		{
 			User user = server.get_user_class(recipient);
-			ft_send(user.get_socketfd(), ":" + server.get_user_class(reply_socket).get_name() + " PRIVMSG " + recipient + " :" + msg + "\r\n");
+			ft_send(user.get_socketfd(), ":" + server.get_user_class(reply_socket).get_name() +
+				"!" + server.get_user_class(reply_socket).get_realname() + "@" + server.get_user_class(reply_socket).get_ip() +
+				" PRIVMSG " + recipient + " :" + msg + "\r\n");
 		}
 		catch(const std::exception& e)	//ce n'est pas un user
 		{
@@ -124,7 +126,9 @@ void	privmsg_command( Server& server, int reply_socket, std::istringstream &mess
 			{
 				Channel channel = server.get_channel_class(recipient);
 				if (channel.is_on_channel(server.get_user_class(reply_socket).get_name()))
-					channel.send_channel(reply_socket, ":" + server.get_user_class(reply_socket).get_name() + " PRIVMSG " + recipient + " :" + msg + "\r\n");
+					channel.send_channel(reply_socket, ":" + server.get_user_class(reply_socket).get_name() +
+				"!" + server.get_user_class(reply_socket).get_realname() + "@" + server.get_user_class(reply_socket).get_ip() +
+				" PRIVMSG " + recipient + " :" + msg + "\r\n");
 				else
 					ft_send(reply_socket, "404 " + server.get_user_class(reply_socket).get_name() + " " + channel.get_name() + " :Cannot send to channel\r\n");
 
@@ -502,25 +506,23 @@ void	part_command( Server& server, int reply_socket, std::istringstream &message
 void	quit_command( Server& server, int reply_socket, std::istringstream &message ) {	
 	try
 	{
-		User& user = server.get_user_class(reply_socket);
+		User user = server.get_user_class(reply_socket);
 		std::vector<Channel*> channel_list = user.get_list_channel();
 
 		for (size_t j = 0; j < channel_list.size(); j++){
+			std::cout << SERVER_INFO << channel_list[j]->get_name() << std::endl;
 			channel_list[j]->user_quit(user, message.str() + "\r\n");
 			if (!channel_list[j]->get_size()) {
-				Channel& chan = server.get_channel_class(channel_list[j]->get_name());
-				server.get_channels_list().erase(std::remove(server.get_channels_list().begin(), server.get_channels_list().end(), &chan), server.get_channels_list().end());
-				delete &chan;
+				server.get_channels_list().erase(std::remove(server.get_channels_list().begin(), server.get_channels_list().end(), channel_list[j]), server.get_channels_list().end());
+				delete channel_list[j];
 			}
 
 		}
 		
 		server.get_connected_user().erase(std::remove(server.get_connected_user().begin(), server.get_connected_user().end(), 
 			&user), server.get_connected_user().end());
-		
-		delete &user;
 	}
-	catch(const std::exception& e) {}
+	catch(...) {}
 	server.remove_poll_fd(reply_socket);
 }
 

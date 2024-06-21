@@ -7,7 +7,6 @@
 #include <iostream>
 #include <sstream>
 #include <sys/poll.h>
-#include <variant>
 
 Server::Server( void ): 
 _ip_str("127.0.0.1"), _ip_address(0), _port(0), _server_socket(0), _nb_sockets(0) {}
@@ -221,8 +220,6 @@ void Server::_read_data(int i)
 		}
 		else
 			std::cerr << SERVER_INFO << "Recv error: " << strerror(errno) << std::endl;
-		close(sender_fd);
-		_sockets_fds[i] = _sockets_fds[--_nb_sockets];
 		std::istringstream message("Quit unexpectedly");
 		quit_command(*this, sender_fd, message);
 	}
@@ -256,8 +253,9 @@ void	Server::join_channel( std::string username, std::string channelname, std::s
 	try {
 		Channel&	channel = this->get_channel_class(channelname);
 		channel.user_join(user, password);
-		if (this->is_on_channel(channel.get_name(), user.get_name()))
+		if (this->is_on_channel(channel.get_name(), user.get_name())) {
 			channel.send_channel(user.get_socketfd(), ":" + user.get_name() + "!" + user.get_realname() + "@" + user.get_ip() + " JOIN " + channel.get_name() + "\r\n");
+		}
 	}
 	catch (NoSuchChannelException& e) {
 		Channel *new_channel = new Channel(channelname, user);

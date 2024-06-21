@@ -7,6 +7,7 @@
 void	add_cmd( Bot& bot, std::string channel, std::istringstream& word_list ) {
 	std::string word;
 
+	std::cout << BOTINFO << "ADD" << std::endl;
 	for (;std::getline(word_list, word, ' ');) {
 		if (word.empty())
 				return ;

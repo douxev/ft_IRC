@@ -32,6 +32,10 @@ void	parse_commands(Bot& bot) {
 		std::getline(line, cmd, ' ');
 		std::getline(line, target, ' ');
 		std::getline(line, msg);
+		if (target.find('!') != std::string::npos)
+			target = target.substr(0, target.find('!'));
+		if (user.find('!') != std::string::npos)
+			user = user.substr(0, user.find('!'));
 		if (msg.size())
 			message.str(msg.substr(1));
 		else

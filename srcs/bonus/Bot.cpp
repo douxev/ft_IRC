@@ -136,6 +136,8 @@ bool Bot::is_op( std::string channel, std::string nick ) {
 	std::string rpl_code;
 	std::istringstream line_is;
 
+	if (nick.find('!') != std::string::npos)
+		nick = nick.substr(0, nick.find('!'));
 	this->send("WHOIS " + nick + "\r\n");
 	this->receive();
 	while (this->buffer.size() > 0) {

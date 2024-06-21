@@ -50,6 +50,8 @@ bool Channel::operator==( const Channel& Other ){
 
 Channel::~Channel() {
 	this->_invited.clear();
+	this->_op_users.clear();
+	this->_connected_users.clear();
 }
 
 void	Channel::send_userlist( const User& user ) {
